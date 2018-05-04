@@ -1,0 +1,26 @@
+.tabTitle{
+	height:20px;
+	line-height: 20px;
+	padding-left: 10px;
+	font-size: 13px;
+	margin-bottom: 15px;
+}
+.blueTabTitle{
+	color:#6699CC;
+	border-left:3px solid #6699CC;
+}
+.orangeTabTitle{
+	color:#FFA400;
+	border-left:3px solid #FFA400;
+}
+.greenTabTitle{
+	color:#07B8AC;
+	border-left:3px solid #07B8AC;
+}
+.grayTabTitle{
+	color:#666666;
+	border-left:3px solid #666666;
+}
+.el-input, .el-input__inner{
+	width: 300px;
+}

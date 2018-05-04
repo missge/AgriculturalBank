@@ -1,0 +1,109 @@
+* {margin:0 ;padding:0}
+li{outline-style: none;list-style:none;}
+
+.main_contanier{
+    padding:30px;
+}
+
+.form_content{
+    display: flex;
+    background:#F9F9F9;
+    margin-bottom: 30px;
+}
+.form_lf,.form_rt{
+    flex:1;
+    padding: 20px 20px 0 20px;
+}
+
+/*.dashedButton,.dashedButton_on{
+	display:inline-block;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    margin: 0;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-bottom:10px;
+    margin-right:20px;
+}
+.dashedButton{
+    background: #fff;
+    border: 1px dashed #D7D7D7;
+    color: #999999;
+}
+.dashedButton_on{
+   background: #07B8AC;
+    border: 1px dashed #D7D7D7;
+    color: #fff;
+}*/
+.grayButton{
+    display:inline-block;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    margin: 0;
+// padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 13px;
+// margin-bottom:10px;
+// margin-right:20px;
+    padding: 11px 19px;
+    font-size: 14px;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #999999;
+    border-color: #999999;
+    border:none;
+}
+.none_bottom{margin-bottom: 0px;}
+.footer_content{
+    display:flex;
+    width:80%;
+    margin:0 auto;
+    margin-bottom:20px;
+}
+.footer_content_lf{
+    flex:0 0 150px;
+    width:150px;
+    text-align: center;
+}
+.footer_content_rt{flex:1;}
+.footer_content_rt button{width:100%;}
+button span{font-size:13px;}
+
+/*三分裂*/
+.three_box{
+    flex: 1;
+    display: flex;
+}
+.three_box_rt{
+    flex: 0 0 150px;
+    width:350px;
+    align-items: center;
+    display: flex;
+    margin-left: 80px;
+}
+.three_child_lf,.three_child_rt{flex:1; padding: 20px 20px 0 20px; padding-left: 150px; width: 500px;}
+
+.img_box{display:flex;}
+.img_box  li{flex:1;padding: 0 10px;text-align: center;}
+.img_box p{font-size: 13px;color:#666666;text-align: center;padding-top:18px; padding-bottom: 20px;}
+.three_box_rt>div{
+    margin: 0 auto;
+    border-left: 1px solid #ddd;
+    text-align: center;
+    padding: 0 30px;
+}
+
+.el-input, .el-input__inner{width:250px}
+.form_content_row{
+    display: flex;
+
+    margin:0;
+}
+.form_content_col .el-form-item{margin:0}
+.form_content_col   { padding-bottom: 20px;  background: #F9F9F9;
+}
+
+

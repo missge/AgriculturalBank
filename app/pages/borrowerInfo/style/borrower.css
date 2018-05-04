@@ -1,0 +1,30 @@
+/*.form_content{
+    display: flex;
+    background:#F9F9F9;
+    margin-bottom: 30px;
+    margin-left: 30px;
+}
+.form_lf,.form_rt{
+    flex:1;
+    padding: 20px 20px 0 20px;
+    width: 500px;
+}
+
+
+
+.footer_content{
+    display:flex;
+    width:80%;
+    margin:0 auto;
+    margin-bottom:20px;
+}
+.footer_content_lf{
+    flex:0 0 150px;
+    width:150px;
+    text-align: center;
+}
+.footer_content_rt{flex:1;}
+.footer_content_rt button{width:100%;}*/
+
+
+

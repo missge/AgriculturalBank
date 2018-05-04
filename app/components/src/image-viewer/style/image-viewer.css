@@ -1,0 +1,127 @@
+@charset "UTF-8";
+
+.mmspc-image-viewer {
+    text-align: center;
+    display: flex;
+    vertical-align: middle;
+    width: 100%;
+    height:100%;
+    font-size: 17px;
+    overflow: hidden;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    background-color:#000;
+}
+
+.mmspc-image-viewer__wrapper {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center
+}
+
+.mmspc-image-viewer__wrapper::after {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    width: 0;
+    vertical-align: middle
+}
+
+.mmspc-image-viewer__image{
+    max-width: 100%;
+    height: auto;
+}
+.mmspc-image-viewer__btns_image{
+    height:60px;
+    width:60px;
+    padding: 10px;
+}
+.mmspc-image-viewer__content {
+    color: #48576a;
+    font-size: 17px;
+    position: relative;
+    display: flex;
+    flex:1;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.mmspc-image-viewer__btns {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content:stretch;
+    text-align: center;
+    width:80px;
+    padding:15% 0
+}
+.mmspc-image-viewer__button{
+    display: flex;
+    flex: 1;
+    align-items: center;
+    align-content: center;
+    border-radius: 0;
+    width: 100%;
+    justify-content:center;
+    text-align: center;
+    border-color: transparent;
+    background-color: transparent;
+    color: #fff;
+    flex-direction: column;
+    font-size: 16px;
+}
+
+.mmspc-image-viewer__btns .high-light{
+    color: #07b8ac;
+}
+
+.mmspc-image-viewer__btns-reverse {
+    -ms-flex-direction: row-reverse;
+    flex-direction: row-reverse
+}
+
+.msgbox-fade-enter-active {
+    animation: msgbox-fade-in .3s
+}
+
+.msgbox-fade-leave-active {
+    animation: msgbox-fade-out .3s
+}
+
+@keyframes msgbox-fade-in {
+    0% {
+        transform: translate3d(0, -20px, 0);
+        opacity: 0
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1
+    }
+}
+
+@keyframes msgbox-fade-out {
+    0% {
+        transform: translate3d(0, 0, 0);
+        opacity: 1
+    }
+    100% {
+        transform: translate3d(0, -20px, 0);
+        opacity: 0
+    }
+}
+@media screen and (orientation:portrait) {
+    /* css[竖向定义样式] */
+}
+@media screen and (orientation:landscape) {
+    /* css[横向定义样式] */
+}
+
+/* PC客户端或大屏幕设备: 1280px 至更大 */
+@media only screen and (min-width: 1280px) {
+    
+}

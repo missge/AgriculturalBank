@@ -1,0 +1,12 @@
+/*三个分裂*/
+.three_box{
+	flex: 1;
+	display: flex;
+	padding: 20px;
+}
+.three_box_rt{
+	flex: 0 0 110px;
+	width:110px;
+	padding: 20px ;
+}
+.three_child_lf,.three_child_rt{flex:1;    }
