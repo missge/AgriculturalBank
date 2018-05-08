@@ -54,7 +54,7 @@ function regexString(value) {
     }
 }
 
-/*
+
 function loginNew() {
     // eslint-disable-next-line
     mmspc.bridge.get(function (data) {
@@ -66,7 +66,7 @@ function loginNew() {
 
     })
 
-}*/
+}
 
 class NetCheck extends Component{
     constructor(props) {

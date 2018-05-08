@@ -10,7 +10,6 @@ import {Radio,Button,Dialog,Tabs,Input,Form,TabTitle,NavBar,SupplePage,SelectLis
 import '../publicCss/public.css';
 import first from "../containerPage/first";
 var qs = require("querystring");
-var that = "";
 let showLength=4;
 const actions = [
     borrowerActions
@@ -78,9 +77,13 @@ class Borrower extends Component {
         return value;
     }
 
-    componentDidMount(){
-        that = this;
+    componentDidMount() {
+        // eslint-disable-next-line
+        // mmspc.bridge.get((data)=>{
+        //
+        // });
     }
+
     constructor(props) {
         super(props);
 
@@ -180,7 +183,7 @@ class Borrower extends Component {
                 teliprefix:"",//固定电话
                             //通信地址
 
-
+                procsId:""
 
                 // _method:"",
                 // addr:"",   // 常用通信地址
@@ -320,7 +323,7 @@ class Borrower extends Component {
                         </div>
                     </div>
                     <TabTitle title="借款人信息" class="tabTitle blueTabTitle"/>
-                    <Form model={this.state.form} labelWidth="110" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
+                    <Form model={this.state.clientVO} labelWidth="110" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
                         <div class="form_content">
                             <div class="form_lf">
                                 <Form.Item label="客户姓名">
@@ -503,15 +506,15 @@ class Borrower extends Component {
                             </div>
                             <div class="footer_content_rt">
                                 <Button type="warning" size="large"  onClick={() => {
-                                    alert(JSON.stringify(this.state.clientVO));
+                                    // alert(JSON.stringify(this.state.clientVO));
                                     // this.context.jumpTo(3, this.setComplete.bind(this)(2))
                                     // eslint-disable-next-line
-                                 {/*  mmspc.bridge.get(function (data) {
-                                        that.props.borrowerActions.postLoanerInfo(data , that.state.clientVO);
+                                    mmspc.bridge.get((data)=> {
+                                        this.props.borrowerActions.postLoanerInfo(data , this.state.clientVO);
                                         // that.props.borrowerActions.postLoanerInfo(data , "{\"cliname\":"+"\"6\""+"}");
                                         // "{\"clientVO\":"+"\""+that.state.clientVO+"\""+"}"
 
-                                    });*/} 
+                                    });
 
                                     }}>下一步</Button>
 

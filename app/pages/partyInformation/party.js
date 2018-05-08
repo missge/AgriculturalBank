@@ -2,6 +2,8 @@ import React from 'react';
 import {Component,unshiftArrs}from '../../components/libs';
 import html2canvas from 'html2canvas';
 import * as homeActions from '../../actions/home';
+import * as partyActions from '../../actions/party';
+
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {Map} from 'immutable';
@@ -31,12 +33,13 @@ var pagePic = "";
 var frontImage = require("../../images/certificate_front.png");
 var backImage = require("../../images/certificate_back.png");
 const actions = [
-  homeActions
+  homeActions,
+  partyActions
 ];
 function mapStateToProps(state) {
-  const {home}=state;
+  const {partyData}=state;
   return {
-    home
+    partyData
   };
 }
 
@@ -47,7 +50,8 @@ function mapDispatchToProps(dispatch) {
       .filter(value => typeof value === 'function')
       .toObject();
   return {
-    homeActions: bindActionCreators(creators, dispatch)
+    homeActions: bindActionCreators(creators, dispatch),
+    partyActions: bindActionCreators(creators, dispatch)
 
   };
 }
@@ -69,7 +73,7 @@ class Party extends Component{
         this.state={
             form:{
                 isrel:'否',//是否共同借款人
-                edulevel:'大学',//文化程度
+                edulevel:'小学',//文化程度
                 mobno:'',//手机号码
                 parincpm:'',//配偶年税后收入,
                 reltype:'夫',// 关系人类型
@@ -83,7 +87,7 @@ class Party extends Component{
                 birthday:'',//出生日期
                 isbirthday:'',//-------------证件有效终止日
                 isLocal:'是',//---------是否本地常住户口
-                housesta:'自有住房无按揭无抵押',//居住状况
+                housesta:'自有住房有按揭或抵押',//居住状况
                 hjdz:'', //--------------是否本地户籍
                 abcstuffflag:'否',//是否为农行员工
                 isyhzh:'否',//-------------是否私人银行客户
@@ -94,7 +98,7 @@ class Party extends Component{
                 perclienttype:'非农户',//人行涉农个人客户类别
                 /****职业信息******/
                 corpname:'' ,//单位全称
-                corpchar:'其他',//单位性质 
+                corpchar:'国资委或省国资委直属企业',//单位性质 
                 dwdz:'',//-------------单位地址
                 title:'其他',//职称
                 dutysta:'其他',//职务状况 
@@ -117,15 +121,18 @@ class Party extends Component{
                 email:'',//电子邮箱
                 teliprefix:'',//固定电话
             },
+            container_height:window.innerHeight-this.getHeight(100),
             // radio:"身份证",
             isInfoShow:false,
             isAddParty:false,
             isAddPartyShow:false,
-            //  types:'本科',
-             types1:'父母同住',
+            //  types:'中专',
             selectDialogVisible:false,
-            list:['大学','研究生','博士','大专','高中','中专','初中',"小学"],
+            selectDialog2Visible:false,
+            selectDialog3Visible:false,
+            list:['大学','研究生','博士','大专','高中','中专','初中','小学'],
             liveList:['父母同住','集体宿舍','租住','共有住宅','其他','自有住房无按揭无抵押','自有住房有按揭或抵押'],
+            corpcharList:['事业单位','国家机关','小企业','个体工商','其他','国资委或省国资委直属企业','优质上市公司','经营规范、效益一般的企业'],
             selectKey:'',
             /*签署征信授权书，弹出电子签名或拍照*/
             dialogVisible: false,
@@ -183,6 +190,7 @@ class Party extends Component{
             // backImage:backImage,
             // frontDisplay:"inline",
             // backDisplay:"inline",
+            isLookorAdd:''
         }
     }
     onSubmit(e) {
@@ -221,15 +229,33 @@ class Party extends Component{
 
     }*/
     componentDidMount(){
+        // this.props.partyActions.showNewContact(false) 
+        let procsId='1234'
+        this.queryAllInformation(procsId)
         that = this;
-        // unshiftArrs(this.state.list,this.state.types,(data)=>{
-        // this.state.form['edulevel']=data
-        // this.refs.educationSL.setState({selected:null})
-        // },showLength)
-        unshiftArrs(this.state.liveList,this.state.types1,(data)=>{
+            unshiftArrs(this.state.list,this.state.form.edulevel,(data)=>{
+             this.state.form['edulevel']=data
+            this.refs.educationSL.setState({selected:null})
+            },showLength)
+            unshiftArrs(this.state.liveList,this.state.form.housesta,(data)=>{
             this.state.form['housesta']=data
             this.refs.educationSL.setState({selected:null})
             },showLength)
+            unshiftArrs(this.state.corpcharList,this.state.form.corpchar,(data)=>{
+                this.state.form['corpchar']=data
+                this.refs.educationSL.setState({selected:null})
+                },showLength)
+            this.forceUpdate();
+
+            
+
+    }
+    queryAllInformation(procsId){
+        let that =this
+        // eslint-disable-next-line
+    //     mmspc.bridge.get(function (data) {
+    //          that.props.partyActions.ishaveInformation(data , {"procsId":procsId});
+    //    });
     }
     onChange(key, value) {
         this.state.form[key] = value;
@@ -261,7 +287,10 @@ class Party extends Component{
     onLiveAppendClick(){
         this.setState({selectDialog2Visible:true});
     }
+    onCorpcharAppendClick(){
+        this.setState({selectDialog3Visible:true});
 
+    }
     setComplete(cur){
         let value = this.context.getListValue();
         value[cur] = 2;
@@ -273,8 +302,8 @@ class Party extends Component{
     }
     render(){
         return(
-            <div style={{height:window.innerHeight-this.getHeight(100)}}>
-                <div id="party" class="showTab1" style={{display:this.state.isAddPartyShow === false ? "block" : "none"}}>
+            <div style={{height:this.state.container_height}}>
+                <div id="party" class="showTab1" style={{display:this.props.partyData.showNewContact === false ? "block" : "none"}}>
                     <div class="main_contanier">
                         <TabTitle title="证件信息" class="tabTitle orangeTabTitle"/>
                         <div class="form_content">
@@ -677,34 +706,7 @@ class Party extends Component{
                                        
                                     </ul>
 
-                                    <Dialog
-                                        size="small"
-                                        visible={ this.state.selectDialogVisible }
-                                        title='对话框'
-                                        onCancel={ () => this.setState({ selectDialogVisible: false,types:this.state.types}) }
-                                        lockScroll={ false }
-                                        className='mmpsc-select-list-dialog'
-                                    >
-                                        <Dialog.Body>
-                                            <SelectList ref ="educationSL" 
-                                        visible={ this.state.selectDialogVisible }
-                                        value={this.state.form.edulevel} multiple={false} onChange={(val)=>{
-                                                this.removeByValue(this.state.list,val)
-                                                this.state.list.unshift(val)
-                                                this.onChange('edulevel',val)
-                                                this.setState({selectDialogVisible: false,types:val})
-                                                this.refs.educationSL.setState({selected:null});
-                                            }}>
-                                                {
-                                                    this.state.list.map(function(item,i){
-                                                        return i>showLength? <SelectList.Option key={i} label={item} value={item} /> :''
-                                                    })
-                                                }
-
-                                            </SelectList>
-                                        </Dialog.Body>
-                                    </Dialog>
-
+                                 
                                     <ul class="form_content_row">
                                         <li class="form_lf">
                                             <Form.Item label="文化程度">
@@ -723,6 +725,36 @@ class Party extends Component{
                                                     <Radio.Button style={{marginBottom:"0px"}} value="更多" />
                                                 </Radio.Group>
                                             </Form.Item>
+                                            <Dialog
+                                                size="small"
+                                                visible={ this.state.selectDialogVisible }
+                                                title='对话框'
+                                                // onCancel={ () => this.setState({ selectDialogVisible: false,types:this.state.types}) }
+                                                onCancel={ () => this.setState({ selectDialogVisible: false}) }
+                                                
+                                                lockScroll={ false }
+                                                className='mmpsc-select-list-dialog'
+                                            >
+                                                <Dialog.Body>
+                                                    <SelectList ref ="educationSL" 
+                                                visible={ this.state.selectDialogVisible }
+                                                value={this.state.form.edulevel} multiple={false} onChange={(val)=>{
+                                                        this.removeByValue(this.state.list,val)
+                                                        this.state.list.unshift(val)
+                                                        this.onChange('edulevel',val)
+                                                        this.setState({selectDialogVisible: false})
+                                                        this.refs.educationSL.setState({selected:null});
+                                                    }}>
+                                                        {
+                                                            this.state.list.map(function(item,i){
+                                                                return i>showLength? <SelectList.Option key={i} label={item} value={item} /> :''
+                                                            })
+                                                        }
+
+                                                    </SelectList>
+                                                </Dialog.Body>
+                                            </Dialog>
+
                                         </li>
                                         <li class="form_rt">
                                             <Form.Item label="婚姻状况">
@@ -768,20 +800,35 @@ class Party extends Component{
                                             onClick={ () => this.setState({ isInfoShow:!this.state.isInfoShow})}>信息补录</Button>
                                 </div>
                                 <div class="footer_content_rt">
-                                    <Button type="warning" size="large"   onClick={() => {
+                                    <Button type="warning" size="large" onClick={() => {
                                         alert(JSON.stringify(this.state.form));
-                                   }}>新增关系人
+                                         // eslint-disable-next-line
+                                        // mmspc.bridge.get(function (data) {
+                                        //         that.props.partyActions.postPartyInfo(data , that.state.form);
+                                        //     });
+                                          this.props.partyActions.showNewContact(true)
+
+                                        }}
+                                        >新增关系人
                                     </Button>
                                 </div>
                             </div>
                         </div>
                  </div>
-                <div id="addParty"  style={{display:this.state.isAddPartyShow === false ? "none" : "block"}}>
+                 
+                {/* <div id="addParty"  style={{display:this.state.isAddPartyShow === false ? "none" : "block"}}> */}
+                <div id="addParty"  style={{display:this.props.partyData.showNewContact === false ? "none" : "block"}}>
                     <div class="main_contanier scrollauto">
                         <TabTitle title="关系人信息" class="tabTitle blueTabTitle"/>
                         <div class="form_content">
                             <ul class="addParty_box">
-                                <li>
+                                <li onClick={() =>{
+                                    // mmspc.bridge.get(function (data) {
+                                        // that.props.partyActions.postPartyInfo(data,clickId);
+                                    // });
+                                    this.setState({isAddParty:!this.state.isAddParty,isLookorAdd:1})
+                                    
+                                }}>
                                     <ul class="addParty_title">
                                         <li>
                                         <span class="addParty_title_key">
@@ -828,7 +875,7 @@ class Party extends Component{
                                 <div class="addcontact">
                                     <div>
                                         <img src={require("./img/add.png")} width="58px" height="58px"
-                                            onClick={() => {this.setState({isAddParty:!this.state.isAddParty})}}
+                                            onClick={() => {this.setState({isAddParty:!this.state.isAddParty,isLookorAdd:2})}}
                                         />
                                         <p>新增关系人</p>
                                     </div>
@@ -875,7 +922,7 @@ class Party extends Component{
                                            <div class="form_content">
                                                 <div class="form_lf">
                                                     <Form.Item label="国家">
-                                                       <Input value={this.state.form.country} placeholder="中国" onChange={this.onChange.bind(this, 'country')}></Input>
+                                                       <Input value={this.state.form.country} placeholder="" onChange={this.onChange.bind(this, 'country')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="性别">
                                                          <Radio.Group value={this.state.form.gender } onChange={this.onChange.bind(this, 'gender')}>
@@ -884,10 +931,10 @@ class Party extends Component{
                                                         </Radio.Group>
                                                     </Form.Item>
                                                       <Form.Item label="出生日期">
-                                                       <Input value={this.state.form.birthday} placeholder="1999-05-22" onChange={this.onChange.bind(this, 'birthday')}></Input>
+                                                       <Input value={this.state.form.birthday} placeholder="" onChange={this.onChange.bind(this, 'birthday')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="户籍地址">
-                                                       <Input value={this.state.form.hjdz} placeholder="1999-05-22" onChange={this.onChange.bind(this, 'hjdz')}></Input>
+                                                       <Input value={this.state.form.hjdz} placeholder="" onChange={this.onChange.bind(this, 'hjdz')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="居住状况">
                                                         <Radio.Group value={this.state.form.housesta} onChange={this.onChange.bind(this, 'housesta')} appendix="更多"
@@ -909,7 +956,7 @@ class Party extends Component{
                                                         size="small"
                                                         visible={ this.state.selectDialog2Visible }
                                                         title='对话框'
-                                                        onCancel={ () => this.setState({ selectDialog2Visible: false,types1:this.state.types1}) }
+                                                        onCancel={ () => this.setState({ selectDialog2Visible: false}) }
                                                         lockScroll={ false }
                                                         className='mmpsc-select-list-dialog'
                                                     >
@@ -920,7 +967,7 @@ class Party extends Component{
                                                                 this.removeByValue(this.state.liveList,val)
                                                                 this.state.liveList.unshift(val)
                                                                 this.onChange('housesta',val)
-                                                                this.setState({selectDialog2Visible: false,types1:val})
+                                                                this.setState({selectDialog2Visible: false})
                                                                 this.refs.liveRadio.setState({selected:null});
                                                             }}>
                                                                 {
@@ -985,7 +1032,7 @@ class Party extends Component{
                                                         </Radio.Group>       
                                                     </Form.Item>
                                                     <Form.Item label="长期居住地地址">
-                                                       <Input value={this.state.form.settleaddr} placeholder="上海南路190号" onChange={this.onChange.bind(this, 'settleaddr')}></Input>
+                                                       <Input value={this.state.form.settleaddr} placeholder="" onChange={this.onChange.bind(this, 'settleaddr')}></Input>
                                                     </Form.Item>
                                                 </div>
                                             </div>
@@ -995,11 +1042,12 @@ class Party extends Component{
                                     <Form labelPosition="left"  model={this.state.form} labelWidth="170" onSubmit={this.onSubmit.bind(this)}>
                                            <div class="form_content">
                                                 <div class="form_lf">
+                                                                
                                                     <Form.Item label="单位全称">
-                                                       <Input value={this.state.form.corpname} placeholder="中国" onChange={this.onChange.bind(this, 'corpname')}></Input>
+                                                       <Input value={this.state.form.corpname} placeholder="" onChange={this.onChange.bind(this, 'corpname')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="单位地址">
-                                                       <Input value={this.state.form.dwdz} placeholder="请输入单位地址" onChange={this.onChange.bind(this, 'dwdz')}></Input>
+                                                       <Input value={this.state.form.dwdz} placeholder="" onChange={this.onChange.bind(this, 'dwdz')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="职称" >
                                                          <Radio.Group value={this.state.form.title}  onChange={this.onChange.bind(this, 'title')}>
@@ -1010,7 +1058,7 @@ class Party extends Component{
                                                         </Radio.Group>
                                                     </Form.Item>
                                                      <Form.Item label="单位固定电话">
-                                                       <Input value={this.state.form.dwgddh} placeholder="请输入单位固定电话" onChange={this.onChange.bind(this, 'dwgddh')}></Input>
+                                                       <Input value={this.state.form.dwgddh} placeholder="" onChange={this.onChange.bind(this, 'dwgddh')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="单位国标行业分类 ">
                                                          <Radio.Group value={this.state.form.corpstdtype} onChange={this.onChange.bind(this, 'corpstdtype')}>
@@ -1029,14 +1077,53 @@ class Party extends Component{
                                                 </div>
                                                 <div class="form_rt">
                                                    <Form.Item label="单位性质">
-                                                         <Radio.Group value={this.state.form.corpchar} onChange={this.onChange.bind(this, 'corpchar')}>
-                                                            <Radio.Button  value="事业单位" />
-                                                            <Radio.Button  value="国家机关" />
-                                                            <Radio.Button  value="小企业" />
-                                                            <Radio.Button  value="个体工商" />
-                                                            <Radio.Button  value="其他" />
-                                                            <Radio.Button  value="更多" />
+                                                         <Radio.Group value={this.state.form.corpchar} onChange={this.onChange.bind(this, 'corpchar')} appendix="更多"
+                                                           onAppendixClick={this.onCorpcharAppendClick.bind(this)}>
+                                                            {
+                                                                this.state.corpcharList.map(function(item,i){
+                                                                    return(
+                                                                        i<showLength+1?
+                                                                            <Radio.Button key={i} value={item} /> :''
+
+                                                                    )
+                                                                })
+
+                                                            }
+                                                            <Radio.Button style={{marginBottom:"0px"}} value="更多" />
                                                         </Radio.Group>
+                                                        <Dialog
+                                                            size="small"
+                                                            visible={ this.state.selectDialog3Visible }
+                                                            title='对话框'
+                                                            // onCancel={ () => this.setState({ selectDialogVisible: false,types:this.state.types}) }
+                                                            onCancel={ () => this.setState({ selectDialog3Visible: false}) }
+                                                            
+                                                            lockScroll={ false }
+                                                            className='mmpsc-select-list-dialog'
+                                                        >
+                                                            <Dialog.Body>
+                                                                <SelectList ref ="educationSL" 
+                                                            visible={this.state.selectDialog3Visible}
+                                                            value={this.state.form.corpchar} multiple={false} onChange={(val)=>{
+                                                                    this.removeByValue(this.state.corpcharList,val)
+                                                                    this.state.corpcharList.unshift(val)
+                                                                    this.onChange('corpchar',val)
+                                                                    this.setState({selectDialog3Visible: false})
+                                                                    this.refs.educationSL.setState({selected:null});
+                                                                }}>
+                                                                    {
+                                                                        this.state.corpcharList.map(function(item,i){
+                                                                            return i>showLength? <SelectList.Option key={i} label={item} value={item} /> :''
+                                                                        })
+                                                                    }
+
+                                                                </SelectList>
+                                                            </Dialog.Body>
+                                                        </Dialog>
+
+
+
+
                                                     </Form.Item>
                                                       <Form.Item label="职务状况">
                                                          <Radio.Group value={this.state.form.dutysta} onChange={this.onChange.bind(this, 'dutysta')}>
@@ -1065,38 +1152,38 @@ class Party extends Component{
                                            <div class="form_content">
                                                 <div class="form_lf">
                                                     <Form.Item label="资产合计">
-                                                       <Input value={this.state.form.asssum} placeholder="中国" onChange={this.onChange.bind(this, 'asssum')}></Input>
+                                                       <Input value={this.state.form.asssum} placeholder="" onChange={this.onChange.bind(this, 'asssum')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="家庭对外担保额">
-                                                       <Input value={this.state.form.guaramt} placeholder="请输入单位地址" onChange={this.onChange.bind(this, 'guaramt')}></Input>
+                                                       <Input value={this.state.form.guaramt} placeholder="" onChange={this.onChange.bind(this, 'guaramt')}></Input>
                                                     </Form.Item>
                                                 </div>
                                                 <div class="form_rt">
                                                     <Form.Item label="负债合计">
-                                                      <Input value={this.state.form.debtsum} placeholder="请输入单位地址" onChange={this.onChange.bind(this, 'debtsum')}></Input>
+                                                      <Input value={this.state.form.debtsum} placeholder="" onChange={this.onChange.bind(this, 'debtsum')}></Input>
                                                     </Form.Item>
                                                      <Form.Item label="家庭其他年收入">
-                                                       <Input value={this.state.form.othincpm} placeholder="请输入单位地址" onChange={this.onChange.bind(this, 'othincpm')}></Input>
+                                                       <Input value={this.state.form.othincpm} placeholder="" onChange={this.onChange.bind(this, 'othincpm')}></Input>
                                                     </Form.Item>
                                                 </div>
                                             </div>
                                              <div class="form_content" >
                                                 <div class="form_lf" style={{paddingTop:"0px"}}>
                                                     <Form.Item label="本人年债务性支出">
-                                                       <Input value={this.state.form.debtexpd} placeholder="中国" onChange={this.onChange.bind(this, 'debtexpd')}></Input>
+                                                       <Input value={this.state.form.debtexpd} placeholder="" onChange={this.onChange.bind(this, 'debtexpd')}></Input>
                                                     </Form.Item>
                                                   
                                                 </div>
                                                 <div class="form_rt" style={{paddingTop:"0px"}}>
                                                     <Form.Item label="本人年生活保障支出">
-                                                      <Input value={this.state.form.debtexpd} placeholder="中国" onChange={this.onChange.bind(this, 'debtexpd')}></Input>
+                                                      <Input value={this.state.form.debtexpd} placeholder="" onChange={this.onChange.bind(this, 'debtexpd')}></Input>
                                                     </Form.Item>
                                                 </div>
                                             </div>
                                              <div class="form_content">
                                                  <div class="form_lf" style={{paddingTop:"0px"}}>
                                                     <Form.Item label="配偶年债务性支出">
-                                                       <Input value={this.state.form.pardebtexpd} placeholder="中国" onChange={this.onChange.bind(this, 'pardebtexpd')}></Input>
+                                                       <Input value={this.state.form.pardebtexpd} placeholder="" onChange={this.onChange.bind(this, 'pardebtexpd')}></Input>
                                                     </Form.Item>
                                                   
                                                 </div>
@@ -1118,13 +1205,13 @@ class Party extends Component{
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="固定电话">
-                                                       <Input value={this.state.form.teliprefix} placeholder="请输入单位地址" onChange={this.onChange.bind(this, 'teliprefix')}></Input>
+                                                       <Input value={this.state.form.teliprefix} placeholder="" onChange={this.onChange.bind(this, 'teliprefix')}></Input>
                                                     </Form.Item>
                                                 </div>
                                                 <div class="form_rt">
                                                
                                                     <Form.Item label="电子邮箱">
-                                                       <Input value={this.state.form.email} placeholder="请输入电子邮箱" onChange={this.onChange.bind(this, 'email')}></Input>
+                                                       <Input value={this.state.form.email} placeholder="" onChange={this.onChange.bind(this, 'email')}></Input>
                                                     </Form.Item>
                                                      
                                                 </div>
@@ -1136,15 +1223,24 @@ class Party extends Component{
 
                 </SupplePage>
                 {/*卡片点击新增联系人*/}
+                {this.state.isLookorAdd}
                 <SupplePage style={{display:this.state.isAddParty === false ? "none" : "block"}}>
                     <NavBar
-                        title={"新增关系人"}
+                        title={this.state.isLookorAdd===1?"关系人信息 ":"新增关系人"}
                         lName={"取消"}
-                        rName={"确定"}
+                        rName={this.state.isLookorAdd===1?"删除":""}
                         lClick={() => this.setState({isAddParty:!this.state.isAddParty})}
                         rClick={() => this.setState({isAddParty:!this.state.isAddParty})}
                     >
                     </NavBar>
+                    {/* <NavBar style={{display:this.state.isLookorAdd===2?"none":"block"}}
+                        title={"关系人信息"}
+                        lName={"取消"}
+                        rName={"删除"}
+                        lClick={() => this.setState({isAddParty:!this.state.isAddParty})}
+                        rClick={() => this.setState({isAddParty:!this.state.isAddParty})}
+                    >
+                    </NavBar> */}
                     {/*新增关系人*/}
                     <div style={{height:window.innerHeight-this.getHeight(100), overflowY:"auto", overflowX:"hidden"}}>
                         <div class="main_contanier">
@@ -1417,121 +1513,119 @@ class Party extends Component{
                              <Tabs activeName="1" onTabClick={ (tab) => console.log(tab.props.name) }>
                                 <Tabs.Pane label="基本信息" name="1">
                                     <Form labelPosition="left" model={this.state.form} labelWidth="120" onSubmit={this.onSubmit.bind(this)}>
-                                        <div class="form_content_col">
-                                            <ul class="form_content_row">
-                                                <li class="form_lf">
-                                                    <Form.Item label="关系人类型">
-                                                        <Radio.Group value={this.state.reltype} onChange={this.onChange.bind(this, 'reltype')}>
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="配偶" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="子女" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="父母" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="祖父母" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="兄弟姐妹" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="更多" />
+                                    <div class="form_content_col">
+                                        <ul class="form_content_row">
+                                        <li class="form_lf">
+                                                <Form.Item label="是否共同借款人">
+                                                    <Radio.Group value={this.state.form.isrel} onChange={this.onChange.bind(this, 'isrel')}>
+                                                        <Radio.Button style={{marginBottom:"0px"}} value="是" />
+                                                        <Radio.Button style={{marginBottom:"0px"}} value="否" />
+                                                    </Radio.Group>
+                                                </Form.Item>
+                                            </li>
+                                            <li class="form_rt">
+                                                <Form.Item label="关系人类型">
+                                                    <Radio.Group value={this.state.form.reltype} onChange={this.onChange.bind(this, 'reltype')}>
+                                                        <Radio.Button  value="夫" />
+                                                        <Radio.Button  value="妻" />
+                                                        <Radio.Button  value="子" />
+                                                        <Radio.Button  value="女" />
+                                                        <Radio.Button  value="父母" />
+                                                        <Radio.Button  value="其他" />
+                                                    </Radio.Group>
+                                                </Form.Item>
+                                            </li>
+                                        
+                                        </ul>
 
-                                                        </Radio.Group>
-                                                    </Form.Item>
-                                                </li>
-                                                <li class="form_rt">
-                                                    <Form.Item label="关系人角色">
-                                                        <Radio.Group value={this.state.jsRadio} onChange={this.onChange.bind(this, 'jsRadio')}>
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="借款人配偶" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="共同借款人" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="待定" />
-                                                        </Radio.Group>
-                                                    </Form.Item>
-                                                </li>
-                                            </ul>
-
-                                            <Dialog
-                                                size="small"
-                                                visible={ this.state.selectDialogVisible }
-                                                title='对话框'
-                                                onCancel={ () => this.setState({ selectDialogVisible: false,types:this.state.types}) }
-                                                lockScroll={ false }
-                                                className='mmpsc-select-list-dialog'
-                                            >
-                                                <Dialog.Body>
-                                                    <SelectList ref ="educationSL"
-                                                                visible={ this.state.selectDialogVisible }
-                                                                value={this.state.types} multiple={false} onChange={(val)=>{
-                                                        this.removeByValue(this.state.list,val)
-                                                        this.state.list.unshift(val)
-                                                        this.setState({selectDialogVisible: false,types:val})
-                                                        this.refs.educationSL.setState({selected:null});
-                                                    }}>
+                                    
+                                        <ul class="form_content_row">
+                                            <li class="form_lf">
+                                                <Form.Item label="文化程度">
+                                                    <Radio.Group value={this.state.form.edulevel} onChange={this.onChange.bind(this, 'edulevel')} appendix="更多"
+                                                    onAppendixClick={this.onEducateAppendClick.bind(this)}>
                                                         {
                                                             this.state.list.map(function(item,i){
-                                                                return i>showLength? <SelectList.Option key={i} label={item} value={item} /> :''
+                                                                return(
+                                                                    i<showLength+1?
+                                                                        <Radio.Button key={i} value={item} /> :''
+
+                                                                )
                                                             })
+
                                                         }
-
-                                                    </SelectList>
-                                                </Dialog.Body>
-                                            </Dialog>
-
-                                            <ul class="form_content_row">
-                                                <li class="form_lf">
-                                                    <Form.Item label="文化程度">
-                                                        <Radio.Group value={this.state.types} onChange={this.onChange.bind(this, 'types')} appendix="更多"
-                                                                     onAppendixClick={this.onEducateAppendClick.bind(this)}>
+                                                        <Radio.Button style={{marginBottom:"0px"}} value="更多" />
+                                                    </Radio.Group>
+                                                </Form.Item>
+                                                <Dialog
+                                                    size="small"
+                                                    visible={ this.state.selectDialogVisible }
+                                                    title='对话框'
+                                                    // onCancel={ () => this.setState({ selectDialogVisible: false,types:this.state.types}) }
+                                                    onCancel={ () => this.setState({ selectDialogVisible: false}) }
+                                                    
+                                                    lockScroll={ false }
+                                                    className='mmpsc-select-list-dialog'
+                                                >
+                                                    <Dialog.Body>
+                                                        <SelectList ref ="educationSL" 
+                                                    visible={ this.state.selectDialogVisible }
+                                                    value={this.state.form.edulevel} multiple={false} onChange={(val)=>{
+                                                            this.removeByValue(this.state.list,val)
+                                                            this.state.list.unshift(val)
+                                                            this.onChange('edulevel',val)
+                                                            this.setState({selectDialogVisible: false})
+                                                            this.refs.educationSL.setState({selected:null});
+                                                        }}>
                                                             {
                                                                 this.state.list.map(function(item,i){
-                                                                    return(
-                                                                        i<showLength+1?
-                                                                            <Radio.Button  key={i} value={item} /> :''
-
-                                                                    )
+                                                                    return i>showLength? <SelectList.Option key={i} label={item} value={item} /> :''
                                                                 })
-
                                                             }
-                                                            <Radio.Button  value="更多" />
-                                                        </Radio.Group>
-                                                    </Form.Item>
-                                                </li>
-                                                <li class="form_rt">
-                                                    <Form.Item label="婚姻状况">
-                                                        <Radio.Group value={this.state.hyRadio} onChange={this.onChange.bind(this, 'hyRadio')}>
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="已婚" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="未婚" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="离异" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="丧偶" />
-                                                            <Radio.Button style={{marginBottom:"0px"}} value="其他" />
-                                                        </Radio.Group>
-                                                    </Form.Item>
-                                                </li>
-                                            </ul>
-                                            <ul class="form_content_row">
-                                                <li class="form_lf">
-                                                    <Form.Item label="手机号码">
-                                                        <Input  size="small" value={this.state.phone} onChange={this.onChange.bind(this, 'phone')}></Input>
-                                                    </Form.Item>
-                                                </li>
-                                                <li class="form_rt">
-                                                    <Form.Item label="本人年税后收入">
-                                                        <Input  size="small" value={this.state.income} onChange={this.onChange.bind(this, 'income')}></Input>
-                                                    </Form.Item>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </Form>
+
+                                                        </SelectList>
+                                                    </Dialog.Body>
+                                                </Dialog>
+
+                                            </li>
+                                            <li class="form_rt">
+                                                <Form.Item label="婚姻状况">
+                                                    <Radio.Group value={this.state.form.marrysta} onChange={this.onChange.bind(this, 'marrysta')}>
+                                                        <Radio.Button  value="已婚" />
+                                                        <Radio.Button  value="未婚" />
+                                                        <Radio.Button  value="离异" />
+                                                        <Radio.Button  value="丧偶" />
+                                                        <Radio.Button  value="其他" />
+                                                    </Radio.Group>
+                                                </Form.Item>
+                                            </li>
+                                        </ul>
+                                        <ul class="form_content_row">
+                                            <li class="form_lf">
+                                                <Form.Item label="手机号码">
+                                                    <Input  size="small" value={this.state.form.mobno} placeholder="请输入手机号" onChange={this.onChange.bind(this, 'mobno')}></Input>
+                                                </Form.Item>
+                                            </li>
+                                            <li class="form_rt">
+                                                <Form.Item label="本人年税后收入">
+                                                    <Input  size="small" value={this.state.form.myselfincpm}  placeholder="20万" onChange={this.onChange.bind(this, 'myselfincpm')}></Input>
+                                                </Form.Item>
+                                            </li>
+                                            
+                                        </ul>
+                                        <ul class="form_content_row">
+                                            <li class="form_lf">
+                                                <Form.Item label="配偶年税后收入">
+                                                    <Input  size="small" value={this.state.form.parincpm}  placeholder="配偶年税后收入" onChange={this.onChange.bind(this, 'parincpm')}></Input>
+                                                </Form.Item>
+                                            </li>
+                                            <li class="form_rt">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </Form>
                                 </Tabs.Pane>
                               </Tabs>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                         </div>
                         <div class="loan_footer">
                             <div class="footer_content" >
@@ -1541,8 +1635,8 @@ class Party extends Component{
                                             onClick={ () => this.setState({ isInfoShow:!this.state.isInfoShow,isAddParty:!this.state.isAddParty})}>信息补录</Button>
                                 </div>
                                 <div class="footer_content_rt">
-                                    <Button type="warning" size="large"
-                                            onClick={() => this.setState({ isAddParty:!this.state.isAddParty})}>新增关系人</Button>
+                                    <Button type="warning" size="large" 
+                                            onClick={() => this.setState({ isAddParty:!this.state.isAddParty})}>{this.state.isLookorAdd===1?"确认修改":"新增关系人"}</Button>
                                 </div>
                             </div>
                         </div>
