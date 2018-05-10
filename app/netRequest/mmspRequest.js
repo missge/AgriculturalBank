@@ -33,7 +33,6 @@ class mmspRequest{
     postRequest(url,data,type,success,error){
         // eslint-disable-next-line
         mmspc.nativeRequest.init();
-        let params=JSON.stringify(data);
         try{
             base = baseUrl.url;
             // eslint-disable-next-line

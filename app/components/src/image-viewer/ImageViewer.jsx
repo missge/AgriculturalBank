@@ -64,7 +64,7 @@ export default class ImageViewer extends Component {
   }
 
   render(): React.Element<any> {
-    const { willUnmount, src, showActionButtons,cancelButtonClass, deleteButtonClass, inputType } = this.props;
+    const { willUnmount, src, showActionButtons,retakeButtonClass, deleteButtonClass, inputType } = this.props;
     const { visible, editorErrorMessage } = this.state;
 
     return (
@@ -86,10 +86,10 @@ export default class ImageViewer extends Component {
                     )
                   }
                   <div className="mmspc-image-viewer__btns" style={{display:showActionButtons?'flex':'none'}}>
-                      <div className={this.classNames('mmspc-image-viewer__button', cancelButtonClass)}
+                      <div className={this.classNames('mmspc-image-viewer__button', retakeButtonClass)}
                        onClick={this.handleAction.bind(this, 'retake')}>
                         <img className="mmspc-image-viewer__btns_image" src={require('../../../images/shoot_again.png')}/>
-                        {this.props.cancelButtonText}
+                        {this.props.retakeButtonText}
                       </div>
                     
                       <div className={this.classNames('mmspc-image-viewer__button', deleteButtonClass)}
@@ -113,17 +113,14 @@ ImageViewer.propTypes = {
   src: PropTypes.string,
   showActionButtons: PropTypes.bool,
   deleteButtonText: PropTypes.string,
-  cancelButtonText: PropTypes.string,
-  cancelButtonClass: PropTypes.string,
+  retakeButtonText: PropTypes.string,
+  retakeButtonClass: PropTypes.string,
   deleteButtonClass: PropTypes.string,
   promise: PropTypes.object,
-  onDelete: PropTypes.func,
-  onRetake:PropTypes.func,
-
 }
 
 ImageViewer.defaultProps = {
   showActionButtons: true,
   deleteButtonText:'删除',
-  cancelButtonText:'重拍',
+  retakeButtonText:'重拍',
 }

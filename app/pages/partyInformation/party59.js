@@ -17,7 +17,6 @@ import {Link}  from 'react-router-dom';
 import {Form,Input,Button,Layout,Tabs,Select,TabTitle,Head,Dialog,Radio,SelectList,NavBar,SupplePage} from "../../components/index";
 import PropTypes from 'prop-types';
 import '../publicCss/public.css'
-import {ImageViewer} from "../../components";
 
 let showLength=4;
 var that='';
@@ -123,7 +122,7 @@ class Party extends Component{
             //     teliprefix:'',//固定电话
             // },
             container_height:window.innerHeight-this.getHeight(100),
-
+            // radio:"身份证",
             isInfoShow:false,
             isAddParty:false,
             isAddPartyShow:false,
@@ -160,15 +159,7 @@ class Party extends Component{
             /* 弹出窗显示手持身份认证的图片*/
             showIdPhotoDialog:false,
             isLookorAdd:'',
-            clickId:'11',
-            check:"inline",
-            checkSuccess:"none",
-            frontImage:frontImage,
-            backImage:backImage,
-            frontDisplay:"inline",
-            backDisplay:"inline",
-            netCheckState:false,
-            radio:"身份证",
+            clickId:'11'
         }
     }
     onSubmit(e) {
@@ -208,7 +199,8 @@ class Party extends Component{
     }*/
     componentDidMount(){
         // this.props.partyActions.showNewContact(false) 
-        this.queryAllInformation()
+        let procsId='1234'
+        this.queryAllInformation(procsId)
         that = this;
             unshiftArrs(this.state.list,this.props.partyData.form.edulevel,(data)=>{
              this.props.partyData.form['edulevel']=data
@@ -227,20 +219,13 @@ class Party extends Component{
             
 
     }
-    queryAllInformation(){
-        let procsId='dc01db22-a682-4fee-'
+    queryAllInformation(procsId){
         let that =this
         //传一个作业id
         // eslint-disable-next-line
     //     mmspc.bridge.get(function (data) {
-    //          that.props.partyActions.ishaveInformation(data , JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"));
+    //          that.props.partyActions.ishaveInformation(data , {"procsId":procsId});
     //    });
-    //    单笔作业信息
-    //    eslint-disable-next-line
-       mmspc.bridge.get(function (data) {
-             that.props.partyActions.querySingleInformation(data , JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"));
-       });
-    
     }
     onChange(key, value) {
         this.props.partyData.form[key] = value;
@@ -285,21 +270,6 @@ class Party extends Component{
         alert("11")
         console.log(this.props.partyData.form)
     }
-    showImageViewer(src,onRetake,onDelete){
-        ImageViewer.show(src).then((action) => {
-            switch (action) {
-                case 'retake':
-                    onRetake();
-                    break;
-                case 'delete':
-                    onDelete();
-                    return;
-                default:
-                    break;
-            }
-        }).catch(() => {
-        });
-    }
     render(){
         return(
             <div style={{height:this.state.container_height}}>
@@ -341,17 +311,9 @@ class Party extends Component{
                                     <ul class="img_box">
                                         <li>
                                             <div class="camera_box"  >
-                                                <img src={this.state.frontImage?this.state.frontImage:frontImage} onClick={()=>{
+                                                <img src={this.state.frontImage} onClick={()=>{
                                                     if (this.state.frontDisplay=="none"){
-                                                        this.showImageViewer(this.state.frontImage,()=>{navigator.camera.getPicture((data)=>{
-                                                            this.setState({frontImage:"data:image/png;base64," + data , frontDisplay:"none"});
-                                                            this.state.frontDisplay = "none";
-                                                            this.setCheckState();
-                                                        },function(data){
-                                                        },{quality:50,destinationType:0});
-                                                        },()=>{this.setState({frontImage:null});
-                                                            this.state.frontDisplay = "inline";
-                                                            this.setCheckState()});
+                                                        this.setState({showFrontPhotoDialog:true})
                                                     }
                                                 }} />
                                                 <p>
@@ -372,17 +334,9 @@ class Party extends Component{
                                         </li>
                                         <li>
                                             <div class="camera_box">
-                                                <img src={this.state.backImage?this.state.backImage:backImage} onClick={()=>{
+                                                <img src={this.state.backImage} onClick={()=>{
                                                     if (this.state.backDisplay=="none"){
-                                                        this.showImageViewer(this.state.backImage,()=>{navigator.camera.getPicture((data)=>{
-                                                            this.setState({backImage:"data:image/png;base64," + data , backDisplay:"none"});
-                                                            this.state.backDisplay = "none";
-                                                            this.setCheckState();
-                                                        },function(data){
-                                                        },{quality:50,destinationType:0});
-                                                        },()=>{this.setState({backImage:null}) ;
-                                                            this.state.backDisplay = "inline";
-                                                            this.setCheckState()});
+                                                        this.setState({showBackPhotoDialog:true})
                                                     }
                                                 }}/>
                                                 <p>
@@ -817,7 +771,7 @@ class Party extends Component{
                                 </div>
                                 <div class="footer_content_rt">
                                     <Button type="warning" size="large" onClick={() => {
-                                        // alert(JSON.stringify(this.props.partyData.form));
+                                        alert(JSON.stringify(this.props.partyData.form));
                                          // eslint-disable-next-line
                                         // mmspc.bridge.get(function (data) {
                                         //         that.props.partyActions.postPartyInfo(data , that.state.form);
@@ -893,15 +847,7 @@ class Party extends Component{
                                 <div class="addcontact">
                                     <div>
                                         <img src={require("./img/add.png")} width="58px" height="58px"
-                                            onClick={() => {this.setState({isAddParty:!this.state.isAddParty,isLookorAdd:2,
-                                                showFaceFailure:"none",
-                                                showIdentityFinished:"none",
-                                                showCreditFinished:"none",
-                                                showFaceFinished:"none"
-                                            
-                                            
-                                            
-                                            })}}
+                                            onClick={() => {this.setState({isAddParty:!this.state.isAddParty,isLookorAdd:2})}}
                             
                                         />
                                         <p>新增关系人</p>
@@ -1250,6 +1196,7 @@ class Party extends Component{
 
                 </SupplePage>
                 {/*卡片点击新增联系人*/}
+                {this.state.isLookorAdd}
                 <SupplePage style={{display:this.state.isAddParty === false ? "none" : "block"}}>
                     <NavBar
                         title={this.state.isLookorAdd===1?"关系人信息 ":"新增关系人"}
@@ -1302,7 +1249,7 @@ class Party extends Component{
                                         <ul class="img_box">
                                             <li>
                                                 <img src={require("./img/img.png")}  />
-                                                <p>请上传身份证头像面</p>
+                                                <p>请上传身份证头像面</p>=
                                             </li>
                                             <li>
                                                 <img src={require("./img/img.png")}  />

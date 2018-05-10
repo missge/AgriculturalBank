@@ -2,7 +2,7 @@ import React from 'react';
 import {Component}from '../../components/libs'
 // import 'element-theme-default';
 // import { Form,Input,Button,Layout,Tabs,Select,DatePicker } from 'element-react';
-import { Form,Input,Button,Layout,Tabs,Select,DatePicker,Dialog} from "../../components/index";
+import { Form,Input,Button,Layout,Tabs,Select,DatePicker,Dialog,ImageViewer} from "../../components/index";
 
 import './style/collect.css'
 import '../publicCss/public.css'
@@ -11,7 +11,7 @@ var loanerList = "";
 var showList = "";
 var imageList="";
 var image = require("../../images/certificate_back.png");
-
+var that = "";
 class Collect extends Component{
     constructor(props){
         super(props);
@@ -42,6 +42,7 @@ class Collect extends Component{
         }
     }
     componentDidMount() {
+        that = this;
         loanerList = [
             this.state.frontImage,
             this.state.backImage,
@@ -62,6 +63,22 @@ class Collect extends Component{
         ]
     }
 
+    showImageViewer(src,onRetake,onDelete){
+        ImageViewer.show(src).then((action) => {
+            switch (action) {
+                case 'retake':
+                    onRetake();
+                    break;
+                case 'delete':
+                    onDelete();
+                    return;
+                default:
+                    break;
+            }
+        }).catch(() => {
+        });
+    }
+
     setComplete(cur){
         let value = this.context.getListValue();
         value[cur] = 2;
@@ -71,25 +88,60 @@ class Collect extends Component{
         if (showList[id]){
             switch (id) {
                 case 0:
-                    this.setState({currentImage: this.state.frontImage , dialogVisible:true});
+                    this.showImageViewer(this.state.frontImage,()=>{navigator.camera.getPicture((data)=>{
+                        this.setState({frontImage:"data:image/png;base64," + data , show0:true});
+                    },(data)=>{
+                    },{quality:50,destinationType:0});
+                    },()=>{this.setState({frontImage:null}) ; showList[id] =false});
+                    // this.setState({currentImage: this.state.backImage , dialogVisible:true});
                     break;
                 case 1:
-                    this.setState({currentImage: this.state.backImage , dialogVisible:true});
+                    this.showImageViewer(this.state.backImage,()=>{navigator.camera.getPicture((data)=>{
+                        this.setState({backImage:"data:image/png;base64," + data , show1:true});
+                    },function(data){
+                    },{quality:50,destinationType:0});
+                    },()=>{this.setState({backImage:null}) ; showList[id] =false});
+                    // this.setState({currentImage: this.state.backImage , dialogVisible:true});
                     break;
                 case 2:
-                    this.setState({currentImage: this.state.eleImage , dialogVisible:true});
+                    this.showImageViewer(this.state.eleImage,()=>{navigator.camera.getPicture((data)=>{
+                        this.setState({eleImage:"data:image/png;base64," + data , show2:true});
+                    },function(data){
+                    },{quality:50,destinationType:0});
+                    },()=>{this.setState({eleImage:null}) ; showList[id] =false});
+                    // this.setState({currentImage: this.state.eleImage , dialogVisible:true});
                     break;
                 case 3:
-                    this.setState({currentImage: this.state.pageImage , dialogVisible:true});
+                    this.showImageViewer(this.state.pageImage,()=>{navigator.camera.getPicture((data)=>{
+                        this.setState({pageImage:"data:image/png;base64," + data , show3:true});
+                    },function(data){
+                    },{quality:50,destinationType:0});
+                    },()=>{this.setState({pageImage:null}) ; showList[id] =false});
+                    // this.setState({currentImage: this.state.pageImage , dialogVisible:true});
                     break;
                 case 4:
-                    this.setState({currentImage: this.state.repayImage , dialogVisible:true});
+                    this.showImageViewer(this.state.repayImage,()=>{navigator.camera.getPicture((data)=>{
+                        this.setState({repayImage:"data:image/png;base64," + data , show4:true});
+                    },function(data){
+                    },{quality:50,destinationType:0});
+                    },()=>{this.setState({repayImage:null}) ; showList[id] =false});
+                    // this.setState({currentImage: this.state.repayImage , dialogVisible:true});
                     break;
                 case 5:
-                    this.setState({currentImage: this.state.marryImage , dialogVisible:true});
+                    this.showImageViewer(this.state.marryImage,()=>{navigator.camera.getPicture((data)=>{
+                        this.setState({marryImage:"data:image/png;base64," + data , show5:true});
+                    },function(data){
+                    },{quality:50,destinationType:0});
+                    },()=>{this.setState({marryImage:null}) ; showList[id] =false});
+                    // this.setState({currentImage: this.state.marryImage , dialogVisible:true});
                     break;
                 case 6:
-                    this.setState({currentImage: this.state.houseHoldImage , dialogVisible:true});
+                    this.showImageViewer(this.state.houseHoldImage,()=>{navigator.camera.getPicture((data)=>{
+                        this.setState({houseHoldImage:"data:image/png;base64," + data , show6:true});
+                    },function(data){
+                    },{quality:50,destinationType:0});
+                    },()=>{this.setState({houseHoldImage:null}) ; showList[id] =false});
+                    // this.setState({currentImage: this.state.houseHoldImage , dialogVisible:true});
                     break;
             }
         }else {
@@ -136,36 +188,36 @@ class Collect extends Component{
                                 <Layout.Row gutter="12" style={{marginTop:"37px"}}>
                                     <Layout.Col span="6">
                                         <div className="grid-content bg-purple layoutBoxs" >
-                                        <img id="tab11" src={this.state.frontImage} class="collect_img" onClick={()=>{this.onSelected(0)}}></img>
+                                        <img id="tab11" src={this.state.frontImage?this.state.frontImage:image} class="collect_img" onClick={()=>{this.onSelected(0)}}></img>
 
                                         <span class="collect_span">身份证头像面</span>
 
                                         </div></Layout.Col>
                                     <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
-                                        <img id="tab12" src={this.state.backImage} class="collect_img"onClick={()=>{this.onSelected(1)}}></img>
+                                        <img id="tab12" src={this.state.backImage?this.state.backImage:image} class="collect_img"onClick={()=>{this.onSelected(1)}}></img>
                                         <span class="collect_span">身份证国徽面</span>
                                     </div></Layout.Col>
                                     <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs" >
-                                        <img id="tab13" src={this.state.eleImage} class="collect_img" onClick={()=>{this.onSelected(2)}}></img>
+                                        <img id="tab13" src={this.state.eleImage?this.state.eleImage:image} class="collect_img" onClick={()=>{this.onSelected(2)}}></img>
                                         <span class="collect_span">电子征信授权书</span>
                                     </div></Layout.Col>
                                     <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
-                                        <img id="tab14" src={this.state.pageImage} class="collect_img" onClick={()=>{this.onSelected(3)}}></img>
+                                        <img id="tab14" src={this.state.pageImage?this.state.pageImage:image} class="collect_img" onClick={()=>{this.onSelected(3)}}></img>
                                         <span class="collect_span">纸质征信授权书</span>
                                     </div></Layout.Col>
                                 </Layout.Row>
                                 <Layout.Row gutter="12" style={{marginTop:"30px"}}>
                                     <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
-                                        <img id="tab15" src={this.state.repayImage} class="collect_img" onClick={()=>{this.onSelected(4)}}></img>
+                                        <img id="tab15" src={this.state.repayImage?this.state.repayImage:image} class="collect_img" onClick={()=>{this.onSelected(4)}}></img>
                                         <span class="collect_span">还款能力证明</span>
 
                                     </div></Layout.Col>
                                     <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
-                                        <img id="tab16" src={this.state.marryImage} class="collect_img" onClick={()=>{this.onSelected(5)}}></img>
+                                        <img id="tab16" src={this.state.marryImage?this.state.marryImage:image} class="collect_img" onClick={()=>{this.onSelected(5)}}></img>
                                         <span class="collect_span">婚姻状态证明</span>
                                     </div></Layout.Col>
                                     <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
-                                        <img id="tab17" src={this.state.houseHoldImage} class="collect_img" onClick={()=>{this.onSelected(6)}}></img>
+                                        <img id="tab17" src={this.state.houseHoldImage?this.state.houseHoldImage:image} class="collect_img" onClick={()=>{this.onSelected(6)}}></img>
                                         <span class="collect_span">户籍证明</span>
                                     </div></Layout.Col>
 

@@ -74,11 +74,13 @@ export function getInst(appId) {
         })
     }
 }
-export function chooseInst(appId , instCode) {
+export function getInstInfo(appId , instCode) {
+    dispatch(loading(true));
+    dispatch(loadingText("查询机构中..."));
     return function (dispatch) {
         Net.postRequest(appId+"/rest/admin/system/user/index" ,"instcode" +instCode ,Type.formType,
             function (data) {
-                
+                dispatch(loading(true));
             },function () {
                 
             })

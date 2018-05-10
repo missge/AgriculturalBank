@@ -11,7 +11,6 @@ const style = {
     margin: 12,
 };
 const activeName = "1";
-let showLength=4;
 class Lab extends Component {
   constructor(props) {
     super(props);
@@ -36,13 +35,10 @@ class Lab extends Component {
       }],
       selectedValue: '',
       dialogVisible: false,
-      corpcharList:['事业单位','国家机关','无','个体','其他','国资委或省国资委直属企业','优质上市公司','经营规范、效益一般的企业','小企业'],
       form: {
         name: '',
         date1:null,
-        date2:null,
-        corpchar:'事业单位',
-        type:'一手房贷款',
+        date2:null
       },
       rules: {
         name: [
@@ -65,7 +61,6 @@ class Lab extends Component {
       }],
       selectedValue2: '选项2',
       selectDialogVisible: false,
-      selectCorpcharDialog:false,
     }
   }
   render() {
@@ -235,34 +230,7 @@ class Lab extends Component {
               onChange={this.onFormChange.bind(this, 'date2')}
             />
           </Form.Item>
-          
         </Layout.Col>
-          <Form.Item label="单位性质" prop='corpchar'>
-        <Radio.Group value={this.state.form.corpchar} onChange={this.onFormChange.bind(this, 'corpchar')}
-        appendix="更多" onAppendixClick={this.onCorpcharAppendClick.bind(this)}>
-         {
-              this.state.corpcharList.map(function(item,i){
-                  return(
-                      i<showLength+1?
-                          <Radio.Button key={i} value={item} /> :''
-
-                  )
-              })
-
-          }
-        <Radio.Button value="更多" />
-      </Radio.Group>
-        </Form.Item>
-      
-        <Form.Item label="单位性质"  prop='type'>
-      <Radio.Group value={this.state.form.type} onChange={this.onFormChange.bind(this, 'type')}>
-         
-        <Radio.Button value="一手房贷款" />
-        <Radio.Button value="二手房贷款" />
-        <Radio.Button value="一手农民安家贷" />
-        <Radio.Button value="二手农民安家贷" />
-      </Radio.Group>
-        </Form.Item>
       </Form.Item>
         <Form.Item>
           <Button type="primary" nativeType="submit">提交</Button>
@@ -270,32 +238,6 @@ class Lab extends Component {
       </Form.Item>
       </Form>
     </div>
-    <Dialog
-        size="small"
-        visible={ this.state.selectCorpcharDialog }
-        onCancel={ () => this.setState({ selectCorpcharDialog: false,corpchar:this.state.corpchar}) }
-        lockScroll={ false }
-        className='mmpsc-select-list-dialog'
-    >
-        <Dialog.Body>
-            <SelectList ref ="corpcharSL"
-                        visible={ this.state.selectCorpcharDialog }
-                        value={this.state.form.corpchar} multiple={false} onChange={(val)=>{
-                this.removeByValue(this.state.corpcharList,val)
-                this.state.corpcharList.unshift(val)
-                this.setState({selectCorpcharDialog: false})
-                this.onFormChange('corpchar',val)
-                this.refs.corpcharSL.setState({selected:null});
-            }}>
-                {
-                    this.state.corpcharList.map(function(item,i){
-                        return i>showLength? <SelectList.Option key={i} label={item} value={item} /> :''
-                    })
-                }
-
-            </SelectList>
-        </Dialog.Body>
-    </Dialog>
     <div className='block'>
     <Steps space={100} active={1}>
       <Steps.Step title="步骤 1" icon="edit"></Steps.Step>
@@ -391,30 +333,17 @@ class Lab extends Component {
   onSubmit(e) {
     e.preventDefault();
     clearTimeout(this.timeout);
-alert(JSON.stringify(this.state.form));
-  // this.timeout = setTimeout(() => {
-  //   this.setState({
-  //     isLoading: false
-  //   });
-  // }, 3000);
-  //   this.setState({ isLoading: true }) 
+
+  this.timeout = setTimeout(() => {
+    this.setState({
+      isLoading: false
+    });
+  }, 3000);
+    this.setState({ isLoading: true }) 
   }
   
-  onCorpcharAppendClick(){
-    this.setState({selectCorpcharDialog:true});
-}
-
-removeByValue(arr, val) {
-  for(var i=0; i<arr.length; i++) {
-      if(arr[i] == val) {
-          arr.splice(i, 1);
-          break;
-      }
-  }
-}
   onMesageBoxClick() {
     // MessageBox.alert('这是一段内容这是一段内容这是一段内容这是一段内容这是一段内容', '标题名称');
-    
     MessageBox.confirm('您正在办理贷款业务,是否继续?', '温馨提示',{showClose:false}).then(() => {
       Message({
         type: 'success',
@@ -428,27 +357,30 @@ removeByValue(arr, val) {
     });
   }
   onImageViewClick() {
-    // ImageViewer.show(require('../../images/test.png'),{showActionButtons:false}).then((action) => {
-    //   switch (action) {
-    //     case 'retake':
-    //     //此处需自行调用拍摄接口,自行清空图片等
-    //       Message({
-    //         type: 'success',
-    //         message: '成功!'
-    //       });
-    //       break;
-    //     case 'delete':    
-    //      //此处需自行清空图片
-    //       Message({
-    //         type: 'success',
-    //         message: '删除成功!'
-    //       });
-    //       return;
-    //     default:
-    //       break;
-    //   }
-    // }).catch(() => {
-    // });
+    // MessageBox.alert('这是一段内容这是一段内容这是一段内容这是一段内容这是一段内容', '标题名称');
+    ImageViewer.show(require('../../images/camera.png')).then((action) => {
+      switch (action) {
+        case 'retake':
+          Message({
+            type: 'success',
+            message: '成功!'
+          });
+          break;
+        case 'delete':        
+          Message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          return;
+        default:
+          break;
+      }
+    }).catch(() => {
+      Message({
+        type: 'info',
+        message: '已取消'
+      });
+    });
   }
   open() {
     Message('这是一条消息提示');

@@ -1,16 +1,16 @@
 import React from 'react';
 import html2canvas from 'html2canvas';
 import {Component}from '../../components/libs';
-import * as homeActions from '../../actions/home';
+import * as creditActions from '../../actions/credit';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {Map} from 'immutable';
 import {Link}  from 'react-router-dom';
-import {Button,Dialog,TabTitle,Header,SupplePage,NavBar} from '../../components/index';
+import {Button,Dialog,TabTitle,Header,SupplePage,NavBar,Loading} from '../../components/index';
 import '../publicCss/public.css';
 import PropTypes from 'prop-types';
 
-
+var that = "";
 
 /*授权人签名*/
 var sign = "";
@@ -24,12 +24,13 @@ var idPhoto = "";
 var pagePic = "";
 
 const actions = [
-  homeActions
+    creditActions
 ];
+
 function mapStateToProps(state) {
-  const {home}=state;
+  const {credit}=state;
   return {
-    home
+      credit
   };
 }
 
@@ -39,7 +40,7 @@ function mapDispatchToProps(dispatch) {
       .filter(value => typeof value === 'function')
       .toObject();
   return {
-    homeActions: bindActionCreators(creators, dispatch)
+    creditActions: bindActionCreators(creators, dispatch)
 
   };
 }
@@ -50,9 +51,15 @@ function mapDispatchToProps(dispatch) {
 )*/
 class Credit extends Component{
 
+    componentDidMount(){
+        that = this;
+    }
+
 	constructor(props){
 		super(props);
+
 		this.state={
+		    containerHeight:window.innerHeight - this.getHeight(100),
             /*签署征信授权书，弹出电子签名或拍照*/
             dialogVisible: false,
             /* 授权人签名弹出窗*/
@@ -76,8 +83,14 @@ class Credit extends Component{
             /* 判断显示电子签名还是拍照签名的图片*/
             isShowPhotoSign:"",
             /* 弹出窗显示手持身份认证的图片*/
-            showIdPhotoDialog:false
+            showIdPhotoDialog:false,
+
+            transId:{
+                procsId:"123456",
+                clientId:"234567",
+            }
         }
+
 	}
 
 	onSubmit(e) {
@@ -103,8 +116,13 @@ class Credit extends Component{
 
 	render(){
         return (
-            <div style={{height: window.innerHeight - this.getHeight(100),overflow:"auto"}}>
+            <div style={{height: this.state.containterHeight,overflow:"auto"}}>
                 <div class="main_contanier">
+                    <div>
+                        {
+                            this.props.credit.loading&&<Loading fullscreen={true} text={this.props.credit.text} style={{backgroundColor: 'rgba(0, 0, 0, 0.3)'}}/>
+                        }
+                    </div>
                     <TabTitle title="征信授权" class="tabTitle blueTabTitle"/>
                     <div class="form_content">
                         <div class="three_box">
@@ -213,7 +231,7 @@ class Credit extends Component{
                                                                () => this.setState({showPhotoSignDialog: true,dialogVisible: false,isShowPhotoSign: "write"})*/
                                                      }
                                                 />
-												<p style={{color: "#FFFFFF"}}>电子手写签名</p>
+												<p style={{color: "#FFFFFF",marginRight:"35%"}}>电子手写签名</p>
 											</span>
                                         <span>
 												<img class="rWhiteTabTitle" src={require("../../images/shoot.png")}
@@ -234,7 +252,7 @@ class Credit extends Component{
                                                                () => {this.setState({showPhotoSignDialog: true,dialogVisible: false,isShowPhotoSign: "photo"})}*/
                                                 }
                                                 />
-                                            	<p style={{color: "#FFFFFF"}}>纸质签名拍照</p>
+                                            	<p style={{color: "#FFFFFF",marginLeft:"35%"}}>纸质签名拍照</p>
 											</span>
                                             </div>
                                             <img src={require("../../images/close_50.png")}
@@ -279,24 +297,46 @@ class Credit extends Component{
                             </div>
                             <div class="three_box_rt">
                                 <div>{this.state.isShow === false ?
-                                    <div>{(((this.state.showFaceFinished == "block") || ((this.state.showFaceFailure == "block") && (this.state.showIdentityFinished == "block"))) && (this.state.showCreditFinished == "block")) == false ?
+                                    <div>
+                                        {(((this.state.showFaceFinished == "block") || ((this.state.showFaceFailure == "block") && (this.state.showIdentityFinished == "block"))) && (this.state.showCreditFinished == "block")) == false ?
                                         <div>
                                             <Button  style={{height:70,width:70}}disabled={true} textStyle={{fontSize:18,lineHeight:1.3,whiteSpace:'normal'}}>征信查询</Button>
                                         </div>
                                         :
                                         <div>
                                             <Button type="warning" style={{height:70,width:70}} textStyle={{fontSize:18,lineHeight:1.3,whiteSpace:'normal'}}
-                                                     onClick={() => this.setState({showQuery: "block", isShow: true})}>
+                                                     onClick={() =>{
+                                                         // alert("征信查询："+JSON.stringify(this.state.transId));
+                                                         // eslint-disable-next-line
+                                                         mmspc.bridge.get(function (data) {
+                                                             that.props.creditActions.getCreditResult(data,that.state.transId);
+
+                                                          //   that.props.creditActions.getCreditResult(data);
+                                                         });
+                                                         this.setState({showQuery: "block", isShow: true})
+                                                     }}>
                                                 征信查询
                                             </Button>
 
                                         </div>
                                     }
+                                       {/* <Button type="warning" style={{height:70,width:70}} textStyle={{fontSize:18,lineHeight:1.3,whiteSpace:'normal'}}
+                                                onClick={() =>{
+                                                  //  alert("征信查询："+JSON.stringify(this.state.transId));
+                                                    // eslint-disable-next-line
+                                                    mmspc.bridge.get(function (data) {
+                                                        that.props.creditActions.getCreditResult(data,that.state.transId);
+                                                      //  that.props.creditActions.getCreditResult(data);
+                                                    });
+                                                    //   this.setState({showQuery: "block", isShow: true})
+                                                }}>
+                                            征信查询
+                                        </Button>*/}
                                     </div>
                                     :
                                     <div>
                                         <img src={require("../../images/success_iocn.png")}
-                                             width="75%" height="75%"/>
+                                             width="65%" height="65%"/>
                                         <p style={{color: "#00CD00"}}>核查通过</p>
                                     </div>
 
@@ -342,19 +382,19 @@ class Credit extends Component{
                     <div class="footer_content">
                         {/* 下一步按钮是否可以点击，当征信查询后，在可以点击下一步按钮*/}
                         <div class="footer_content_rt">
-                          {/*} {this.state.isShow === false ?
+                          {this.state.isShow === false ?
                             <Button style={{background: "#999999", color: "#fff", borderColor: "#999999"}}
                                     size="large">
                                 下一步
                             </Button>
-                            :*/}
+                            :
                             <Button type="warning" size="large"
                                 onClick={() => {this.context.jumpTo(2, this.setComplete.bind(this)(1))}}>
                                 下一步
                             </Button>
 
                         }
-                           {/*<Button type="warning" size="large"
+                          {/* <Button type="warning" size="large"
                                     onClick={() => {
                                         this.context.jumpTo(2, this.setComplete.bind(this)(1))
                                     }}>

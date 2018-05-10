@@ -9,7 +9,8 @@ let initNavList = {
 }
 
 let initName = {
-    instName:"丽泽路支行..."
+    instName:"丽泽路支行...",
+    instCode:""
 }
 
 let initState = {
@@ -36,6 +37,11 @@ export function head(state = initName ,action={}) {
             return{
                 ...state,
                 instName:action.instName
+            }
+        case 'Code':
+            return{
+                ...state,
+                instCode:action.instCode
             }
         default:
             return {...state};
@@ -75,7 +81,10 @@ let initData = {
     // 获取机构列表成功的数据
     getInstResult:null,
     // 获取机构列表失败的数据
-    getInstFail:null
+    getInstFail:null,
+    // 是否联网核查成功
+    netCheck:false
+
 }
 export function loginData(state=initData ,action={}) {
     switch (action.type){
@@ -104,10 +113,6 @@ export function loginData(state=initData ,action={}) {
     }
 }
 
-let instData = {
-
-}
-
 export function instData(state=initData , action={}) {
     switch (action.type){
         case "Success":
@@ -134,6 +139,50 @@ export function instData(state=initData , action={}) {
             return{
                 ...state,
                 text:action.value
+            }
+        case "netResult":
+            return{
+                ...state,
+                netCheck:action.value
+            }
+        default:
+            return{...state}
+    }
+}
+let instInfo={
+    // 机构的详细数据，数据格式是一个json
+    instInfo:""
+}
+export function instInfo(state=instInfo , action={}) {
+    switch (action.type){
+        case "instInfo":
+            return{
+                ...state,
+                instInfo:action.value
+            }
+        default:
+            return{...state}
+    }
+}
+
+let clientData = {
+    clientId:"",
+    certNo:"",
+    certName:"",
+    procsId:""
+}
+
+export function client(state=clientData ,action={}) {
+    switch (action.type){
+        case "clientId":
+            return{
+                ...state,
+                clientId:action.value
+            }
+        case "procsId":
+            return{
+                ...state,
+                procsId:action.value
             }
         default:
             return{...state}

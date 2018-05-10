@@ -10,8 +10,11 @@ li{outline-style: none;list-style:none;}
     white-space: nowrap;
     cursor: pointer;
     margin: 0;
+    // padding: 8px 15px;
     border-radius: 4px;
     font-size: 13px;
+    // margin-bottom:10px;
+    // margin-right:20px;
      padding: 11px 19px;
     font-size: 15px;
     border-radius: 4px;
@@ -26,8 +29,11 @@ li{outline-style: none;list-style:none;}
     white-space: nowrap;
     cursor: pointer;
     margin: 0;
+// padding: 8px 15px;
     border-radius: 4px;
     font-size: 13px;
+// margin-bottom:10px;
+// margin-right:20px;
     padding: 11px 19px;
     font-size: 15px;
     border-radius: 4px;
@@ -39,6 +45,7 @@ li{outline-style: none;list-style:none;}
 .form_content{
     display: flex;
     background:#F9F9F9;
+    // margin-bottom: 30px;
 }
 .form_lf,.form_rt{
     flex:1;
@@ -219,6 +226,7 @@ padding: 0 10px;
     top:50%;
     left:50%;
     transform:translateX(-50%)translateY(-50%);
+    // background: url(../../images/camera.png) no-repeat center center;
     display:inline-block;
     background-size: cover;
 }
@@ -251,6 +259,7 @@ padding: 0 10px;
     padding: 20px;
     background: #fff;
     border: 1px solid #ddd;}
+// .el-input, .el-input__inner{width:250px}
 .collect_img{
     margin-bottom: 8px;
     max-height: 130px;

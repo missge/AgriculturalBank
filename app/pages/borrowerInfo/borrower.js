@@ -26,8 +26,9 @@ function onChange(e) {
 
 function mapStateToProps(state) {
     const {borrower}=state;
+    const {client} = state;
     return {
-        borrower
+        borrower,client
     };
 }
 
@@ -63,12 +64,14 @@ class Borrower extends Component {
     }
     onChange(key, value) {
         this.state.clientVO[key] = value;
-        this.forceUpdate();
+        this.setState({
+            clientVO: {[key]:value}
+        });
     }
     onChangeRadio(key, value) {
         this.state.clientVO[key] = value;
         this.setState({
-            [key]: value
+            clientVO: {[key]:value}
         });
     }
     setComplete(cur){
@@ -78,10 +81,13 @@ class Borrower extends Component {
     }
 
     componentDidMount() {
-        // eslint-disable-next-line
-        // mmspc.bridge.get((data)=>{
-        //
-        // });
+        if (2==this.context.select){
+            // eslint-disable-next-line
+            mmspc.bridge.get((appId)=>{
+                this.props.borrowerActions.getLoadnerInfo(appId , JSON.parse("{\"clientId\":\"1111\"}"));
+            });
+        }
+
     }
 
     constructor(props) {
@@ -131,60 +137,162 @@ class Borrower extends Component {
 
             clientVO:{
                 // 主页面字段
-                cliname:"",//客户姓名
+                // cliname:"",//客户姓名
+                //
+                // settleaddr:"",//长期居住地地址
+                // corpname:"",//单位全称
+                // corpadd:"",//单位注册地址  // 单位地址
+                // myselfincpm:"",//本人年税后收入
+                // mobno:"",//手机号码
+                // certno:"",//证件号码
+                // marrysta:"已婚",//婚姻状况
+                //
+                //
+                //              //配偶税后年收入 暂无
+                // // 基本信息字段
+                // country:"",//国家/地区
+                // gender:"男",//性别
+                // birthday:"" , //出生日期
+                // housesta:"父母同住",//居住状况
+                //          // 本地居住年限  暂无
+                // addagrflag:"", // 长期居住地城乡属性
+                // // perclienttype:"",//人行涉农个人客户类别
+                // certtype:"",//证件类型
+                //              //是否长期有效 暂无
+                //             //证件有效终止日  暂无
+                //             //是否本地常住户口
+                //             //是否本地户籍
+                // abcstuffflag:"否",  //是否农行员工
+                //              //是否私人银行客户
+                //             //离婚证明登记日期
+                //
+                // //职业信息字段
+                // careertype:"公务员",//个人信贷对象
+                // title:"",//职称
+                //             //单位固定电话
+                // corpstdtype:"",//单位国标行业分类
+                // stdjobtype:"国家机关",//国标职业分类
+                // dutysta:"",//职务状况
+                //             // 职业经营类别
+                //
+                // //财务信息字段
+                // asssum:"" , //资产合计
+                // guaramt:"",//家庭对外担保额
+                // pardebtexpd:"",//配偶年债务性支出
+                // exppm:"",//家庭年其他收入
+                // debtsum:"",//负债合计
+                // debtexpd:"",//本人年债务性支出
+                // protexpd:"",//本人年生活保障支出
+                //
+                // //联系信息字段
+                // email:"",//电子邮箱
+                // teliprefix:"",//固定电话
+                //             //通信地址
+                //
+                // procsId:"",
+                // clientId:"",//客户唯一id
 
-                settleaddr:"",//长期居住地地址
-                corpname:"",//单位全称
-                corpadd:"",//单位注册地址  // 单位地址
-                myselfincpm:"",//本人年税后收入
-                mobno:"",//手机号码
-                certno:"",//证件号码
-                marrysta:"已婚",//婚姻状况
-
-
-                             //配偶税后年收入 暂无
-                // 基本信息字段
-                country:"",//国家/地区
-                gender:"男",//性别
-                birthday:"" , //出生日期
-                housesta:"父母同住",//居住状况
-                         // 本地居住年限  暂无
-                addagrflag:"", // 长期居住地城乡属性
-                // perclienttype:"",//人行涉农个人客户类别
-                certtype:"",//证件类型
-                             //是否长期有效 暂无
-                            //证件有效终止日  暂无
-                            //是否本地常住户口
-                            //是否本地户籍
-                abcstuffflag:"否",  //是否农行员工
-                             //是否私人银行客户
-                            //离婚证明登记日期
-
-                //职业信息字段
-                careertype:"公务员",//个人信贷对象
-                title:"",//职称
-                            //单位固定电话
-                corpstdtype:"",//单位国标行业分类
-                stdjobtype:"国家机关",//国标职业分类
-                dutysta:"",//职务状况
-                            // 职业经营类别
-
-                //财务信息字段
-                asssum:"" , //资产合计
-                guaramt:"",//家庭对外担保额
-                pardebtexpd:"",//配偶年债务性支出
-                exppm:"",//家庭年其他收入
-                debtsum:"",//负债合计
-                debtexpd:"",//本人年债务性支出
-                protexpd:"",//本人年生活保障支出
-
-                //联系信息字段
-                email:"",//电子邮箱
-                teliprefix:"",//固定电话
-                            //通信地址
-
-                procsId:""
-
+                housesta:"",
+                corpchar:"",
+                busiscale:"",
+                emptype:"",
+                clicode:"",
+                othflag:"",
+                opdate:"",
+                busiloanbal:"",
+                opinstcode:"",
+                corpflag:"",
+                addrdist:"",
+                othdebtbal:"",
+                othincpm:"",
+                carvalue:"",
+                contact:"",
+                qq:"",
+                f21:"",
+                f22:"",
+                position:"",
+                asssum:"",
+                isrel:"",
+                corpname:"",
+                offsite:"",
+                jobno:"",
+                abcstuffflag:"",
+                jobexp:"",
+                clientId:"",
+                corpdist:"",
+                housevalue:"",
+                reltype:"",
+                title:"",
+                parincpm:"",
+                req_id:"",
+                certtype:"",
+                perclienttype:"",
+                myselfincpm:"",
+                engname:"",
+                settledist:"",
+                agrflag:"",
+                jobyear:"",
+                birthday:"",
+                faxiprefix:"",
+                othass:"",
+                remark:"",
+                stkvalue:"",
+                msn:"",
+                dutysta:"",
+                f1:"",
+                oprid:"",
+                f2:"",
+                postcode:"",
+                f3:"",
+                edulevel:"",
+                f4:"",
+                f5:"",
+                f6:"",
+                agflag:"",
+                country:"",
+                busista:"",
+                othloanbal:"",
+                pardebtexpd:"",
+                email:"",
+                myguaramt:"",
+                depbal:"",
+                f61:"",
+                f62:"",
+                sumexpend:"",
+                cliname:"",
+                manchar:"",
+                hujidist:"",
+                corpadd:"",
+                addagrflag:"",
+                careertype:"",
+                settleaddr:"",
+                teliprefix:"",
+                gender:"",
+                mobno:"",
+                carloanbal:"",
+                guaramt:"",
+                degree:"",
+                protexpd:"",
+                f103:"",
+                f105:"",
+                orgcode:"",
+                f106:"",
+                f107:"",
+                jobbegdate:"",
+                debtsum:"",
+                exppm:"",
+                marrysta:"",
+                fendcent:"",
+                certno:"",
+                sumincpm:"",
+                addr:"",
+                corpstdtype:"",
+                stdjobtype:"",
+                cdobj:"",
+                delflag:"",
+                debtexpd:"",
+                houseloanbal:"",
+                hujiaddr:""
                 // _method:"",
                 // addr:"",   // 常用通信地址
                 // addrdist:"" ,// 常用通信地址区划
@@ -316,11 +424,13 @@ class Borrower extends Component {
                             this.context.jumpTo(3, this.setComplete.bind(this)(2))
 
                         }
-                        <div>
-                            {
-                                this.props.borrower.loading&&<Loading fullscreen={true} text={this.props.borrower.text} style={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}/>
-                            }
-                        </div>
+                    </div>
+                    <div>
+                        {   this.props.borrower.state&&
+                            this.props.borrowerActions.getLoanerInfoState(false)&&
+                            this.setState({clientVO:this.props.borrower.loanerInfo})
+
+                        }
                     </div>
                     <TabTitle title="借款人信息" class="tabTitle blueTabTitle"/>
                     <Form model={this.state.clientVO} labelWidth="110" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
@@ -355,7 +465,7 @@ class Borrower extends Component {
                                     </Dialog.Body>
                                 </Dialog>
                                 <Form.Item label="文化程度">
-                                    <Radio.Group value={this.state.edulevel} onChange={this.onChangeRadio.bind(this, 'edulevel')} appendix="更多"
+                                    <Radio.Group value={this.state.clientVO.edulevel} onChange={this.onChangeRadio.bind(this, 'edulevel')} appendix="更多"
                                                  onAppendixClick={this.onEducateAppendClick.bind(this)}>
                                         {
                                             this.state.cultureList.map(function(item,i){
@@ -436,7 +546,7 @@ class Borrower extends Component {
                                     </Dialog.Body>
                                 </Dialog>
                                 <Form.Item label="供养人口">
-                                    <Radio.Group value={this.state.fendcent} onChange={this.onChangeRadio.bind(this, 'fendcent')} appendix="更多"
+                                    <Radio.Group value={this.state.clientVO.fendcent} onChange={this.onChangeRadio.bind(this, 'fendcent')} appendix="更多"
                                                  onAppendixClick={this.onFendcentAppendClick.bind(this)}>
                                         {
                                             this.state.fendcentList.map(function(item,i){
@@ -477,7 +587,7 @@ class Borrower extends Component {
                                     </Dialog.Body>
                                 </Dialog>
                                 <Form.Item label="单位性质">
-                                    <Radio.Group value={this.state.corpchar} onChange={this.onChangeRadio.bind(this, 'corpchar')} appendix="更多"
+                                    <Radio.Group value={this.state.clientVO.corpchar} onChange={this.onChangeRadio.bind(this, 'corpchar')} appendix="更多"
                                                  onAppendixClick={this.onCorpcharAppendClick.bind(this)}>
                                         {
                                             this.state.corpcharList.map(function(item,i){
@@ -494,7 +604,7 @@ class Borrower extends Component {
                                 </Form.Item>
                                 {/*暂无*/}
                                 <Form.Item label="配偶税后年收入">
-                                    <Input value={this.state.form.name}  placeholder="18万" onChange={this.onChange.bind(this, 'name')}></Input>
+                                    <Input value={this.state.clientVO.pardebtexpd}  placeholder="18万" onChange={this.onChange.bind(this, 'name')}></Input>
                                 </Form.Item>
                             </div>
                         </div>
@@ -510,8 +620,9 @@ class Borrower extends Component {
                                     // this.context.jumpTo(3, this.setComplete.bind(this)(2))
                                     // eslint-disable-next-line
                                     mmspc.bridge.get((data)=> {
+                                        this.state.clientVO.clientId = this.props.client.clientId;
+                                        this.state.clientVO.procsId = this.props.client.procsId;
                                         this.props.borrowerActions.postLoanerInfo(data , this.state.clientVO);
-                                        // that.props.borrowerActions.postLoanerInfo(data , "{\"cliname\":"+"\"6\""+"}");
                                         // "{\"clientVO\":"+"\""+that.state.clientVO+"\""+"}"
 
                                     });
@@ -547,7 +658,7 @@ class Borrower extends Component {
                         </div>*/}
                         <Tabs activeName="1" onTabClick={ (tab) => console.log(tab.props.name) }>
                             <Tabs.Pane label="基本信息" name="1">
-                                <Form model={this.state.form} labelWidth="155" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
+                                <Form model={this.state.clientVO} labelWidth="155" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
                                     <div class="form_content">
                                         <div class="form_lf">
                                             <Form.Item label="国家">
@@ -593,7 +704,7 @@ class Borrower extends Component {
                                         </div>
                                         <div class="form_rt">
                                             <Form.Item label="证件类型">
-                                                <Input value={this.state.clientVO.certttype} placeholder="身份证 " onChange={this.onChange.bind(this, 'certttype')}></Input>
+                                                <Input value={this.state.clientVO.certtype} placeholder="身份证 " onChange={this.onChange.bind(this, 'certttype')}></Input>
                                             </Form.Item>
                                             {/*暂无*/}
                                             <Form.Item label="是否长期有效">
@@ -605,7 +716,7 @@ class Borrower extends Component {
                                             {/*暂无*/}
                                             <Form.Item label="证件有效终止日">
                                                 <DatePicker
-                                                    value={this.state.form.date2}
+                                                    value={this.state.clientVO.opdate}
                                                     placeholder="选择日期"
                                                     onChange={this.onChange.bind(this, 'date2')}
                                                 />
@@ -650,7 +761,7 @@ class Borrower extends Component {
                                 </Form>
                             </Tabs.Pane>
                             <Tabs.Pane label="职业信息" name="2">
-                                <Form model={this.state.form} labelWidth="100" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
+                                <Form model={this.state.clientVO} labelWidth="100" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
                                     <div class="form_content">
                                         <div class="form_lf">
                                             <Form.Item label="个人信贷对象">
@@ -685,7 +796,7 @@ class Borrower extends Component {
                                                 </Radio.Group>
                                             </Form.Item>
                                             <Form.Item label="职务状况">
-                                                <Input value={this.state.clientVO.detysta}  onChange={this.onChange.bind(this, 'detysta')}></Input>
+                                                <Input value={this.state.clientVO.debtexpd}  onChange={this.onChange.bind(this, 'detysta')}></Input>
                                             </Form.Item>
                                             {/*暂无*/}
                                             <Form.Item label="职业经营类别">
@@ -701,7 +812,7 @@ class Borrower extends Component {
                                 </Form>
                             </Tabs.Pane>
                             <Tabs.Pane label="财务信息" name="3">
-                                <Form model={this.state.form} labelWidth="125" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
+                                <Form model={this.state.clientVO} labelWidth="125" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
                                     <div class="form_content">
                                         <div class="form_lf">
                                             <Form.Item label="资产合计">
@@ -732,7 +843,7 @@ class Borrower extends Component {
                                 </Form>
                             </Tabs.Pane>
                             <Tabs.Pane label="联系信息" name="4">
-                                <Form model={this.state.form} labelWidth="80" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
+                                <Form model={this.state.clientVO} labelWidth="80" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
                                     <div class="form_content">
                                         <div class="form_lf">
                                             <Form.Item label="电子邮箱">
@@ -771,7 +882,8 @@ class Borrower extends Component {
 
 Borrower.contextTypes = {
     jumpTo: PropTypes.func,
-    getListValue:PropTypes.func
+    getListValue:PropTypes.func,
+    select:PropTypes.number
 };
 
 

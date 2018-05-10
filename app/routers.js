@@ -13,8 +13,6 @@ const Credit = lazyLoadComponent(() => import(/* webpackChunkName: "search" */ '
 const MainPage = lazyLoadComponent(() => import(/* webpackChunkName: "search" */ './pages/mainPage'));
 const Collect = lazyLoadComponent(() => import(/* webpackChunkName: "search" */ './pages/infoCollection/collect'));
 const Lab = lazyLoadComponent(() => import(/* webpackChunkName: "search" */ './pages/labContainer/lab'));
-const test = lazyLoadComponent(() => import(/* webpackChunkName: "search" */ './pages/test/test'));
-
 export default () => (
     <HashRouter>
         <div>
@@ -26,8 +24,6 @@ export default () => (
             <Route path="/credit" component={Credit} />
             <Route path="/collect" component={Collect} />
             <Route path="/lab" component={Lab} />
-            <Route path="/test" component={test} />
-
         </div>
     </HashRouter>
 );

@@ -5,8 +5,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 
-function show(src, onRetake, onDelete, props) {
-  props = Object.assign({ src, onRetake,onDelete}, props);
+function show(src, props) {
+  props = Object.assign({ src}, props);
 
   return next(props);
 }

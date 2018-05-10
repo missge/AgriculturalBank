@@ -17,7 +17,6 @@ import {Map} from "immutable";
 
 var qs = require("querystring");
 
-var appId;
 var frontImage = require("../../images/certificate_front.png");
 var backImage = require("../../images/certificate_back.png");
 
@@ -28,9 +27,9 @@ const actions = [
 ]
 function mapStateToProps(state) {
     const {instData} = state;
-
+    const {head} = state;
     return {
-        instData
+        instData,head
     };
 }
 
@@ -54,7 +53,7 @@ function regexString(value) {
     }
 }
 
-
+/*
 function loginNew() {
     // eslint-disable-next-line
     mmspc.bridge.get(function (data) {
@@ -66,7 +65,7 @@ function loginNew() {
 
     })
 
-}
+}*/
 
 class NetCheck extends Component{
     constructor(props) {
@@ -97,13 +96,82 @@ class NetCheck extends Component{
             check:"inline",
             checkSuccess:"none",
 
+            processVO:{
+                acpt_data:"1",
+                acpt_opr_id:"1",
+                acpt_opr_inst_id:"1",
+                acpt_opr_inst_name:"1",
+                acpt_opr_name:"1",
+                act_id:"1",
+                altn1:"1",
+                altn2:"1",
+                altn3:"1",
+                altn4:"1",
+                altn5:"1",
+                aply_date:"1",
+                aply_id:"1",
+                aply_src:"1",
+                asset_val:"1",
+                buss_rc:"1",
+                cert_no:"1",
+                cert_type:"1",
+                client_name:"1",
+                coprj_name:"1",
+                cur_step:"1",
+                finish_step:"1",
+                invt_adv:"1",
+                invt_opr_id:"1",
+                invt_opr_inst_id:"1",
+                invt_opr_inst_name:"1",
+                invt_opr_name:"1",
+                invtadv_info:"1",
+                is_track:"1",
+                loan_sum:"1",
+                opr_date:"1",
+                opr_id:"1",
+                opr_inst_id:"1",
+                opr_inst_name:"1",
+                opr_name:"1",
+                opr_time:"1",
+                optkind:"1",
+                phone_num:"1",
+                rep_id:"1",
+                sale_opr_id_1:"1",
+                sale_opr_id_2:"1",
+                sale_opr_inst_id_1:"1",
+                sale_opr_inst_id_2:"1",
+                sale_opr_inst_name_1:"1",
+                sale_opr_inst_name_2:"1",
+                sale_opr_name_1:"1",
+                sale_opr_name_2:"1",
+                state:"1",
+                tmplt_id:"1",
+                tmplt_type:"1",
+
+
+            }
         }
     }
     onChangeRadio(key, value) {
+        if ("radio2"==key){
+            // eslint-disable-next-line
+            mmspc.bridge.get((appId)=>{
+                // this.props.netActions.addWork(appId,JSON.parse("{\"acpt_opr_inst_id\":"+"\""+this.props.head.instCode+"\"}"));
+                this.props.netActions.addWork(appId,this.state.processVO);
+                // $.ajax("http://10.230.155.49:9083/mmsp-ps/forward/vEwQVohB/rest/hl/process",{
+                //     async:false,
+                //     cache:false,
+                //     method:"POST",
+                //     dataType:"json",
+                //     headers:{"dnfl-token":$("#dnflToken").val()
+                //     },
+                //     data:"acpt_opr_inst_id=000000603"
+                //
+                // })
+            })
+        }
         this.setState({
             [key]:value
-        },()=>{
-
         })
 
     }
@@ -251,7 +319,9 @@ class NetCheck extends Component{
                                                             that.setCheckState();
                                                         },function(data){
                                                         },{quality:50,destinationType:0});
-                                                    },()=>{this.setState({frontImage:null,frontDisplay:"inline"})});
+                                                    },()=>{this.setState({frontImage:null});
+                                                            this.state.frontDisplay = "inline";
+                                                            this.setCheckState()});
                                                     }} />
                                                   <p>
                                                      <img  src={require("../../images/camera.png")} style={{display:this.state.frontDisplay}} onClick={()=>{
@@ -272,12 +342,14 @@ class NetCheck extends Component{
                                                 <div class="camera_box">
                                                     <img src={this.state.backImage?this.state.backImage:backImage} onClick={()=>{
                                                         this.showImageViewer(this.state.backImage,()=>{navigator.camera.getPicture(function(data){
-                                                            that.setState({backImage:"data:image/png;base64," + data , frontDisplay:"none"});
-                                                            that.state.frontDisplay = "none";
+                                                            that.setState({backImage:"data:image/png;base64," + data , backDisplay:"none"});
+                                                            that.state.backDisplay = "none";
                                                             that.setCheckState();
                                                         },function(data){
                                                         },{quality:50,destinationType:0});
-                                                    },()=>{this.setState({backImage:null,frontDisplay:"inline"})});
+                                                    },()=>{this.setState({backImage:null}) ;
+                                                            this.state.backDisplay = "inline";
+                                                            this.setCheckState()});
                                                     }}/>
                                                    <p>
                                                      <img src={require("../../images/camera.png")} style={{display:this.state.backDisplay}} onClick={()=>{
@@ -299,15 +371,22 @@ class NetCheck extends Component{
                                     </div>
                                 </div>
                                 <div class="three_box_rt" >
-                                    <div style={{display:this.state.check}}>
+                                    <div style={{display:!(this.props.instData.netCheck)}}>
                                         <input type="button" class={(this.state.netCheckState)?"orangeButton":"grayButton"} value="联网核查" onClick={()=>{
                                             if (this.state.netCheckState){
                                                 this.setState({loadingContent:"联网核查..." , fullscreen:true});
                                                 // eslint-disable-next-line
                                                 mmspc.nativeRequest.init();
                                                 // eslint-disable-next-line
-                                                mmspc.nativeRequest.get("http://219.142.79.229:8989/mmsp-ps/forward/"+appId+"/rest/pub/access/onlinecheck?clientId=易贤武&userId=360731199110284813"
-                                                    ,success , fail);
+                                                mmspc.bridge.get((appId)=>{
+                                                    this.props.netActions.addCustomer(appId ,JSON.parse("{}"));
+                                                    // this.props.netActions.addCustomer(appId , "{\"clientVO\":{\"cliname\":"+"\""+this.state.cardName+"\",\"certno\":"+"\""+this.state.cardNumber+"\"}}");
+                                                    // this.props.netActions.netcheck(appId);
+                                                    // eslint-disable-next-line
+                                                    // mmspc.nativeRequest.get("http://219.142.79.229:8989/mmsp-ps/forward/"+appId+"/rest/pub/access/onlinecheck?clientId=易贤武&userId=360731199110284813"
+                                                    //     ,success , fail);
+                                                });
+
                                                 function success() {
                                                     that.setState({nextBg:"#FFA400" , nextBorder:"#FFA400" ,
                                                         nextState:true,loadingContent:"联网核查..." , fullscreen:false,
@@ -320,7 +399,7 @@ class NetCheck extends Component{
                                         }}/>
 
                                     </div>
-                                    <div style={{display:this.state.checkSuccess}}>
+                                    <div style={{display:this.props.instData.netCheck?"inline":"none"}}>
                                         <img src={require("../../images/success_iocn.png")}
                                              width="75%" height="75%"/>
                                         <p style={{color:"#00CD00"}}>核查通过</p>
@@ -341,12 +420,11 @@ class NetCheck extends Component{
                                 </div>
                                  <div class="footer_content_rt">
                                       <Button  id="nextStep" style={{backgroundColor:this.state.nextBg ,borderColor:this.state.nextBorder}} type="warning" size="large" onClick={()=>{
-                                         {/* if(this.state.nextState){
+                                          if(this.state.nextState){
                                                   this.context.jumpTo(1, this.setComplete.bind(this)(0))
                                           }else {
-                                              
-                                          }*/}
-                                          this.context.jumpTo(1,[2,0,0,0,0,0,0,0])
+                                              // this.context.jumpTo(1,[2,0,0,0,0,0,0,0])
+                                          }
                                       }}>下一步</Button>
                                 </div>
                             </div>

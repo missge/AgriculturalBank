@@ -16,6 +16,9 @@ import {bindActionCreators} from "redux";
 import {Map} from "immutable";
 import * as loginActions from '../../../actions/login';
 import * as homeActions from '../../../actions/home';
+import Net from "../../../netRequest/mmspRequest";
+import watermark from "../../../components/src/utils/waterMark";
+
 const actions=[
     loginActions,homeActions
 ]
@@ -77,21 +80,12 @@ const titleColor =["#999999","#12b2a8","#faa21e"];
 class Index extends Component {
     constructor(props){
         super(props);
-        this.state= {
-            headInstName:""
 
+        this.state = {
+            selectedValue2:true
         }
-
     }
-    changeValue = (values) => {
-        this.setState({
-            headInstName: values
-        }, this.showChange);
 
-    }
-    showChange = () => {
-
-    }
     handleVal(val) {
         return val;
     }
@@ -112,13 +106,26 @@ class Index extends Component {
         }
     }
     componentDidMount(){
-        // this.props.homeActions.loading(true);
+        watermark({watermark_txt0:'小明   123456'});
+        this.props.homeActions.loading(true);
         // setTimeout(()=>{
-            // eslint-disable-next-line
-            // mmspc.bridge.get((data)=>{
-            //     this.props.homeActions.login(data);
-            // });
+        //     // eslint-disable-next-line
+        //     mmspc.bridge.get((data)=>{
+        //         if ("A"==data){
+        //             // eslint-disable-next-line
+        //             mmspc.bridge.get((data)=>{
+        //                 this.props.homeActions.login(data);
+        //             });
+        //         }
+        //
+        //     },()=>{},"page");
         // },2000)
+        setTimeout(()=>{
+            // eslint-disable-next-line
+            mmspc.bridge.get((data)=>{
+                this.props.homeActions.login(data);
+            });
+        },2000)
     }
     render() {
         return (
@@ -138,7 +145,11 @@ class Index extends Component {
                 >
                     <Dialog.Body>
                         <SelectList value={this.state.selectedValue2} multiple={false} onChange={val=>{
+                            // eslint-disable-next-line
+                            mmspc.bridge.get((data)=>{
 
+                                this.props.homeActions.getInstInfo(data , val.instcode);
+                            });
                             this.props.homeActions.changeName(val.instname);
                             this.setState({selectedValue2: true})
                             this.props.homeActions.showList(false)
