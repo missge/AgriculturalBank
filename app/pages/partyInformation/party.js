@@ -169,6 +169,9 @@ class Party extends Component{
             backDisplay:"inline",
             netCheckState:false,
             radio:"身份证",
+            loadingContent:"登录中...",
+            fullscreen:false,
+            netCheckState:false,            
         }
     }
     onSubmit(e) {
@@ -208,8 +211,9 @@ class Party extends Component{
     }*/
     componentDidMount(){
         // this.props.partyActions.showNewContact(false) 
-        this.queryAllInformation()
         that = this;
+        // this.queryAllInformation()
+        
             unshiftArrs(this.state.list,this.props.partyData.form.edulevel,(data)=>{
              this.props.partyData.form['edulevel']=data
             this.refs.educationSL.setState({selected:null})
@@ -232,14 +236,14 @@ class Party extends Component{
         let that =this
         //传一个作业id
         // eslint-disable-next-line
-    //     mmspc.bridge.get(function (data) {
-    //          that.props.partyActions.ishaveInformation(data , JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"));
-    //    });
+        mmspc.bridge.get(function (data) {
+             that.props.partyActions.ishaveInformation(data , JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"));
+       });
     //    单笔作业信息
     //    eslint-disable-next-line
-       mmspc.bridge.get(function (data) {
-             that.props.partyActions.querySingleInformation(data , JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"));
-       });
+    //    mmspc.bridge.get(function (data) {
+    //          that.props.partyActions.querySingleInformation(data , JSON.parse("{\"clientId\":\"dc01db22-a682-4fee-\"}"));
+    //    });
     
     }
     onChange(key, value) {
@@ -339,69 +343,67 @@ class Party extends Component{
                                 </div>
                                 <div class="three_child_rt">
                                     <ul class="img_box">
-                                        <li>
-                                            <div class="camera_box"  >
-                                                <img src={this.state.frontImage?this.state.frontImage:frontImage} onClick={()=>{
-                                                    if (this.state.frontDisplay=="none"){
-                                                        this.showImageViewer(this.state.frontImage,()=>{navigator.camera.getPicture((data)=>{
-                                                            this.setState({frontImage:"data:image/png;base64," + data , frontDisplay:"none"});
-                                                            this.state.frontDisplay = "none";
-                                                            this.setCheckState();
-                                                        },function(data){
-                                                        },{quality:50,destinationType:0});
-                                                        },()=>{this.setState({frontImage:null});
-                                                            this.state.frontDisplay = "inline";
-                                                            this.setCheckState()});
-                                                    }
-                                                }} />
-                                                <p>
-                                                    <img  src={require("../../images/camera.png")} style={{display:this.state.frontDisplay}} onClick={()=>{
-                                                        // eslint-disable-next-line
-                                                        navigator.camera.getPicture(successData => {
-                                                            this.setState({frontImage:"data:image/png;base64," + successData , frontDisplay:"none"});
-                                                            this.state.frontDisplay = "none";
-                                                            this.setCheckState();
-                                                        }, errData => {
+                                    <li>
+                                                <div class="camera_box"  >
+                                                    <img src={this.state.frontImage?this.state.frontImage:frontImage} onClick={()=>{
+                                                        if (this.state.frontDisplay=="none"){
+                                                            this.showImageViewer(this.state.frontImage,()=>{navigator.camera.getPicture(function(data){
+                                                                that.setState({frontImage:"data:image/png;base64," + data , frontDisplay:"none"});
+                                                                that.state.frontDisplay = "none";
+                                                                that.setCheckState();
+                                                            },function(data){
+                                                            },{quality:50,destinationType:0});
+                                                            },()=>{this.setState({frontImage:null});
+                                                                this.state.frontDisplay = "inline";
+                                                                this.setCheckState()});
+                                                        }
+                                                    }} />
+                                                  <p>
+                                                     <img  src={require("../../images/camera.png")} style={{display:this.state.frontDisplay}} onClick={()=>{
+                                                         // eslint-disable-next-line
+                                                         navigator.camera.getPicture(function(data){
+                                                             that.setState({frontImage:"data:image/png;base64," + data , frontDisplay:"none"});
+                                                             that.state.frontDisplay = "none";
+                                                             that.setCheckState();
+                                                         },function(data){
+                                                         },{quality:50,destinationType:0});
+                                                     }}/>
+                                                  </p>
+                                                </div>
+                                                <p>请上传身份证头像面</p>
 
-                                                        }, {quality: 50, destinationType: 0});
-                                                    }}/>
-                                                </p>
-                                            </div>
-                                            <p>请上传身份证头像面</p>
-
-                                        </li>
-                                        <li>
-                                            <div class="camera_box">
-                                                <img src={this.state.backImage?this.state.backImage:backImage} onClick={()=>{
-                                                    if (this.state.backDisplay=="none"){
-                                                        this.showImageViewer(this.state.backImage,()=>{navigator.camera.getPicture((data)=>{
-                                                            this.setState({backImage:"data:image/png;base64," + data , backDisplay:"none"});
-                                                            this.state.backDisplay = "none";
-                                                            this.setCheckState();
-                                                        },function(data){
-                                                        },{quality:50,destinationType:0});
-                                                        },()=>{this.setState({backImage:null}) ;
-                                                            this.state.backDisplay = "inline";
-                                                            this.setCheckState()});
-                                                    }
-                                                }}/>
-                                                <p>
-                                                    <img src={require("../../images/camera.png")} style={{display:this.state.backDisplay}} onClick={()=>{
-                                                        // eslint-disable-next-line
-                                                        navigator.camera.getPicture(successData => {
-                                                            this.setState({backImage:"data:image/png;base64," + successData  , backDisplay:"none"});
-                                                            this.state.backDisplay = "none";
-                                                            this.setCheckState();
-                                                        }, errData => {
-
-                                                        }, {quality: 50, destinationType: 0});
+                                            </li>
+                                            <li>
+                                                <div class="camera_box">
+                                                    <img src={this.state.backImage?this.state.backImage:backImage} onClick={()=>{
+                                                        if (this.state.backDisplay=="none"){
+                                                            this.showImageViewer(this.state.backImage,()=>{navigator.camera.getPicture(function(data){
+                                                                that.setState({backImage:"data:image/png;base64," + data , backDisplay:"none"});
+                                                                that.state.backDisplay = "none";
+                                                                that.setCheckState();
+                                                            },function(data){
+                                                            },{quality:50,destinationType:0});
+                                                            },()=>{this.setState({backImage:null}) ;
+                                                                this.state.backDisplay = "inline";
+                                                                this.setCheckState()});
+                                                        }
 
                                                     }}/>
-                                                </p>
-                                            </div>
-                                            <p>请上传身份证国徽面</p>
-                                        </li>
+                                                   <p>
+                                                     <img src={require("../../images/camera.png")} style={{display:this.state.backDisplay}} onClick={()=>{
+                                                         // eslint-disable-next-line
+                                                         navigator.camera.getPicture(function(data){
+                                                             that.setState({backImage:"data:image/png;base64," + data  , backDisplay:"none"});
+                                                             that.state.backDisplay = "none";
+                                                             that.setCheckState();
+                                                         },function(data){
+                                                         },{quality:50,destinationType:0});
 
+                                                     }}/>
+                                                  </p>
+                                                </div>
+                                                <p>请上传身份证国徽面</p>
+                                            </li>
                                     </ul>
                                 </div>
                             </div>
@@ -819,10 +821,10 @@ class Party extends Component{
                                     <Button type="warning" size="large" onClick={() => {
                                         // alert(JSON.stringify(this.props.partyData.form));
                                          // eslint-disable-next-line
-                                        // mmspc.bridge.get(function (data) {
-                                        //         that.props.partyActions.postPartyInfo(data , that.state.form);
-                                        //     });
-                                          this.props.partyActions.showNewContact(true)
+                                          mmspc.bridge.get( (data)=> {
+                                           this.props.partyActions.postPartyInfo(data ,this.props.partyData.form);
+                                            });
+                                        //   this.props.partyActions.showNewContact(true)
 
 
                                         }}
@@ -853,7 +855,9 @@ class Party extends Component{
                                             姓名：
                                         </span>
                                             <span class="addParty_title_value">
-                                            关小明
+                                            {/* 关小明 */}
+                                            {this.props.partyData.partyDataList.cliname}
+
                                         </span>
                                         </li>
                                         <li>
@@ -861,7 +865,8 @@ class Party extends Component{
                                             证件号码：
                                         </span>
                                             <span class="addParty_title_value">
-                                            100101001010101010000
+                                            {this.props.partyData.partyDataList.cert_no}
+                                            
                                         </span>
                                         </li>
                                         <li>
@@ -869,7 +874,8 @@ class Party extends Component{
                                             角色：
                                         </span>
                                             <span class="addParty_title_value">
-                                            借款人配偶
+                                            {/* {this.props.partyData.partyDataList.cert_no} */}
+                                            无此字段 借款人配偶
                                         </span>
                                         </li>
                                         <li >
@@ -877,7 +883,7 @@ class Party extends Component{
                                             类型：
                                         </span>
                                             <span class="addParty_title_value">
-                                          配偶
+                                              {this.props.partyData.partyDataList.reltype}
                                         </span>
                                         </li>
                                     </ul>
@@ -1260,10 +1266,10 @@ class Party extends Component{
                         rClick={()=>{
                            this.setState({isAddParty:!this.state.isAddParty})
                                 if(this.state.isLookorAdd===1){
-                                    alert("1")
-                                    // mmspc.bridge.get(function (data) {
-                                    //     that.props.partyActions.deleteRelated(data,this.state.clickId);
-                                    // })
+                                   // eslint-disable-next-line
+                                    mmspc.bridge.get(function (data) {
+                                        that.props.partyActions.deleteRelated(data,JSON.parse("{\"clientId\":\"dc01db22-a682-4fee-\"}"));
+                                    })
                                 }
                             }
                         }
@@ -1676,13 +1682,15 @@ class Party extends Component{
                                                 this.setState({ isAddParty:!this.state.isAddParty})
                                                 if(this.state.isLookorAdd){
                                                     //传递一个当前id。--确认修改
-                                                    // mmspc.bridge.get(function (data) {
-                                                    //     that.props.partyActions.postPartyInfo(data,this.state.clickId);
-                                                    // })
+                                                     // eslint-disable-next-line
+                                                    mmspc.bridge.get(function (data) {
+                                                        that.props.partyActions.postPartyInfo(data,this.state.clickId);
+                                                    })
                                                }else{
-                                                    // mmspc.bridge.get(function (data) {
-                                                    //     that.props.partyActions.postPartyInfo(data,this.props.partyData.form);
-                                                    // })
+                                                    // eslint-disable-next-line
+                                                    mmspc.bridge.get(function (data) {
+                                                        that.props.partyActions.postPartyInfo(data,this.props.partyData.form);
+                                                    })
                                                }
                                             }}>
                                             {this.state.isLookorAdd===1?"确认修改":"新增关系人"}

@@ -5,6 +5,7 @@ let initData={
     partyDataList:[],
     // 请求失败
     getPartyFail:'',
+    getclientId:'',
     form:{
         isrel:'否',//是否共同借款人
         edulevel:'小学',//文化程度
@@ -79,7 +80,11 @@ export function partyData(state=initData , action={}) {
                 ...state,
                 form:action.value
             }
-
+        case "partyClientId":
+            return {
+                ...state,
+                getclientId:action.value                
+            }
         default:
             return{...state}
     }

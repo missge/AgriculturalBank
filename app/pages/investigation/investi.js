@@ -49,7 +49,8 @@ class addParty extends Component{
 		        type: [],
 		        resource: '',
 		        desc: '',
-                radio3:''
+                radio3:'',
+                containterHeight:window.innerHeight - this.getHeight(100)
 			},
 		}
 	}
@@ -74,7 +75,7 @@ class addParty extends Component{
 	}
 	render(){
 		return(
-			<div style={{height: window.innerHeight - this.getHeight(100),overflow:"auto"}}>
+			<div style={{height: this.state.containterHeight}}>
 				<div class="main_contanier">
 					<TabTitle title="调查意见" class="tabTitle blueTabTitle"/>
 					<div class="form_bg">
@@ -91,6 +92,7 @@ class addParty extends Component{
 						  	<div className="investiBox">
                                  <span className="talk_label">调查报告</span>
                                   <div  class="talk_Box">
+
 										<ul>
 											<li>
 												&nbsp;&nbsp;&nbsp;&nbsp;借款人#客户姓名#，共同借款人#共同借款人姓名#，因购房#房屋地址及房号#，拟向我行申请#业务品种#贷款人民币#贷款金额#万元整，期限#贷款期限#，采取#还款方式#还款方式。经本岗与借款人面谈及调查核实，该笔贷款资料完整、真实和有效，调查情况具体报告如下：
@@ -104,28 +106,15 @@ class addParty extends Component{
 											<li>
                                                 借款人#客户姓名#任职于#单位全称#与（征信显示#确认/不#一致），单位性质为#单位性质#，税后约收入约人民币#本人年税后收入12#元，结合本地区经济及借款人情况，认定其收入真实合理。
 											</li>
-											<li>
+											{/*<li>
                                                 &nbsp;&nbsp;&nbsp;&nbsp;2、人行征信系统及我行XMS系统反映，借款人#客户姓名#目前名下@有/无#贷款记录；名下目前#有/无#到期未还的金融债务（包括逾期贷款、信用卡透支等）；#有/无#对外担保记录。
 											</li>
 											<li>
                                                 &nbsp;&nbsp;&nbsp;&nbsp;3、经我行个人客户信用评级认定借款人#客户姓名#为#评分结果#分，本岗认定真实。
-											</li>
-											<li>
-                                                <h5>（二）共同借款人家庭基本情况</h5>
-											</li>
-											<li>
-                                                &nbsp;&nbsp;&nbsp;&nbsp;1、共同借款人#共同借款人姓名#，性别#性别#，户籍地为#共同借款人户籍（学生家庭）详细地址#，出生于#出生日期#，婚姻状况为#婚姻状况已核真实。
-											</li>
-											<li>
-                                                借款人#客户姓名#任职于#单位全称#与（征信显示#确认/不#一致），单位性质为#单位性质#，税后约收入约人民币#本人年税后收入12#元，结合本地区经济及借款人情况，认定其收入真实合理。
-											</li>
-											<li>
-                                                &nbsp;&nbsp;&nbsp;&nbsp;2、人行征信系统及我行XMS系统反映，借款人#客户姓名#目前名下@有/无#贷款记录；名下目前#有/无#到期未还的金融债务（包括逾期贷款、信用卡透支等）；#有/无#对外担保记录。
-											</li>
-											<li>
-                                                &nbsp;&nbsp;&nbsp;&nbsp;3、经我行个人客户信用评级认定借款人#客户姓名#为#评分结果#分，本岗认定真实。
-											</li>
+											</li>*/}
+
 										</ul>
+
                                   </div>
                              </div>
 						 </Form>

@@ -181,7 +181,7 @@
     white-space: nowrap;
     background: #fff;
     border:1px dashed #ccc;
-    border-radius:8px;
+    border-radius:5px;
     color: #1f2d3d;
     -webkit-appearance: none;
     text-align: center;
@@ -190,11 +190,11 @@
     margin: 0;
     cursor: pointer;
     transition: all .3s cubic-bezier(.645, .045, .355, 1);
-    padding: 10px 15px;
+    padding: 11px 8px;
     font-size: 15px;
 }
 .el-radio-button__inner::after{
-    margin-left: 10px;
+    margin-left: 12px;
 }
 .el-radio-button__inner:hover {
     color: #07b8ac

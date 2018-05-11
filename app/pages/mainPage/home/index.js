@@ -122,9 +122,9 @@ class Index extends Component {
         // },2000)
         setTimeout(()=>{
             // eslint-disable-next-line
-            mmspc.bridge.get((data)=>{
-                this.props.homeActions.login(data);
-            });
+            // mmspc.bridge.get((data)=>{
+            //     this.props.homeActions.login(data);
+            // });
         },2000)
     }
     render() {
@@ -151,6 +151,7 @@ class Index extends Component {
                                 this.props.homeActions.getInstInfo(data , val.instcode);
                             });
                             this.props.homeActions.changeName(val.instname);
+                            this.props.homeActions.setInstCode(val.instcode);
                             this.setState({selectedValue2: true})
                             this.props.homeActions.showList(false)
                         }}>

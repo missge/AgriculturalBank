@@ -108,8 +108,8 @@
     margin-top:20px;
 }
 .card-front-img{
-    width:238px;
-    height:149px;
+    width:160px;
+    height:100px;
     background-size:100% 100%;
     background-position:center center;
 }
@@ -117,8 +117,8 @@
     margin-top:25px;
 }
 .card-back-img{
-    width:238px;
-    height:149px;
+    width:160px;
+    height:100px;
     background-size:100% 100%;
     background-position:center center;
 }

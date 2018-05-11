@@ -53,6 +53,10 @@ export const setProcsId = (data)=>({
     type:"procsId",
     value:data
 })
+export const setClientId = (data)=>({
+    type:"clientId",
+    value:data
+})
 /*export function getInst(appId) {
     return function (dispatch) {
         dispatch(loading(true));
@@ -145,6 +149,7 @@ export function login(appId) {
             Type.formType,function (data) {
                 // dispatch(loading(false));
                 // dispatch(loginLoadSuccess(data));
+                // dispatch(getInst(appId));
                 dispatch(getInst(appId));
             },function () {
                 dispatch(loading(false));
@@ -204,7 +209,8 @@ export function addCustomer(appId , params) {
         Net.postRequest(appId+"/rest/hl/process/client" , params , Type.jsonType,
             function (data) {
                 dispatch(loading(false));
-                dispatch(netcheck(appId , data));
+                dispatch(setClientId(JSON.parse(data).data));
+                dispatch(netcheck(appId , JSON.parse(data).data));
             },function () {
                 dispatch(loading(false));
             });
@@ -218,9 +224,11 @@ export function netcheck(appId , clientId) {
         Net.getRequest(appId+"/rest/pub/access/onlinecheck" ,
             JSON.parse("{\"clientId\":"+"\""+clientId+"\"}"),function (data) {
                 dispatch(loading(false));
-                dispatch(accessResult(true));
+                dispatch(accessResult(appId ,clientId));
+                dispatch(netResult(true));
             },function () {
                 dispatch(loading(false));
+                dispatch(netResult(false));
             })
 
     }
@@ -235,10 +243,8 @@ export function accessResult(appId , clientId) {
         Net.getRequest(appId+"/rest/pub/access/result" ,
             JSON.parse("{\"clientId\":\""+clientId+"\"}"),function (data) {
                 dispatch(loading(false));
-                dispatch(netResult(true));
             },function () {
                 dispatch(loading(false));
-                dispatch(netResult(false));
             })
     }
 }

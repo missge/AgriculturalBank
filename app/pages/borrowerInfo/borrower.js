@@ -81,12 +81,12 @@ class Borrower extends Component {
     }
 
     componentDidMount() {
-        if (2==this.context.select){
-            // eslint-disable-next-line
-            mmspc.bridge.get((appId)=>{
-                this.props.borrowerActions.getLoadnerInfo(appId , JSON.parse("{\"clientId\":\"1111\"}"));
-            });
-        }
+        // if (0==this.context.select){
+        //     // eslint-disable-next-line
+        //     mmspc.bridge.get((appId)=>{
+        //         this.props.borrowerActions.getLoadnerInfo(appId , JSON.parse("{\"clientId\":\"1111\"}"));
+        //     });
+        // }
 
     }
 
@@ -134,7 +134,7 @@ class Borrower extends Component {
             selectDialogVisible:false,
             selectFendcentDialog:false,
             selectCorpcharDialog:false,
-
+            containerHeight:window.innerHeight-this.getHeight(100),
             clientVO:{
                 // 主页面字段
                 // cliname:"",//客户姓名
@@ -414,7 +414,7 @@ class Borrower extends Component {
     }
     render() {
         return (
-            <div  style={{height:window.innerHeight-this.getHeight(100)}}>
+            <div  style={{height:this.state.containerHeight}}>
 
                 <div class="showTab1">
                     <div>
@@ -622,7 +622,8 @@ class Borrower extends Component {
                                     mmspc.bridge.get((data)=> {
                                         this.state.clientVO.clientId = this.props.client.clientId;
                                         this.state.clientVO.procsId = this.props.client.procsId;
-                                        this.props.borrowerActions.postLoanerInfo(data , this.state.clientVO);
+                                        // this.props.borrowerActions.postLoanerInfo(data , this.state.clientVO);
+                                        this.props.borrowerActions.postLoanerInfo(data , "{\"clientId\":"+"\""+this.props.client.clientId+"\"}");
                                         // "{\"clientVO\":"+"\""+that.state.clientVO+"\""+"}"
 
                                     });

@@ -1,27 +1,27 @@
 import {getSuccess} from "../actions/credit";
 
 let creditState={
-    loading:false,
-    text:"",
-    getSuccess:false,
+    loadingCredit:false,
+    loadingCreditText:"",
+    getCreditQuery:"",
 }
 
 export function credit(state = creditState , action={}) {
     switch (action.type){
-        case "loading":
+        case "loadingCredit":
             return{
                 ...state,
-                loading:action.value
+                loadingCredit:action.value
             }
-        case "text":
+        case "loadingCreditText":
             return{
                 ...state,
-                text:action.value
+                loadingCreditText:action.value
             }
-        case "getSuccess":
+        case "getCreditQuery":
             return{
                 ...state,
-                getSuccess:action.value
+                getCreditQuery:JSON.parse(action.value).data
             }
         default:
             return{...state}

@@ -45,12 +45,20 @@ export default class RadioButton extends Radio {
         />}
         <span className="el-radio-button__inner" style={this.state.checked ? this.activeStyle() : {}}
          onClick = {this.props.isAppendix ? this.parent().props.onAppendixClick : null}>
-          {this.props.children || this.props.value}
+          {this.elipseText(this.props.children || this.props.value)}
         </span>
       </label>
     )
   }
+  elipseText(content){
+    if (content.length > 8) {  
+      return content.substring(0,7) + "..." ;  
+    }else{
+      return content;
+    }
+  }
 }
+
 
 RadioButton.contextTypes = {
   component: PropTypes.any
@@ -59,5 +67,5 @@ RadioButton.contextTypes = {
 RadioButton.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   disabled: PropTypes.bool,
-  name: PropTypes.string
+  name: PropTypes.string,
 };

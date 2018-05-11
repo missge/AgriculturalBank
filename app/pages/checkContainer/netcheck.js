@@ -75,7 +75,7 @@ class NetCheck extends Component{
                 name: '',
 
             },
-
+            container_height:window.innerHeight-this.getHeight(100),
             radio1:"一手房贷款",
             radio2:"不使用模板",
             radio3:"身份证",
@@ -156,8 +156,8 @@ class NetCheck extends Component{
         if ("radio2"==key){
             // eslint-disable-next-line
             mmspc.bridge.get((appId)=>{
-                // this.props.netActions.addWork(appId,JSON.parse("{\"acpt_opr_inst_id\":"+"\""+this.props.head.instCode+"\"}"));
-                this.props.netActions.addWork(appId,this.state.processVO);
+                this.props.netActions.addWork(appId,JSON.parse("{\"acpt_opr_inst_id\":"+"\""+this.props.head.instCode+"\"}"));
+                // this.props.netActions.addWork(appId,this.state.processVO);
                 // $.ajax("http://10.230.155.49:9083/mmsp-ps/forward/vEwQVohB/rest/hl/process",{
                 //     async:false,
                 //     cache:false,
@@ -242,7 +242,7 @@ class NetCheck extends Component{
     render(){
         return(
 
-            <div style={{height:window.innerHeight-this.getHeight(100)}}>
+            <div style={{height:this.state.container_height}}>
 
                 <div class="scrollContent">
                    {/* <div>
@@ -251,7 +251,7 @@ class NetCheck extends Component{
                         }
                     </div>*/}
                      <TabTitle title="业务信息" class="tabTitle blueTabTitle"/>
-                        <Form labelPosition="left" model={this.state.form} labelWidth="120" onSubmit={this.onSubmit.bind(this)}>
+                        <Form labelPosition="left" model={this.state.form} labelWidth="80" onSubmit={this.onSubmit.bind(this)}>
                         <div className="form_content">
                             <div className="form_lf">
                                 <Form.Item label="业务品种" >
@@ -313,15 +313,17 @@ class NetCheck extends Component{
                                             <li>
                                                 <div class="camera_box"  >
                                                     <img src={this.state.frontImage?this.state.frontImage:frontImage} onClick={()=>{
-                                                        this.showImageViewer(this.state.frontImage,()=>{navigator.camera.getPicture(function(data){
-                                                            that.setState({frontImage:"data:image/png;base64," + data , frontDisplay:"none"});
-                                                            that.state.frontDisplay = "none";
-                                                            that.setCheckState();
-                                                        },function(data){
-                                                        },{quality:50,destinationType:0});
-                                                    },()=>{this.setState({frontImage:null});
-                                                            this.state.frontDisplay = "inline";
-                                                            this.setCheckState()});
+                                                        if (this.state.frontDisplay=="none"){
+                                                            this.showImageViewer(this.state.frontImage,()=>{navigator.camera.getPicture(function(data){
+                                                                that.setState({frontImage:"data:image/png;base64," + data , frontDisplay:"none"});
+                                                                that.state.frontDisplay = "none";
+                                                                that.setCheckState();
+                                                            },function(data){
+                                                            },{quality:50,destinationType:0});
+                                                            },()=>{this.setState({frontImage:null});
+                                                                this.state.frontDisplay = "inline";
+                                                                this.setCheckState()});
+                                                        }
                                                     }} />
                                                   <p>
                                                      <img  src={require("../../images/camera.png")} style={{display:this.state.frontDisplay}} onClick={()=>{
@@ -341,15 +343,18 @@ class NetCheck extends Component{
                                             <li>
                                                 <div class="camera_box">
                                                     <img src={this.state.backImage?this.state.backImage:backImage} onClick={()=>{
-                                                        this.showImageViewer(this.state.backImage,()=>{navigator.camera.getPicture(function(data){
-                                                            that.setState({backImage:"data:image/png;base64," + data , backDisplay:"none"});
-                                                            that.state.backDisplay = "none";
-                                                            that.setCheckState();
-                                                        },function(data){
-                                                        },{quality:50,destinationType:0});
-                                                    },()=>{this.setState({backImage:null}) ;
-                                                            this.state.backDisplay = "inline";
-                                                            this.setCheckState()});
+                                                        if (this.state.backDisplay=="none"){
+                                                            this.showImageViewer(this.state.backImage,()=>{navigator.camera.getPicture(function(data){
+                                                                that.setState({backImage:"data:image/png;base64," + data , backDisplay:"none"});
+                                                                that.state.backDisplay = "none";
+                                                                that.setCheckState();
+                                                            },function(data){
+                                                            },{quality:50,destinationType:0});
+                                                            },()=>{this.setState({backImage:null}) ;
+                                                                this.state.backDisplay = "inline";
+                                                                this.setCheckState()});
+                                                        }
+
                                                     }}/>
                                                    <p>
                                                      <img src={require("../../images/camera.png")} style={{display:this.state.backDisplay}} onClick={()=>{
@@ -371,32 +376,33 @@ class NetCheck extends Component{
                                     </div>
                                 </div>
                                 <div class="three_box_rt" >
-                                    <div style={{display:!(this.props.instData.netCheck)}}>
-                                        <input type="button" class={(this.state.netCheckState)?"orangeButton":"grayButton"} value="联网核查" onClick={()=>{
-                                            if (this.state.netCheckState){
-                                                this.setState({loadingContent:"联网核查..." , fullscreen:true});
-                                                // eslint-disable-next-line
-                                                mmspc.nativeRequest.init();
-                                                // eslint-disable-next-line
-                                                mmspc.bridge.get((appId)=>{
-                                                    this.props.netActions.addCustomer(appId ,JSON.parse("{}"));
-                                                    // this.props.netActions.addCustomer(appId , "{\"clientVO\":{\"cliname\":"+"\""+this.state.cardName+"\",\"certno\":"+"\""+this.state.cardNumber+"\"}}");
-                                                    // this.props.netActions.netcheck(appId);
-                                                    // eslint-disable-next-line
-                                                    // mmspc.nativeRequest.get("http://219.142.79.229:8989/mmsp-ps/forward/"+appId+"/rest/pub/access/onlinecheck?clientId=易贤武&userId=360731199110284813"
-                                                    //     ,success , fail);
-                                                });
+                                    <div style={{display:!this.props.instData.netCheck?"inline":"none"}}>
+                                        <Button type="primary" style={{height:70,width:70}}disabled={!this.state.netCheckState} textStyle={{fontSize:18,lineHeight:1.3,whiteSpace:'normal'}}
+                                                onClick={()=>{
+                                                    if (this.state.netCheckState){
+                                                        this.setState({loadingContent:"联网核查..." , fullscreen:true});
+                                                        // eslint-disable-next-line
+                                                        mmspc.nativeRequest.init();
+                                                        // eslint-disable-next-line
+                                                        mmspc.bridge.get((appId)=>{
+                                                            // this.props.netActions.addCustomer(appId ,JSON.parse("{}"));
+                                                            this.props.netActions.addCustomer(appId , "{\"cliname\":"+"\""+this.state.cardName+"\",\"certno\":"+"\""+this.state.cardNumber+"\"}");
+                                                            // this.props.netActions.netcheck(appId);
+                                                            // eslint-disable-next-line
+                                                            // mmspc.nativeRequest.get("http://219.142.79.229:8989/mmsp-ps/forward/"+appId+"/rest/pub/access/onlinecheck?clientId=易贤武&userId=360731199110284813"
+                                                            //     ,success , fail);
+                                                        });
 
-                                                function success() {
-                                                    that.setState({nextBg:"#FFA400" , nextBorder:"#FFA400" ,
-                                                        nextState:true,loadingContent:"联网核查..." , fullscreen:false,
-                                                        check:"none" ,checkSuccess:"inline"});
-                                                }
-                                                function fail() {
-                                                    this.setState({loadingContent:"联网核查..." , fullscreen:false});
-                                                }
-                                            }
-                                        }}/>
+                                                        function success() {
+                                                            that.setState({nextBg:"#FFA400" , nextBorder:"#FFA400" ,
+                                                                nextState:true,loadingContent:"联网核查..." , fullscreen:false,
+                                                                check:"none" ,checkSuccess:"inline"});
+                                                        }
+                                                        function fail() {
+                                                            this.setState({loadingContent:"联网核查..." , fullscreen:false});
+                                                        }
+                                                    }
+                                                }}>联网核查</Button>
 
                                     </div>
                                     <div style={{display:this.props.instData.netCheck?"inline":"none"}}>
@@ -419,8 +425,8 @@ class NetCheck extends Component{
                                     }}>重置</Button>
                                 </div>
                                  <div class="footer_content_rt">
-                                      <Button  id="nextStep" style={{backgroundColor:this.state.nextBg ,borderColor:this.state.nextBorder}} type="warning" size="large" onClick={()=>{
-                                          if(this.state.nextState){
+                                      <Button  id="nextStep" style={{backgroundColor:this.props.instData.netCheck?"#FFA400":"#999999" ,borderColor:this.props.instData.netCheck?"#FFA400":"#999999"}} type="warning" size="large" onClick={()=>{
+                                          if(this.props.instData.netCheck){
                                                   this.context.jumpTo(1, this.setComplete.bind(this)(0))
                                           }else {
                                               // this.context.jumpTo(1,[2,0,0,0,0,0,0,0])

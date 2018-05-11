@@ -43,5 +43,31 @@ class mmspRequest{
         }
     }
 
+    putRequest(url,data,type,success,error){
+        // eslint-disable-next-line
+        mmspc.nativeRequest.init();
+        try{
+            base = baseUrl.url;
+            // eslint-disable-next-line
+            mmspc.nativeRequest.put(base+url,data,type,success,error);
+        }catch(e){
+            alert(e);
+            error();
+        }
+    }
+
+    deleteRequest(url,data,type,success,error){
+        // eslint-disable-next-line
+        mmspc.nativeRequest.init();
+        try{
+            base = baseUrl.url;
+            // eslint-disable-next-line
+            mmspc.nativeRequest.del(base+url,data,type,success,error);
+        }catch(e){
+            alert(e);
+            error();
+        }
+    }
+
 }
 export default new mmspRequest();

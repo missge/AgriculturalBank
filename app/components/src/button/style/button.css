@@ -67,8 +67,8 @@
     color: #ffffff;
     cursor: not-allowed;
     background-image: none;
-    background-color: #999999;
-    border-color: #999999
+    background-color: #cccccc;
+    border-color: #cccccc
 }
 
 .el-button.is-disabled.el-button--text {

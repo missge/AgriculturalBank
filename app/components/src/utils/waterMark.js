@@ -3,8 +3,8 @@ export default function watermark(settings) {
     var defaultSettings={  
         watermark_img:"text",//根据本业务需求  有两行，第一行是图片  
         watermark_txt0:"text",  
-        watermark_x:40,//水印起始位置x轴坐标  
-        watermark_y:110,//水印起始位置Y轴坐标  
+        watermark_x:80,//水印起始位置x轴坐标  
+        watermark_y:130,//水印起始位置Y轴坐标  
         watermark_rows:3,//水印行数  
         watermark_cols:4,//水印列数  
         watermark_x_space:30,//水印x轴间隔  

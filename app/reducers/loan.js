@@ -1,57 +1,57 @@
 import {getAssetSuccess} from "../actions/loan";
 
 let loanState={
-    loading:false,
-    text:"",
-    postSuccess:false,
-    getLoanSuccess: [],
-    getRateSuccess:[],
-    getHouseSuccess:[],
-    getAssetSuccess:[],
-    getGuarSuccess:[],
+    loadingLoan:false,
+    loadingLoanText:"",
+    postLoan:false,
+    loanInfo:"",
+    rateInfo:"",
+    houseInfo:"",
+    assetInfo:[],
+    guarInfo:[],
 }
 
 export function loan(state = loanState , action={}) {
     switch (action.type){
-        case "loading":
+        case "loadingLoan":
             return{
                 ...state,
-                loading:action.value
+                loadingLoan:action.value
             }
-        case "text":
+        case "loadingLoanText":
             return{
                 ...state,
-                text:action.value
+                loadingLoanText:action.value
             }
-        case "postSuccess":
+        case "postLoan":
             return{
                 ...state,
-                postSuccess:action.value
+                postLoan:action.value
             }
-        case "getLoanSuccess":
+        case "loanInfo":
             return{
                 ...state,
-                getLoanSuccess:action.value
+                loanInfo:JSON.parse(action.value).data
             }
-        case "getRateSuccess":
+        case "rateInfo":
             return{
                 ...state,
-                getRateSuccess:action.value
+                rateInfo:JSON.parse(action.value).data
             }
-        case "getHouseSuccess":
+        case "houseInfo":
             return{
                 ...state,
-                getHouseSuccess:action.value
+                houseInfo:JSON.parse(action.value).data
             }
-        case "getAssetSuccess":
+        case "assetInfo":
             return{
                 ...state,
-                getAssetSuccess:action.value
+                assetInfo:JSON.parse(action.value).data
             }
-        case "getGuarSuccess":
+        case "guarInfo":
             return{
                 ...state,
-                getGuarSuccess:action.value
+                guarInfo:JSON.parse(action.value).data
             }
         default:
             return{...state}
