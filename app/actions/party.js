@@ -30,6 +30,11 @@ export const handlePartyClineId = (data) => ({
     type: "partyClientId",
     value:data
 })
+//是否查询过judgeIsQuery
+export const handleIsQuery = (data) =>({
+    type:'judgeIsQuery',
+    value:data
+})
 //获取默认数据的表单(不用传递参数)
 export function getDefaultValue(appId) {
     return function (dispatch) {
@@ -53,8 +58,11 @@ export function ishaveInformation (appId, params) {
             alert(JSON.parse(data).data.length)
             if(JSON.parse(data).data.length==0){
                 dispatch(getDefaultValue(appId))
+                dispatch(handleIsQuery(true))
                 
             }else{
+                dispatch(handleIsQuery(true))
+                
             }
 
 

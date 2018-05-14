@@ -5,11 +5,11 @@
 // 初始化状态
 let initNavList = {
     readIdCard: 'none',
-
+    pageSelected:false
 }
 
 let initName = {
-    instName:"丽泽路支行...",
+    instName:"",
     instCode:""
 }
 
@@ -25,7 +25,11 @@ export function home(state = initNavList, action={}) {
                 ...state,   //三个点是展开符
                 readIdCard: action.readIdCard
             }
-
+        case "selected":
+            return{
+                ...state,
+                pageSelected:action.value
+            }
         default:
             return {...state};
     }

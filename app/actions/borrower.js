@@ -6,7 +6,7 @@ export const loading=(data)=>({
 })
 export const loadingText=(data)=>({
     type:"content",
-    value:data
+    value:data,
 })
 export const postSuccess=(data)=>({
     type:"postSuccess",
@@ -19,6 +19,11 @@ export const setLoanerInfo=(data)=>({
 export const getLoanerInfoState=(data)=>({
     type:"state",
     value:data
+})
+export const setLoaner=(data1,data2)=>({
+    type:"loaner",
+    key:data1,
+    value:data2
 })
 export function postLoanerInfo(appId , params) {
     return function (dispatch) {

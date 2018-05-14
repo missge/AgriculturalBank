@@ -15,6 +15,10 @@ export const setInstCode = (data)=>({
     type:"Code",
     instCode:data
 })
+export const pageSelected=(data)=>({
+    type:"selected",
+    value:data
+})
 export const showText = (data) => ({
     type: 'LoadingText',
     value: data

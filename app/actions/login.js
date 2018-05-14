@@ -258,7 +258,7 @@ export function addWork(appId , params) {
         Net.postRequest(appId+"/rest/hl/process" ,params , Type.jsonType,
             function (data) {
                 dispatch(loading(false));
-                dispatch(setProcsId(data));
+                dispatch(setProcsId(JSON.parse(data).data.req_id));
             },function () {
                 dispatch(loading(false));
             })

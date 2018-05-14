@@ -2,7 +2,8 @@ import React from 'react';
 import {Component,unshiftArrs}from '../../components/libs';
 import html2canvas from 'html2canvas';
 import * as homeActions from '../../actions/home';
-import * as partyActions from '../../actions/party';
+import * as loginActions from '../../actions/login';
+import * as partyAction from '../../actions/party';
 
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -31,29 +32,34 @@ var photoSign = "";
 var idPhoto = "";
 /*授权书页面截图*/
 var pagePic = "";
+var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
 var frontImage = require("../../images/certificate_front.png");
 var backImage = require("../../images/certificate_back.png");
 const actions = [
   homeActions,
-  partyActions
+  partyAction,
+  loginActions
 ];
 function mapStateToProps(state) {
+ const {instData} = state;
   const {partyData}=state;
+  const {client} = state;
   return {
-    partyData
+    partyData,
+    instData,
+    client
+    
   };
 }
 
 function mapDispatchToProps(dispatch) {
 
   const creators = Map()
-      .merge(...actions)
+      .merge(...actions)//把一堆都揉
       .filter(value => typeof value === 'function')
       .toObject();
   return {
-    homeActions: bindActionCreators(creators, dispatch),
     partyActions: bindActionCreators(creators, dispatch)
-
   };
 }
 /*@connect(
@@ -72,58 +78,7 @@ class Party extends Component{
     constructor(props){
         super(props);
         this.state={
-            // form:{
-            //     isrel:'否',//是否共同借款人
-            //     edulevel:'小学',//文化程度
-            //     mobno:'',//手机号码
-            //     parincpm:'',//配偶年税后收入,
-            //     reltype:'夫',// 关系人类型
-            //     marrysta:'已婚',//婚姻状况
-            //     myselfincpm:'',//本人年税后收入
-            //     /****基本信息******/
-            //     country:'',//国家/地区
-            //     certtype :'',//证件类型
-            //     gender :'男',//性别
-            //     isLong:'否',//----------是否长期有效
-            //     birthday:'',//出生日期
-            //     isbirthday:'',//-------------证件有效终止日
-            //     isLocal:'是',//---------是否本地常住户口
-            //     housesta:'自有住房有按揭或抵押',//居住状况
-            //     hjdz:'', //--------------是否本地户籍
-            //     abcstuffflag:'否',//是否为农行员工
-            //     isyhzh:'否',//-------------是否私人银行客户
-            //      bdzjnx:'', //--------------本地居住年限
-            //     // isGtjhr:'', //--------是否有共同借款人
-            //     addagrflag :'城市',//长期居住地城乡属性
-            //     settleaddr :'',//长期居住地地址,
-            //     perclienttype:'非农户',//人行涉农个人客户类别
-            //     /****职业信息******/
-            //     corpname:'' ,//单位全称
-            //     corpchar:'国资委或省国资委直属企业',//单位性质 
-            //     dwdz:'',//-------------单位地址
-            //     title:'其他',//职称
-            //     dutysta:'其他',//职务状况 
-            //     dwgddh:'',  //----------------单位固定电话
-            //     dutysta:'',//职务状况 
-            //     manageRadio :'工薪供职',// -----------职业经营类别
-            //     corpstdtype:'',//单位国标行业分类 
-            //     stdjobtype:'其他',//国标职业分类 
-            //     careertype:'',//个人信贷对象 
-            //     /****财务信息******/
-            //     asssum:'',//资产合计 ,
-            //     guaramt:'',//家庭对外担保额 
-            //     debtexpd:'',//本人年债务性支出 
-            //     pardebtexpd:'',//配偶年债务性支出
-            //     debtsum:'',//负债合计 
-            //     othincpm:'',//家庭其他年收入
-            //     protexpd:'',//本人年生活保障支出 
-            //     /****联系人信息******/
-            //     addr:'居住地址',//常用通信地址
-            //     email:'',//电子邮箱
-            //     teliprefix:'',//固定电话
-            // },
             container_height:window.innerHeight-this.getHeight(100),
-
             isInfoShow:false,
             isAddParty:false,
             isAddPartyShow:false,
@@ -165,13 +120,16 @@ class Party extends Component{
             checkSuccess:"none",
             frontImage:frontImage,
             backImage:backImage,
-            frontDisplay:"inline",
-            backDisplay:"inline",
-            netCheckState:false,
             radio:"身份证",
             loadingContent:"登录中...",
             fullscreen:false,
-            netCheckState:false,            
+            netCheckState:false,       
+            radio3:"身份证",
+            cardNumber:"",
+            cardName:"",
+            frontDisplay:"inline",
+            backDisplay:"inline",
+
         }
     }
     onSubmit(e) {
@@ -211,8 +169,14 @@ class Party extends Component{
     }*/
     componentDidMount(){
         // this.props.partyActions.showNewContact(false) 
-        that = this;
-        // this.queryAllInformation()
+        //作业id
+        if(this.props.client.procsId){
+            //如果procsId有调用id
+            this.queryAllInformation(this.props.client.procsId)
+        }else{
+            //没有掉接口
+            this.queryAllInformation('dc01db22-a682-4fee-')
+        }
         
             unshiftArrs(this.state.list,this.props.partyData.form.edulevel,(data)=>{
              this.props.partyData.form['edulevel']=data
@@ -231,13 +195,16 @@ class Party extends Component{
             
 
     }
-    queryAllInformation(){
-        let procsId='dc01db22-a682-4fee-'
+    queryAllInformation(procsId){
+        // let procsId='dc01db22-a682-4fee-'
         let that =this
         //传一个作业id
         // eslint-disable-next-line
         mmspc.bridge.get(function (data) {
-             that.props.partyActions.ishaveInformation(data , JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"));
+            alert(procsId)
+             that.props.partyActions.ishaveInformation(data , JSON.parse(`{\"req_id\":\"${procsId}\"}`));
+            
+            //  that.props.partyActions.ishaveInformation(data , JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"));
        });
     //    单笔作业信息
     //    eslint-disable-next-line
@@ -308,6 +275,18 @@ class Party extends Component{
         return(
             <div style={{height:this.state.container_height}}>
                 <div id="party" class="showTab1" style={{display:this.props.partyData.showNewContact === false ? "block" : "none"}}>
+                   <div>
+                       {
+                        
+                        //    (this.props.instData.pageSelected===3&&this.props.partyData.isQuery)?
+                        //         // eslint-disable-next-line
+                        //     mmspc.bridge.get(function (data) {
+                        //             that.props.partyActions.ishaveInformation(data , JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"));
+                        //     })
+                        //     :
+                        //     ''
+                       }
+                   </div>
                     <div class="main_contanier">
                         <TabTitle title="证件信息" class="tabTitle orangeTabTitle"/>
                         <div class="form_content">
@@ -919,7 +898,10 @@ class Party extends Component{
                             <div class="footer_content" >
                                 <div class="footer_content_rt">
                                     <Button type="warning" size="large"
-                                            onClick={() => {this.context.jumpTo(4, this.setComplete.bind(this)(3))}}>下一步</Button>
+                                            onClick={() => {
+                                                this.context.jumpTo(4, this.setComplete.bind(this)(3))
+                                                this.props.partyActions.pageSelected(4);
+                                            }}>下一步</Button>
                                 </div>
                             </div>
                         </div>
@@ -1290,41 +1272,145 @@ class Party extends Component{
                             <div class="form_content">
                                 <div class="three_box">
                                     <div class="three_child_lf">
-                                        <Form labelPosition="left" model={this.props.partyData.form} labelWidth="80" onSubmit={this.onSubmit.bind(this)}>
+                                        <Form labelPosition="left" model={this.state.form} labelWidth="80" onSubmit={this.onSubmit.bind(this)}>
                                             <Form.Item label="证件类型">
                                                 <Radio.Group value={this.state.radio3} onChange={this.onChange.bind(this, 'radio3')}>
-                                                    <Radio.Button style={{marginBottom:"0px"}} value="身份证" />
-                                                </Radio.Group>
+                                                    <Radio.Button value="身份证" />
+                                                  </Radio.Group>
                                             </Form.Item>
                                             <Form.Item label="证件号码">
-                                                <Input  size="small" value={this.props.partyData.form.name} onChange={this.onChange.bind(this, 'name')}></Input>
+                                                <Input type="text" placeholder="请输入证件号码" value={this.state.cardNumber} onChange={this.onChange.bind(this, 'cardNumber')}/>
+                                                <button type="button" className="loading-button" onClick={()=>
+                                                {
+                                                    // eslint-disable-next-line
+                                                    mmspc.abcDevice.initDevice();
+                                                    // eslint-disable-next-line
+                                                    mmspc.abcDevice.readIDCardInfo("0", function(json) {
+                                                        that.setState({cardNumber:json.identityCardNumber , cardName:json.fullName});
+                                                    }, function (error){
+
+                                                    }, 30000);
+
+                                                }
+                                                }>读取</button>
+
                                             </Form.Item>
                                             <Form.Item label="客户姓名">
-                                                <Input  size="small" value={this.props.partyData.form.name} onChange={this.onChange.bind(this, 'name')}></Input>
+                                                <Input  id="card_name" type="text" size="small" value={this.state.cardName} onChange={this.onChange.bind(this, 'cardName')}></Input>
                                             </Form.Item>
                                         </Form>
                                     </div>
                                     <div class="three_child_rt">
                                         <ul class="img_box">
                                             <li>
-                                                <img src={require("./img/img.png")}  />
+                                                <div class="camera_box"  >
+                                                    <img src={this.state.frontImage?this.state.frontImage:frontImage} onClick={()=>{
+                                                        if (this.state.frontDisplay=="none"){
+                                                            this.showImageViewer(this.state.frontImage,()=>{navigator.camera.getPicture(function(data){
+                                                                that.setState({frontImage:"data:image/png;base64," + data , frontDisplay:"none"});
+                                                                that.state.frontDisplay = "none";
+                                                                that.setCheckState();
+                                                            },function(data){
+                                                            },{quality:50,destinationType:0});
+                                                            },()=>{this.setState({frontImage:null});
+                                                                this.state.frontDisplay = "inline";
+                                                                this.setCheckState()});
+                                                        }
+                                                    }} />
+                                                  <p>
+                                                     <img  src={require("../../images/camera.png")} style={{display:this.state.frontDisplay}} onClick={()=>{
+                                                         // eslint-disable-next-line
+                                                         navigator.camera.getPicture(function(data){
+                                                             that.setState({frontImage:"data:image/png;base64," + data , frontDisplay:"none"});
+                                                             that.state.frontDisplay = "none";
+                                                             that.setCheckState();
+                                                         },function(data){
+                                                         },{quality:50,destinationType:0});
+                                                     }}/>
+                                                  </p>
+                                                </div>
                                                 <p>请上传身份证头像面</p>
+
                                             </li>
                                             <li>
-                                                <img src={require("./img/img.png")}  />
-                                                <p>请上传身份证头像面</p>
+                                                <div class="camera_box">
+                                                    <img src={this.state.backImage?this.state.backImage:backImage} onClick={()=>{
+                                                        if (this.state.backDisplay=="none"){
+                                                            this.showImageViewer(this.state.backImage,()=>{navigator.camera.getPicture(function(data){
+                                                                that.setState({backImage:"data:image/png;base64," + data , backDisplay:"none"});
+                                                                that.state.backDisplay = "none";
+                                                                that.setCheckState();
+                                                            },function(data){
+                                                            },{quality:50,destinationType:0});
+                                                            },()=>{this.setState({backImage:null}) ;
+                                                                this.state.backDisplay = "inline";
+                                                                this.setCheckState()});
+                                                        }
+
+                                                    }}/>
+                                                   <p>
+                                                     <img src={require("../../images/camera.png")} style={{display:this.state.backDisplay}} onClick={()=>{
+                                                         // eslint-disable-next-line
+                                                         navigator.camera.getPicture(function(data){
+                                                             that.setState({backImage:"data:image/png;base64," + data  , backDisplay:"none"});
+                                                             that.state.backDisplay = "none";
+                                                             that.setCheckState();
+                                                         },function(data){
+                                                         },{quality:50,destinationType:0});
+
+                                                     }}/>
+                                                  </p>
+                                                </div>
+                                                <p>请上传身份证国徽面</p>
                                             </li>
 
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="three_box_rt">
-                                    <div>
-                                        <input type="button" class="grayButton" value="联网核查"/>
+                                <div class="three_box_rt" >
+                                    <div style={{display:!this.props.instData.netCheck?"inline":"none"}}>
+                                        <Button type="primary" style={{height:70,width:70}}disabled={!this.state.netCheckState} textStyle={{fontSize:18,lineHeight:1.3,whiteSpace:'normal'}}
+                                                onClick={()=>{
+                                                    if (reg.test(this.state.cardNumber)==false){
+                                                        // eslint-disable-next-line
+                                                        mmspc.dialog.toast("身份证号码格式不正确");
+                                                    } else {
+                                                        if (this.state.netCheckState){
+                                                            this.setState({loadingContent:"联网核查..." , fullscreen:true});
+                                                            // eslint-disable-next-line
+                                                            mmspc.nativeRequest.init();
+                                                            // eslint-disable-next-line
+                                                            mmspc.bridge.get((appId)=>{
+                                                                // this.props.netActions.addCustomer(appId ,JSON.parse("{}"));
+                                                                this.props.netActions.addCustomer(appId , "{\"cliname\":"+"\""+this.state.cardName+"\",\"certno\":"+"\""+this.state.cardNumber+"\"}");
+                                                                // this.props.netActions.netcheck(appId);
+                                                                // eslint-disable-next-line
+                                                                // mmspc.nativeRequest.get("http://219.142.79.229:8989/mmsp-ps/forward/"+appId+"/rest/pub/access/onlinecheck?clientId=易贤武&userId=360731199110284813"
+                                                                //     ,success , fail);
+                                                            });
 
+                                                            function success() {
+                                                                that.setState({nextBg:"#FFA400" , nextBorder:"#FFA400" ,
+                                                                    nextState:true,loadingContent:"联网核查..." , fullscreen:false,
+                                                                    check:"none" ,checkSuccess:"inline"});
+                                                            }
+                                                            function fail() {
+                                                                this.setState({loadingContent:"联网核查..." , fullscreen:false});
+                                                            }
+                                                        }
+
+                                                    }
+                                                }}>联网核查</Button>
+
+                                    </div>
+                                    <div style={{display:this.props.instData.netCheck?"inline":"none"}}>
+                                        <img src={require("../../images/success_iocn.png")}
+                                             width="75%" height="75%"/>
+                                        <p style={{color:"#00CD00"}}>核查通过</p>
                                     </div>
                                 </div>
                             </div>
+
                             <TabTitle title="征信授权" class="tabTitle blueTabTitle"/>
                             <div class="form_content">
                                 <div class="three_box">

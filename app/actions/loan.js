@@ -1,5 +1,6 @@
 import Net from "../netRequest/mmspRequest"
 import {getSuccess} from "./credit";
+import {handlePartyFormData} from "./party";
 
 export const loadingLoan = (data) => ({
     type: "loadingLoan",
@@ -14,25 +15,30 @@ export const postLoan = (data) => ({
     value: data
 })
 export const setLoanInfo = (data) => ({
-    type: "loanInfo",
+    type: "loanData",
     value: data
 })
 export const setRateInfo = (data) => ({
-    type: "rateInfo",
+    type: "rateData",
     value: data
 })
 export const setHouseInfo = (data) => ({
-    type: "houseInfo",
+    type: "houseData",
     value: data
 })
 export const setAssetInfo = (data) => ({
-    type: "assetInfo",
+    type: "assetData",
     value: data
 })
 export const setGuarInfo = (data) => ({
-    type: "guarInfo",
+    type: "guarData",
     value: data
 })
+/*export const handleLoanLoanData = (data) => ({
+    type: "loanLoanData",
+    value: data
+
+})*/
 
 /*export function postLoanInfo(appId ,loanParams,houseParams) {
     return function (dispatch) {
@@ -122,11 +128,11 @@ export function getLoanInfo(appId, params) {
     return function (dispatch) {
         dispatch(loadingLoan(true));
         dispatch(loadingLoanText("查询贷款信息..."));
-        Net.getRequest(appId + "/rest/hl/process/loan", params, function (data) {
-            alert(data);
-            alert(JSON.parse(data).data);
+        Net.getRequest(appId + "/rest/hl/process/loan", params, function (successData) {
+            alert(successData);
+            let jsonData = JSON.parse(successData).data;
+            dispatch(setLoanInfo(jsonData));
             dispatch(loadingLoan(false));
-            dispatch(setLoanInfo(data));
         }, function () {
             alert("贷款信息查询失败！");
             dispatch(loadingLoan(false));
@@ -138,10 +144,11 @@ export function getRateInfo(appId, params) {
     return function (dispatch) {
         dispatch(loadingLoan(true));
         dispatch(loadingLoanText("查询利率信息..."));
-        Net.getRequest(appId + "/rest/hl/process/acct", params, function (data) {
-            alert(data);
+        Net.getRequest(appId + "/rest/hl/process/acct", params, function (successData) {
+            alert(successData);
+            let jsonData = JSON.parse(successData).data;
+            dispatch(setRateInfo(jsonData));
             dispatch(loadingLoan(false));
-            dispatch(setRateInfo(data));
         }, function () {
             alert("利率信息查询失败！");
             dispatch(loadingLoan(false));
@@ -153,10 +160,11 @@ export function getHouseInfo(appId, params) {
     return function (dispatch) {
         dispatch(loadingLoan(true));
         dispatch(loadingLoanText("查询用途信息..."));
-        Net.getRequest(appId + "/rest/hl/process/house", params, function (data) {
-            alert(data);
+        Net.getRequest(appId + "/rest/hl/process/house", params, function (successData) {
+            alert(successData);
+            let jsonData = JSON.parse(successData).data
+            dispatch(setHouseInfo(jsonData))
             dispatch(loadingLoan(false));
-            dispatch(setHouseInfo(data));
         }, function () {
             alert("用途信息查询失败！");
             dispatch(loadingLoan(false));
@@ -169,19 +177,20 @@ export function getAssetInfo(appId, assetlistparams, assetIdparams) {
         dispatch(loadingLoan(true));
         dispatch(loadingLoanText("查询押品信息..."));
         //押品列表查询  传作业Id
-        Net.getRequest(appId + "/rest/hl/process/assetlist", assetlistparams, function (data) {
-            alert("列表"+data);
-            alert(JSON.parse(data).data.length);
-            if (JSON.parse(data).data.length != 0 ){
+        Net.getRequest(appId + "/rest/hl/process/assetlist", assetlistparams, function (successData) {
+            alert("列表" + successData);
+            if (JSON.parse(successData).data.length != 0) {
+                let jsonData = JSON.parse(successData).data;
+                dispatch(setAssetInfo(jsonData));
                 dispatch(loadingLoan(false));
-                dispatch(setAssetInfo(data));
             } else {
                 alert("进入单笔查询");
                 //押品单笔查询  传押品Id
-                Net.getRequest(appId + "/rest/hl/process/asset", assetIdparams, function (data) {
-                    alert("单笔"+data);
+                Net.getRequest(appId + "/rest/hl/process/asset", assetIdparams, function (successData) {
+                    alert("单笔" + successData);
+                    let jsonData = JSON.parse(successData).data;
+                    dispatch(setAssetInfo(jsonData));
                     dispatch(loadingLoan(false));
-                    dispatch(setAssetInfo(data));
                 }, function () {
                     alert("押品信息查询失败！");
                     dispatch(loadingLoan(false));
@@ -199,23 +208,12 @@ export function getGuarInfo(appId, guarListparams, guarIdparams) {
         dispatch(loadingLoan(true));
         dispatch(loadingLoanText("查询担保信息..."));
         //押品列表查询  传作业Id
-        Net.getRequest(appId + "/rest/hl/process/guarlist", guarListparams, function (data) {
-            alert("列表"+data);
-            alert(JSON.parse(data).data.length);
-            if (JSON.parse(data).data.length != 0) {
-                dispatch(loadingLoan(false));
-                dispatch(setGuarInfo(data));
-            } else {
-                alert("进入单笔查询");
-                //押品单笔查询  传押品Id
-                Net.getRequest(appId + "/rest/hl/process/guar", guarIdparams, function (data) {
-                    dispatch(loadingLoan(false));
-                    dispatch(setGuarInfo(data));
-                }, function () {
-                    alert("担保信息查询失败！");
-                    dispatch(loadingLoan(false));
-                })
-            }
+        Net.getRequest(appId + "/rest/hl/process/guarlist", guarListparams, function (successData) {
+            alert(successData);
+            let jsonData = JSON.parse(successData).data;
+            dispatch(setGuarInfo(jsonData));
+            dispatch(loadingLoan(false));
+
         }, function () {
             alert("担保信息查询失败！");
             dispatch(loadingLoan(false));

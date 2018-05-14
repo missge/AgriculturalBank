@@ -16,7 +16,7 @@ import {bindActionCreators} from "redux";
 import {Map} from "immutable";
 
 var qs = require("querystring");
-
+var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
 var frontImage = require("../../images/certificate_front.png");
 var backImage = require("../../images/certificate_back.png");
 
@@ -53,19 +53,6 @@ function regexString(value) {
     }
 }
 
-/*
-function loginNew() {
-    // eslint-disable-next-line
-    mmspc.bridge.get(function (data) {
-        appId = data;
-        that.props.netActions.login(data);
-        // that.props.netActions.getInst(data);
-    },
-    function () {
-
-    })
-
-}*/
 
 class NetCheck extends Component{
     constructor(props) {
@@ -154,25 +141,26 @@ class NetCheck extends Component{
     }
     onChangeRadio(key, value) {
         if ("radio2"==key){
-            // eslint-disable-next-line
-            mmspc.bridge.get((appId)=>{
-                this.props.netActions.addWork(appId,JSON.parse("{\"acpt_opr_inst_id\":"+"\""+this.props.head.instCode+"\"}"));
-                // this.props.netActions.addWork(appId,this.state.processVO);
-                // $.ajax("http://10.230.155.49:9083/mmsp-ps/forward/vEwQVohB/rest/hl/process",{
-                //     async:false,
-                //     cache:false,
-                //     method:"POST",
-                //     dataType:"json",
-                //     headers:{"dnfl-token":$("#dnflToken").val()
-                //     },
-                //     data:"acpt_opr_inst_id=000000603"
-                //
-                // })
+            if (this.props.head.instName==""){
+                // eslint-disable-next-line
+                mmspc.dialog.toast("请选择机构");
+            } else {
+                // eslint-disable-next-line
+                mmspc.bridge.get((appId)=>{
+                    this.props.netActions.addWork(appId,JSON.parse("{\"optkind\":\"A5401\" ,\"acpt_opr_inst_id\":"+"\""+this.props.head.instCode+"\" , \"acpt_opr_inst_name\":"+"\""+this.props.head.instName+"\"}"));
+                    // this.props.netActions.addWork(appId,this.state.processVO);
+                })
+                this.setState({
+                    [key]:value
+                })
+            }
+
+        }else {
+            this.setState({
+                [key]:value
             })
         }
-        this.setState({
-            [key]:value
-        })
+
 
     }
     onChange(key, value) {
@@ -181,9 +169,6 @@ class NetCheck extends Component{
         },()=>{
             this.setCheckState();
         })
-        // setTimeout(this.setState({
-        //     [key]: value
-        // }),0);
         switch (key){
             case "cardName":
                 this.state.cardName = value;
@@ -200,14 +185,6 @@ class NetCheck extends Component{
 
     componentDidMount(){
         that=this;
-        // this.setState({loadingContent:"登录中..." , fullscreen:true});
-        // this.props.netActions.loading(true);
-        // setTimeout(loginNew , 2000);
-        // loginNew();
-        // initData();
-        // this.props.netActions.loginLoading(true);
-        // setTimeout(this.props.netActions.loginLoading(false) , 3000);
-        // setTimeout(login , 1000);
 
     }
     setCheckState(){
@@ -223,6 +200,7 @@ class NetCheck extends Component{
         value[cur] = 2;
         return value;
     }
+
 
     showImageViewer(src,onRetake,onDelete){
         ImageViewer.show(src).then((action) => {
@@ -379,28 +357,34 @@ class NetCheck extends Component{
                                     <div style={{display:!this.props.instData.netCheck?"inline":"none"}}>
                                         <Button type="primary" style={{height:70,width:70}}disabled={!this.state.netCheckState} textStyle={{fontSize:18,lineHeight:1.3,whiteSpace:'normal'}}
                                                 onClick={()=>{
-                                                    if (this.state.netCheckState){
-                                                        this.setState({loadingContent:"联网核查..." , fullscreen:true});
+                                                    if (reg.test(this.state.cardNumber)==false){
                                                         // eslint-disable-next-line
-                                                        mmspc.nativeRequest.init();
-                                                        // eslint-disable-next-line
-                                                        mmspc.bridge.get((appId)=>{
-                                                            // this.props.netActions.addCustomer(appId ,JSON.parse("{}"));
-                                                            this.props.netActions.addCustomer(appId , "{\"cliname\":"+"\""+this.state.cardName+"\",\"certno\":"+"\""+this.state.cardNumber+"\"}");
-                                                            // this.props.netActions.netcheck(appId);
+                                                        mmspc.dialog.toast("身份证号码格式不正确");
+                                                    } else {
+                                                        if (this.state.netCheckState){
+                                                            this.setState({loadingContent:"联网核查..." , fullscreen:true});
                                                             // eslint-disable-next-line
-                                                            // mmspc.nativeRequest.get("http://219.142.79.229:8989/mmsp-ps/forward/"+appId+"/rest/pub/access/onlinecheck?clientId=易贤武&userId=360731199110284813"
-                                                            //     ,success , fail);
-                                                        });
+                                                            mmspc.nativeRequest.init();
+                                                            // eslint-disable-next-line
+                                                            mmspc.bridge.get((appId)=>{
+                                                                // this.props.netActions.addCustomer(appId ,JSON.parse("{}"));
+                                                                this.props.netActions.addCustomer(appId , "{\"cliname\":"+"\""+this.state.cardName+"\",\"certno\":"+"\""+this.state.cardNumber+"\"}");
+                                                                // this.props.netActions.netcheck(appId);
+                                                                // eslint-disable-next-line
+                                                                // mmspc.nativeRequest.get("http://219.142.79.229:8989/mmsp-ps/forward/"+appId+"/rest/pub/access/onlinecheck?clientId=易贤武&userId=360731199110284813"
+                                                                //     ,success , fail);
+                                                            });
 
-                                                        function success() {
-                                                            that.setState({nextBg:"#FFA400" , nextBorder:"#FFA400" ,
-                                                                nextState:true,loadingContent:"联网核查..." , fullscreen:false,
-                                                                check:"none" ,checkSuccess:"inline"});
+                                                            function success() {
+                                                                that.setState({nextBg:"#FFA400" , nextBorder:"#FFA400" ,
+                                                                    nextState:true,loadingContent:"联网核查..." , fullscreen:false,
+                                                                    check:"none" ,checkSuccess:"inline"});
+                                                            }
+                                                            function fail() {
+                                                                this.setState({loadingContent:"联网核查..." , fullscreen:false});
+                                                            }
                                                         }
-                                                        function fail() {
-                                                            this.setState({loadingContent:"联网核查..." , fullscreen:false});
-                                                        }
+
                                                     }
                                                 }}>联网核查</Button>
 
@@ -427,7 +411,8 @@ class NetCheck extends Component{
                                  <div class="footer_content_rt">
                                       <Button  id="nextStep" style={{backgroundColor:this.props.instData.netCheck?"#FFA400":"#999999" ,borderColor:this.props.instData.netCheck?"#FFA400":"#999999"}} type="warning" size="large" onClick={()=>{
                                           if(this.props.instData.netCheck){
-                                                  this.context.jumpTo(1, this.setComplete.bind(this)(0))
+                                                  this.context.jumpTo(1, this.setComplete.bind(this)(0));
+                                                  this.props.netActions.pageSelected(1);
                                           }else {
                                               // this.context.jumpTo(1,[2,0,0,0,0,0,0,0])
                                           }

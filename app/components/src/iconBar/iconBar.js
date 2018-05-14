@@ -3,6 +3,7 @@ import React from 'react';
 import {Component}from '../../libs'
 import './banner.css';
 import PropTypes from 'prop-types';
+import {pageSelected} from "../../../actions/home"
 export default class IconBar extends Component{
     constructor(props, context) {
         super(props, context);
@@ -39,7 +40,6 @@ export default class IconBar extends Component{
     renderItem(items){
         return items.map(
             function (item, i) {
-
                 if(this.state.select==i){
                     return (
                         <div style={{width:this.getWidth(160),height:this.getHeight(140),backgroundColor:this.props.touchColor,borderTopLeftRadius:10,borderBottomLeftRadius:10}}>
@@ -75,7 +75,7 @@ export default class IconBar extends Component{
         )
     }
     jumpTo(num,iconType){
-         this.setState({select:num,iconType:iconType})
+        this.setState({select:num,iconType:iconType})
     }
     getChildContext() {
         return {
@@ -90,6 +90,11 @@ export default class IconBar extends Component{
     }
 
 };
+
+function send(dispatch){
+    dispatch(pageSelected(true));
+    alert("方法执行了");
+}
 IconBar.childContextTypes = {
     select:PropTypes.number,
     jumpTo:PropTypes.func,

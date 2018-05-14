@@ -6,6 +6,8 @@ let initData={
     // 请求失败
     getPartyFail:'',
     getclientId:'',
+    //是否查询过
+    isQuery:false,
     form:{
         isrel:'否',//是否共同借款人
         edulevel:'小学',//文化程度
@@ -84,6 +86,11 @@ export function partyData(state=initData , action={}) {
             return {
                 ...state,
                 getclientId:action.value                
+            }
+        case "judgeIsQuery":
+            return {
+                ...state,
+                isQuery:action.value
             }
         default:
             return{...state}

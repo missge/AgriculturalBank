@@ -18,6 +18,7 @@ import * as loginActions from '../../../actions/login';
 import * as homeActions from '../../../actions/home';
 import Net from "../../../netRequest/mmspRequest";
 import watermark from "../../../components/src/utils/waterMark";
+import {MessageBox} from "../../../components";
 
 const actions=[
     loginActions,homeActions
@@ -77,6 +78,18 @@ const dcbgImage = [
     require("./image/dcbg_yellow.png"),
 ];
 const titleColor =["#999999","#12b2a8","#faa21e"];
+
+function onBackPressed() {
+    MessageBox.confirm(
+        '您当前正在办理贷款业务\n' +
+        '\n' +
+        '请选择操作\n', '温馨提示',{showClose:false}).then(() => {
+        // eslint-disable-next-line
+        mmspc.button.backPress()
+    }).catch(() => {
+
+    });
+}
 class Index extends Component {
     constructor(props){
         super(props);
@@ -104,8 +117,12 @@ class Index extends Component {
                 this.refs.myIconBar.jumpTo(cur,value);
             }
         }
+        this.props.homeActions.pageSelected(cur);
     }
     componentDidMount(){
+        // 开始时注册一个插件
+        // eslint-disable-next-line
+        mmspc.android.init(onBackPressed);
         watermark({watermark_txt0:'小明   123456'});
         this.props.homeActions.loading(true);
         // setTimeout(()=>{
@@ -122,9 +139,9 @@ class Index extends Component {
         // },2000)
         setTimeout(()=>{
             // eslint-disable-next-line
-            // mmspc.bridge.get((data)=>{
-            //     this.props.homeActions.login(data);
-            // });
+            mmspc.bridge.get((data)=>{
+                this.props.homeActions.login(data);
+            });
         },2000)
     }
     render() {

@@ -79,114 +79,21 @@ class Loan extends Component {
             isShow: false,
             selectDialogVisible: false,
 
-            //贷款房屋信息
-            houseInfo: {
-                /*dlpname: '',//开发商名称
-                bldname: '',//楼盘名称
-                sellno: '',//销
-                bhusaim: '',//购房目的
-                housesum: '',//本套房屋属于第几套
-                hustype: '',//房屋类型
-                husform: '',//房屋形式
-                buildyear: '',//房屋建造年份
-                husloclinfo: '',//房贷结清情况
-                ishired: '',//房屋是否已经出租*/
-                req_id:'dc01db22-a682-4fee-'
-            },
-
             isCommonasst: '',//是否普通住宅 onChangeHouse
             isLocal: '',//借款人是否本地信息
             divorceDate: '',//借款人离婚证明登记日期
 
-            //贷款信息
-            loanInfo: {
-               /* loansum: '',//贷款金额
-                firstpaysum: '',//首付金额
-                loanterm: '',//贷款期限
-                price: '',//房屋交易总价
-                isfund: '是',//是否公积金组合
-                cobreno: '',//合作品种编号
-                coprjname: '',//合作项目名称
-                firstpayrate: '',//首付款比例
-                fundno: '',//公积金网点号
-                fundcontno: '',//公积金贷款相关合同编号
-                loanusekind: '购买住房',//贷款用途
-                charkind: '自营常规贷款',//贷款性质
-                spepdct: '',//特色产品
-                iscredit: '是',//是否信用方式
-                account1: '', //     还款结算账号一
-                payeedepacc: '',//     收款人账号
-                payeename: '',//     收款人户名*/
-                req_id:'dc01db22-a682-4fee-'
-            },
-
-            //利率信息
-            rateInfo: {
-               /* execrate: '',//执行利率
-                isgetbreaksum: '是',//是否收取提前还款违约金
-                repaykind: '',//还款类型
-                adjrateflag: '',//利率浮动周期
-                floatrange: '0%',//利率浮动幅度
-                houseexp: '',//每月房屋其他费用支出（单位：元）
-                execratekind: '',//执行利率类别*/
-                req_id:'dc01db22-a682-4fee-'
-            },
-            //利率信息与原型 不一致的2个字段
-            // monHousPay:'',//每月房屋费用支出
-            // f_ratePol:'',//执行利率政策
-
-            //押品信息
-            asstInfo: {
-               /* buildarea: '',//房屋建筑面积
-                houseaddr: '',//详细地址
-                assttype: '',//押品分类
-                asstname: '',//押品名称
-                hususe: '',//房屋实际用途
-                landgetmetho: '',//土地取得方式
-                ownercode: '',//产权人客户代码
-                archstruc: '',//建筑结构
-                landuse: '',//土地用途
-                evaldate: '',//评估基准日
-                confval: '',//确认价值
-                evalressrc: '',//评估结果来源
-                evalmeth1: '',//评估方法1
-                evalname2: '',//评估师姓名2
-                evalval: '',//评估价值
-                validdate: '',//评估有效期到期日
-                evaldat: '',//评估价值认定日期
-                evaluinstcode: '',//外部评估机构代码
-                evalname1: '',//评估师姓名1
-                ownerprop: '',//产权份额
-                ownershiptype: '',//产权类型
-                archusage: '',//建筑物规划用途*/
-                req_id:'dc01db22-a682-4fee-',//作业Id
-            },
-
-            //缺少1个字段
+            //押品缺少2个字段
             iseval: '',//是否评估流程
+            evaldat: '',//评估价值认定日期
 
-            //担保信息
-            guarInfo: {
-              /*  guarcode: '',//保证人代码
-                //   guaranteeID:'',//担保人ID
-                guarname: '',//担保人名称
-                guarway: '',//拟定担保方式
-                isphase: '',//是否阶段性担保*/
-                req_id:'dc01db22-a682-4fee-', //作业Id
-                //    guarcalway:'',//担保能力测算方法
-                //    guarsum:'',//可用担保额度（原型）与担保额度
-            },
 
             houseTypeList: ['商品房', '经济适用房', '限价房', '房改房', '军队经济适用房', '军队安置房'],
-            loanIds: {
-                procsId: '',//作业Id
-                loanorder: '',//贷款流程号
-            },
         };
     }
 
     onGetInterest(key, value) {
-        this.state.rateInfo[key] = value;
+        this.props.loan.rateInfo[key] = value;
         this.setState({
             [key]: value
         })
@@ -202,27 +109,27 @@ class Loan extends Component {
     }
 
     onChangeHouse(key, value) {
-        this.state.houseInfo[key] = value;
+        this.props.loan.houseInfo[key] = value;
         this.forceUpdate();
     }
 
     onChangeLoan(key, value) {
-        this.state.loanInfo[key] = value;
+        this.props.loan.loanInfo[key] = value;
         this.forceUpdate();
     }
 
     onChangeRate(key, value) {
-        this.state.rateInfo[key] = value;
+        this.props.loan.rateInfo[key] = value;
         this.forceUpdate();
     }
 
     onChangeAsst(key, value) {
-        this.state.asstInfo[key] = value;
+        this.props.loan.asstInfo[key] = value;
         this.forceUpdate();
     }
 
     onChangeGuar(key, value) {
-        this.state.guarInfo[key] = value;
+        this.props.loan.guarInfo[key] = value;
         this.forceUpdate();
     }
 
@@ -248,16 +155,14 @@ class Loan extends Component {
     componentDidMount() {
         that = this;
         // eslint-disable-next-line
-        //   mmspc.bridge.get(function (data) {
-        //   that.props.loanActions.getLoanInfo(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\",\"loanorder\":\"11111\"}"));
-    //      that.setState({loanInfo:this.props.loan.loanInfo});
+      //  mmspc.bridge.get(data => {
+            //this.props.loanActions.getLoanInfo(data, JSON.parse("{\"req_id\":\"111111\",\"loanorder\":\"11111\"}"));
+            //    this.props.loanActions.getRateInfo(data, JSON.parse("{\"req_id\":\"11111\"}"));
+            //    this.props.loanActions.getHouseInfo(data, JSON.parse("{\"req_id\":\"1111111\"}"));
+            //    this.props.loanActions.getAssetInfo(data, JSON.parse("{\"req_id\":\"111111\"}"), "");//作业Id 押品Id
+            //    this.props.loanActions.getGuarInfo(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}")); //作业Id 担保信息Id
+      //  });
 
-       //     that.props.loanActions.getRateInfo(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"));
-       //     that.setState({rateInfo:this.props.loan.rateInfo});
-       //   that.props.loanActions.getHouseInfo(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"));
-       //       that.props.loanActions.getAssetInfo(data,JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}"), "");//作业Id 押品Id
-       //       that.props.loanActions.getGuarInfo(data,JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\",\"guarId\":\"11111\"}")); //作业Id 担保信息Id
-        //  });
     }
 
 
@@ -276,8 +181,9 @@ class Loan extends Component {
                         </div>
                         <div>
                             {
-                                this.props.loan.loading && <Loading fullscreen={true} text={this.props.loan.text}
-                                                                    style={{backgroundColor: 'rgba(0, 0, 0, 0.3)'}}/>
+                                this.props.loan.loadingLoan &&
+                                <Loading fullscreen={true} text={this.props.loan.loadingLoanText}
+                                         style={{backgroundColor: 'rgba(0, 0, 0, 0.3)'}}/>
                             }
                         </div>
                         <div class="main_contanier">
@@ -287,23 +193,24 @@ class Loan extends Component {
                                 <div class="form_content">
                                     <div class="form_lf">
                                         <Form.Item label="贷款金额">
-                                            <Input size="small" value={this.state.loanInfo.loansum} placeholder="50万"
+                                            <Input size="small" value={this.props.loan.loanInfo.loansum}
+                                                   placeholder="50万"
                                                    onChange={this.onChangeLoan.bind(this, 'loansum')}></Input>
                                         </Form.Item>
                                         <Form.Item label="首付金额">
-                                            <Input size="small" value={this.state.loanInfo.firstpaysum}
+                                            <Input size="small" value={this.props.loan.loanInfo.firstpaysum}
                                                    placeholder="15万"
                                                    onChange={this.onChangeLoan.bind(this, 'firstpaysum')}></Input>
                                         </Form.Item>
                                         <Form.Item label="还款方式">
-                                            <Radio.Group value={this.state.loanInfo.f_repayment}
+                                            <Radio.Group value={this.props.loan.loanInfo.f_repayment}
                                                          onChange={this.onChangeLoan.bind(this, 'f_repayment')}>
                                                 <Radio.Button value="等额本金"/>
                                                 <Radio.Button value="等额本息"/>
                                             </Radio.Group>
                                         </Form.Item>
                                         <Form.Item label="是否公积金组合">
-                                            <Radio.Group value={this.state.loanInfo.isfund}
+                                            <Radio.Group value={this.props.loan.loanInfo.isfund}
                                                          onChange={this.onChangeLoan.bind(this, 'isfund')}>
                                                 <Radio.Button value="是"/>
                                                 <Radio.Button value="否"/>
@@ -313,18 +220,21 @@ class Loan extends Component {
                                     </div>
                                     <div class="form_rt">
                                         <Form.Item label="贷款期限">
-                                            <Input size="small" value={this.state.loanInfo.loanterm} placeholder="10年"
+                                            <Input size="small" value={this.props.loan.loanInfo.loanterm}
+                                                   placeholder="10年"
                                                    onChange={this.onChangeLoan.bind(this, 'loanterm')}></Input>
                                         </Form.Item>
                                         <Form.Item label="房屋交易总价">
-                                            <Input size="small" value={this.state.loanInfo.price} placeholder="150万"
+                                            <Input size="small" value={this.props.loan.loanInfo.price}
+                                                   placeholder="150万"
                                                    onChange={this.onChangeLoan.bind(this, 'price')}></Input>
                                         </Form.Item>
                                         <Form.Item label="利率浮动幅度">
-                                            <Input size="small" value={this.state.rateInfo.floatrange} readonly></Input>
+                                            <Input size="small" value={this.props.loan.rateInfo.floatrange}
+                                                   readonly></Input>
                                         </Form.Item>
                                         <Form.Item>
-                                            <Radio.Group value={this.state.rateInfo.floatrange}
+                                            <Radio.Group value={this.props.loan.rateInfo.floatrange}
                                                          onChange={this.onGetInterest.bind(this, 'floatrange')}>
                                                 <Radio.Button value="0%"/>
                                                 <Radio.Button value="5%"/>
@@ -340,13 +250,14 @@ class Loan extends Component {
                                 <div class="form_content">
                                     <div class="form_lf">
                                         <Form.Item label="房屋建筑面积">
-                                            <Input size="small" value={this.state.asstInfo.buildarea} placeholder="92平方"
+                                            <Input size="small" value={this.props.loan.asstInfo.buildarea}
+                                                   placeholder="92平方"
                                                    onChange={this.onChangeAsst.bind(this, 'buildarea')}></Input>
                                         </Form.Item>
                                     </div>
                                     <div class="form_rt">
                                         <Form.Item label="详细地址">
-                                            <Input size="small" value={this.state.asstInfo.houseaddr}
+                                            <Input size="small" value={this.props.loan.asstInfo.houseaddr}
                                                    placeholder="北京北路102号"
                                                    onChange={this.onChangeAsst.bind(this, 'houseaddr')}></Input>
                                         </Form.Item>
@@ -364,20 +275,19 @@ class Loan extends Component {
                                     <Button type="warning" size="large"
                                             onClick={
                                                 () => {
-                                                    //    alert("贷款信息："+JSON.stringify(this.state.loanInfo));
-                                                    //    alert("房屋信息："+JSON.stringify(this.state.houseInfo));
-                                                    //   alert("利率信息："+JSON.stringify(this.state.rateInfo));
-                                                    //    alert("押品信息："+JSON.stringify(this.state.asstInfo));
-                                                   //     alert("担保信息："+JSON.stringify(this.state.guarInfo));
-                                                    //   alert("贷款查询传的参数："+JSON.stringify(this.state.loanIds.procsId));
+                                                    //     alert("贷款信息："+JSON.stringify(this.props.loan.loanInfo));
+                                                    //     alert("房屋信息："+JSON.stringify(this.props.loan.houseInfo));
+                                                    //   alert("利率信息："+JSON.stringify(this.props.loan.rateInfo));
+                                                    //      alert("押品信息：" + JSON.stringify(this.props.loan.asstInfo));
+                                                    //     alert("担保信息："+JSON.stringify(this.props.loan.guarInfo));
                                                     // eslint-disable-next-line
                                                     mmspc.bridge.get(function (data) {
-                                                        //    that.props.loanActions.postLoanInfo(data ,that.state.loanInfo, that.state.houseInfo);
-                                                    //    that.props.loanActions.postLoanInfo(data, that.state.loanInfo);
-                                                     //   that.props.loanActions.postHouseInfo(data, that.state.houseInfo);
-                                                    //   that.props.loanActions.postRateInfo(data, that.state.rateInfo);
-                                                    //    that.props.loanActions.postAssetInfo(data, that.state.asstInfo);
-                                                    //   that.props.loanActions.postGuarInfo(data, that.state.guarInfo);
+                                                    //    that.props.loanActions.postLoanInfo(data, that.state.loanInfo, that.props.loan.houseInfo);
+                                                    //    that.props.loanActions.postLoanInfo(data, that.props.loan.loanInfo);
+                                                    //    that.props.loanActions.postHouseInfo(data, that.props.loan.houseInfo);
+                                                    //    that.props.loanActions.postRateInfo(data, that.props.loan.rateInfo);
+                                                        that.props.loanActions.postAssetInfo(data, that.props.loan.asstInfo);
+                                                    //    that.props.loanActions.postGuarInfo(data, that.props.loan.guarInfo);
                                                     });
                                                     // eslint-disable-next-line
                                                     // mmspc.fileConversion.getApplicationFrom();
@@ -406,62 +316,64 @@ class Loan extends Component {
                                             <div class="form_content">
                                                 <div class="form_lf">
                                                     <Form.Item label="贷款性质">
-                                                        <Radio.Group value={this.state.loanInfo.charkind}
+                                                        <Radio.Group value={this.props.loan.loanInfo.charkind}
                                                                      onChange={this.onChangeLoan.bind(this, 'charkind')}>
                                                             <Radio.Button value="自营常规贷款"/>
                                                             <Radio.Button value="公积金委托贷款"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="合作项目名称">
-                                                        <Input value={this.state.loanInfo.coprjname} placeholder="合作项目 "
+                                                        <Input value={this.props.loan.loanInfo.coprjname}
+                                                               placeholder="合作项目 "
                                                                onChange={this.onChangeLoan.bind(this, 'coprjname')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="首付款比例">
-                                                        <Input value={this.state.loanInfo.firstpayrate}
+                                                        <Input value={this.props.loan.loanInfo.firstpayrate}
                                                                placeholder="15% "
                                                                onChange={this.onChangeLoan.bind(this, 'firstpayrate')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="执行利率政策">
-                                                        <Radio.Group value={this.state.rateInfo.execratekind}
+                                                        <Radio.Group value={this.props.loan.rateInfo.execratekind}
                                                                      onChange={this.onChangeRate.bind(this, 'execratekind')}>
                                                             <Radio.Button value="首套利率"/>
                                                             <Radio.Button value="二套利率"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="执行利率">
-                                                        <Input value={this.state.rateInfo.execrate} placeholder="5% "
+                                                        <Input value={this.props.loan.rateInfo.execrate}
+                                                               placeholder="5% "
                                                                onChange={this.onChangeRate.bind(this, 'execrate')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="还款账号">
-                                                        <Input value={this.state.loanInfo.account1}
+                                                        <Input value={this.props.loan.loanInfo.account1}
                                                                placeholder="请输入还款账号"
                                                                onChange={this.onChangeLoan.bind(this, 'account1')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="收款人账号">
-                                                        <Input value={this.state.loanInfo.payeedepacc}
+                                                        <Input value={this.props.loan.loanInfo.payeedepacc}
                                                                placeholder="请输入收款人账号"
                                                                onChange={this.onChangeLoan.bind(this, 'payeedepacc')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="每月房屋费用支出">
-                                                        <Input value={this.state.rateInfo.houseexp}
+                                                        <Input value={this.props.loan.rateInfo.houseexp}
                                                                onChange={this.onChangeRate.bind(this, 'houseexp')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="是否信用方式">
-                                                        <Radio.Group value={this.state.loanInfo.iscredit}
+                                                        <Radio.Group value={this.props.loan.loanInfo.iscredit}
                                                                      onChange={this.onChangeLoan.bind(this, 'iscredit')}>
                                                             <Radio.Button value="是"/>
                                                             <Radio.Button value="否"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="公积金网点号">
-                                                        <Input value={this.state.loanInfo.fundno}
+                                                        <Input value={this.props.loan.loanInfo.fundno}
                                                                placeholder="A40051008 "
                                                                onChange={this.onChangeLoan.bind(this, 'fundno')}></Input>
                                                     </Form.Item>
                                                 </div>
                                                 <div class="form_rt">
                                                     <Form.Item label="特色产品">
-                                                        <Radio.Group value={this.state.loanInfo.spepdct}
+                                                        <Radio.Group value={this.props.loan.loanInfo.spepdct}
                                                                      onChange={this.onChangeLoan.bind(this, 'spepdct')}>
                                                             <Radio.Button value="非特色"/>
                                                             <Radio.Button value="接力贷款"/>
@@ -470,18 +382,18 @@ class Loan extends Component {
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="合作品种编号">
-                                                        <Input value={this.state.loanInfo.cobreno}
+                                                        <Input value={this.props.loan.loanInfo.cobreno}
                                                                placeholder="A2018040101 "
                                                                onChange={this.onChangeLoan.bind(this, 'cobreno')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="贷款用途">
-                                                        <Radio.Group value={this.state.loanInfo.loanusekind}
+                                                        <Radio.Group value={this.props.loan.loanInfo.loanusekind}
                                                                      onChange={this.onChangeLoan.bind(this, 'loanusekind')}>
                                                             <Radio.Button value="购买住房"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="利率浮动周期">
-                                                        <Radio.Group value={this.state.rateInfo.adjrateflag}
+                                                        <Radio.Group value={this.props.loan.rateInfo.adjrateflag}
                                                                      onChange={this.onChangeRate.bind(this, 'adjrateflag')}>
                                                             <Radio.Button value="次年1月1日"/>
                                                             <Radio.Button value="1年"/>
@@ -491,26 +403,26 @@ class Loan extends Component {
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="收款人户名">
-                                                        <Input value={this.state.loanInfo.payeename}
+                                                        <Input value={this.props.loan.loanInfo.payeename}
                                                                placeholder="请输入收款人户名"
                                                                onChange={this.onChangeLoan.bind(this, 'payeename')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="还款类型">
-                                                        <Radio.Group value={this.state.rateInfo.repaykind}
+                                                        <Radio.Group value={this.props.loan.rateInfo.repaykind}
                                                                      onChange={this.onChangeRate.bind(this, 'repaykind')}>
                                                             <Radio.Button value="对日还款"/>
                                                             <Radio.Button value="定日还款"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="是否收取提前还款违约金">
-                                                        <Radio.Group value={this.state.rateInfo.isgetbreaksum}
+                                                        <Radio.Group value={this.props.loan.rateInfo.isgetbreaksum}
                                                                      onChange={this.onChangeRate.bind(this, 'isgetbreaksum')}>
                                                             <Radio.Button value="是"/>
                                                             <Radio.Button value="否"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="公积金贷款合同编号">
-                                                        <Input value={this.state.loanInfo.fundcontno}
+                                                        <Input value={this.props.loan.loanInfo.fundcontno}
                                                                placeholder="A8898012B1 "
                                                                onChange={this.onChangeLoan.bind(this, 'fundcontno')}></Input>
                                                     </Form.Item>
@@ -524,17 +436,17 @@ class Loan extends Component {
                                             <div class="form_content">
                                                 <div class="form_lf">
                                                     <Form.Item label="开发商名称">
-                                                        <Input value={this.state.houseInfo.dlpname}
+                                                        <Input value={this.props.loan.houseInfo.dlpname}
                                                                placeholder="请输入开发商名称 "
                                                                onChange={this.onChangeHouse.bind(this, 'dlpname')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="销(预)售许可证编号">
-                                                        <Input value={this.state.houseInfo.sellno}
+                                                        <Input value={this.props.loan.houseInfo.sellno}
                                                                placeholder="请输入销(预)售许可证编号 "
                                                                onChange={this.onChangeHouse.bind(this, 'sellno')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="购房目的">
-                                                        <Radio.Group value={this.state.houseInfo.bhusaim}
+                                                        <Radio.Group value={this.props.loan.houseInfo.bhusaim}
                                                                      onChange={this.onChangeHouse.bind(this, 'bhusaim')}>
                                                             <Radio.Button value="自主"/>
                                                             <Radio.Button value="经营"/>
@@ -555,7 +467,7 @@ class Loan extends Component {
                                                         <Dialog.Body>
                                                             <SelectList ref="houseType"
                                                                         visible={this.state.selectDialogVisible}
-                                                                        value={this.state.houseInfo.hustype}
+                                                                        value={this.props.loan.houseInfo.hustype}
                                                                         multiple={false} onChange={(val) => {
                                                                 this.removeByValue(this.state.houseTypeList, val)
                                                                 this.state.houseTypeList.unshift(val)
@@ -577,7 +489,7 @@ class Loan extends Component {
                                                         </Dialog.Body>
                                                     </Dialog>
                                                     <Form.Item label="房屋类型">
-                                                        <Radio.Group value={this.state.houseInfo.hustype}
+                                                        <Radio.Group value={this.props.loan.houseInfo.hustype}
                                                                      onChange={this.onChangeHouse.bind(this, 'hustype')}
                                                                      appendix="更多"
                                                                      onAppendixClick={this.onEducateAppendClick.bind(this)}>
@@ -595,12 +507,12 @@ class Loan extends Component {
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="房屋建造年份">
-                                                        <Input value={this.state.houseInfo.buildyear}
+                                                        <Input value={this.props.loan.houseInfo.buildyear}
                                                                placeholder="请输入房屋建造年份 "
                                                                onChange={this.onChangeHouse.bind(this, 'buildyear')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="房屋是否已经出租">
-                                                        <Radio.Group value={this.state.houseInfo.ishired}
+                                                        <Radio.Group value={this.props.loan.houseInfo.ishired}
                                                                      onChange={this.onChangeHouse.bind(this, 'ishired')}>
                                                             <Radio.Button value="是"/>
                                                             <Radio.Button value="否"/>
@@ -618,7 +530,7 @@ class Loan extends Component {
                                                 </div>
                                                 <div class="form_rt">
                                                     <Form.Item label="楼盘名称">
-                                                        <Input value={this.state.houseInfo.bldname}
+                                                        <Input value={this.props.loan.houseInfo.bldname}
                                                                placeholder="请输入楼盘名称 "
                                                                onChange={this.onChangeHouse.bind(this, 'bldname')}></Input>
                                                     </Form.Item>
@@ -631,7 +543,7 @@ class Loan extends Component {
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="本套房属于第几套">
-                                                        <Radio.Group value={this.state.houseInfo.housesum}
+                                                        <Radio.Group value={this.props.loan.houseInfo.housesum}
                                                                      onChange={this.onChangeHouse.bind(this, 'housesum')}>
                                                             <Radio.Button value="第一套"/>
                                                             <Radio.Button value="第二套"/>
@@ -640,14 +552,14 @@ class Loan extends Component {
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="房屋形式">
-                                                        <Radio.Group value={this.state.houseInfo.husform}
+                                                        <Radio.Group value={this.props.loan.houseInfo.husform}
                                                                      onChange={this.onChangeHouse.bind(this, 'husform')}>
                                                             <Radio.Button value="期房"/>
                                                             <Radio.Button value="现房"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="房贷结清情况">
-                                                        <Radio.Group value={this.state.houseInfo.husloclinfo}
+                                                        <Radio.Group value={this.props.loan.houseInfo.husloclinfo}
                                                                      onChange={this.onChangeHouse.bind(this, 'husloclinfo')}>
                                                             <Radio.Button value="名下无住房贷款记录"/>
                                                             <Radio.Button value="已结清名下住房贷款"/>
@@ -671,7 +583,7 @@ class Loan extends Component {
                                             <div class="form_content">
                                                 <div class="form_lf">
                                                     <Form.Item label="押品分类">
-                                                        <Radio.Group value={this.state.asstInfo.assttype}
+                                                        <Radio.Group value={this.props.loan.asstInfo.assttype}
                                                                      onChange={this.onChangeAsst.bind(this, 'assttype')}>
                                                             <Radio.Button value="商品房住宅"/>
                                                             <Radio.Button value="完全产权保障住房"/>
@@ -681,18 +593,18 @@ class Loan extends Component {
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="押品名称">
-                                                        <Input value={this.state.asstInfo.asstname}
+                                                        <Input value={this.props.loan.asstInfo.asstname}
                                                                placeholder="请输入押品地址信息"
                                                                onChange={this.onChangeAsst.bind(this, 'asstname')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="房屋实际用途">
-                                                        <Radio.Group value={this.state.asstInfo.hususe}
-                                                                     onChange={this.onChangeAsst.bind(this, 'hususe')}>
+                                                        <Radio.Group value={this.props.loan.asstInfo.houseusage}
+                                                                     onChange={this.onChangeAsst.bind(this, 'houseusage')}>
                                                             <Radio.Button value="居住"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="土地取得方式">
-                                                        <Radio.Group value={this.state.asstInfo.landgetmetho}
+                                                        <Radio.Group value={this.props.loan.asstInfo.landgetmetho}
                                                                      onChange={this.onChangeAsst.bind(this, 'landgetmetho')}>
                                                             <Radio.Button value="拍卖出让"/>
                                                             <Radio.Button value="转让"/>
@@ -700,14 +612,14 @@ class Loan extends Component {
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="产权人客户代码">
-                                                        <Input value={this.state.asstInfo.ownercode}
+                                                        <Input value={this.props.loan.asstInfo.ownercode}
                                                                placeholder="请输入产权人客户代码"
                                                                onChange={this.onChangeAsst.bind(this, 'ownercode')}></Input>
                                                     </Form.Item>
                                                 </div>
                                                 <div class="form_rt">
                                                     <Form.Item label="建筑结构">
-                                                        <Radio.Group value={this.state.asstInfo.archstruc}
+                                                        <Radio.Group value={this.props.loan.asstInfo.archstruc}
                                                                      onChange={this.onChangeAsst.bind(this, 'archstruc')}>
                                                             <Radio.Button value="钢混"/>
                                                             <Radio.Button value="砖混"/>
@@ -718,7 +630,7 @@ class Loan extends Component {
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="建筑物规划用途">
-                                                        <Radio.Group value={this.state.asstInfo.archusage}
+                                                        <Radio.Group value={this.props.loan.asstInfo.archusage}
                                                                      onChange={this.onChangeAsst.bind(this, 'archusage')}>
                                                             <Radio.Button value="普通商品房"/>
                                                             <Radio.Button value="别墅"/>
@@ -730,20 +642,20 @@ class Loan extends Component {
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="土地用途">
-                                                        <Radio.Group value={this.state.asstInfo.landuse}
-                                                                     onChange={this.onChangeAsst.bind(this, 'landuse')}>
+                                                        <Radio.Group value={this.props.loan.asstInfo.landusage}
+                                                                     onChange={this.onChangeAsst.bind(this, 'landusage')}>
                                                             <Radio.Button value="住宅"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="产权类型">
-                                                        <Radio.Group value={this.state.asstInfo.ownershiptype}
+                                                        <Radio.Group value={this.props.loan.asstInfo.ownershiptype}
                                                                      onChange={this.onChangeAsst.bind(this, 'ownershiptype')}>
                                                             <Radio.Button value="所有权"/>
                                                             <Radio.Button value="使用权"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="产权份额">
-                                                        <Input value={this.state.asstInfo.ownerprop}
+                                                        <Input value={this.props.loan.asstInfo.ownerprop}
                                                                placeholder="请输入产权份额"
                                                                onChange={this.onChangeAsst.bind(this, 'ownerprop')}></Input>
                                                     </Form.Item>
@@ -764,25 +676,26 @@ class Loan extends Component {
                                                     </Form.Item>
                                                     <Form.Item label="评估基准日">
                                                         <DatePicker
-                                                            value={this.state.asstInfo.evaldate}
+                                                            value={this.state.evaldate}
                                                             placeholder="请选择日期"
-                                                            onChange={this.onChangeAsst.bind(this, 'evaldate')}
+                                                            onChange={this.onChange.bind(this, 'evaldate')}
                                                         />
                                                     </Form.Item>
                                                     <Form.Item label="确认价值">
-                                                        <Input value={this.state.asstInfo.confval} placeholder="请输入确认价值"
+                                                        <Input value={this.props.loan.asstInfo.confval}
+                                                               placeholder="请输入确认价值"
                                                                onChange={this.onChangeAsst.bind(this, 'confval')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="评估结果来源">
-                                                        <Radio.Group value={this.state.asstInfo.evalressrc}
-                                                                     onChange={this.onChangeAsst.bind(this, 'evalressrc')}>
+                                                        <Radio.Group value={this.props.loan.asstInfo.evalmethod}
+                                                                     onChange={this.onChangeAsst.bind(this, 'evalmethod')}>
                                                             <Radio.Button value="直接评估"/>
                                                             <Radio.Button value="内部评估"/>
                                                             <Radio.Button value="外部评估"/>
                                                         </Radio.Group>
                                                     </Form.Item>
                                                     <Form.Item label="评估方法1">
-                                                        <Radio.Group value={this.state.asstInfo.evalmeth1}
+                                                        <Radio.Group value={this.props.loan.asstInfo.evalmeth1}
                                                                      onChange={this.onChangeAsst.bind(this, 'evalmeth1')}>
                                                             <Radio.Button value="市场法"/>
                                                             <Radio.Button value="收益法"/>
@@ -794,35 +707,36 @@ class Loan extends Component {
                                                 </div>
                                                 <div class="form_rt">
                                                     <Form.Item label="评估价值">
-                                                        <Input value={this.state.asstInfo.evalval} placeholder="请输入评估价值"
+                                                        <Input value={this.props.loan.asstInfo.evalval}
+                                                               placeholder="请输入评估价值"
                                                                onChange={this.onChangeAsst.bind(this, 'evalval')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="评估有效期到期日">
                                                         <DatePicker
-                                                            value={this.state.asstInfo.validdate}
+                                                            value={this.props.loan.asstInfo.validdate}
                                                             placeholder="请选择日期"
                                                             onChange={this.onChangeAsst.bind(this, 'validdate')}
                                                         />
                                                     </Form.Item>
                                                     <Form.Item label="确认日期">
                                                         <DatePicker
-                                                            value={this.state.asstInfo.evaldat}
+                                                            value={this.props.loan.asstInfo.evaldat}
                                                             placeholder="请选择日期"
                                                             onChange={this.onChangeAsst.bind(this, 'evaldat')}
                                                         />
                                                     </Form.Item>
                                                     <Form.Item label="外部评估机构代码">
-                                                        <Input value={this.state.asstInfo.evaluinstcode}
+                                                        <Input value={this.props.loan.asstInfo.evalinst}
                                                                placeholder="请输入外部评估机构代码"
-                                                               onChange={this.onChangeAsst.bind(this, 'evaluinstcode')}></Input>
+                                                               onChange={this.onChangeAsst.bind(this, 'evalinst')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="评估师姓名1">
-                                                        <Input value={this.state.asstInfo.evalname1}
+                                                        <Input value={this.props.loan.asstInfo.evalname1}
                                                                placeholder="请输入评估师姓名"
                                                                onChange={this.onChangeAsst.bind(this, 'evalname1')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="评估师姓名2">
-                                                        <Input value={this.state.asstInfo.evalname2}
+                                                        <Input value={this.props.loan.asstInfo.evalname2}
                                                                placeholder="请输入评估师姓名"
                                                                onChange={this.onChangeAsst.bind(this, 'evalname2')}></Input>
                                                     </Form.Item>
@@ -837,12 +751,12 @@ class Loan extends Component {
                                             <div class="form_content">
                                                 <div class="form_lf">
                                                     <Form.Item label="担保人ID">
-                                                        <Input value={this.state.guarInfo.guarcode}
+                                                        <Input value={this.props.loan.guarInfo.guarcode}
                                                                placeholder="请输入担保人ID"
                                                                onChange={this.onChangeGuar.bind(this, 'guarcode')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="拟定担保方式">
-                                                        <Radio.Group value={this.state.guarInfo.guarway}
+                                                        <Radio.Group value={this.props.loan.guarInfo.guarway}
                                                                      onChange={this.onChangeGuar.bind(this, 'guarway')}>
                                                             <Radio.Button value="单人担保"/>
                                                             <Radio.Button value="多人分保"/>
@@ -852,12 +766,12 @@ class Loan extends Component {
                                                 </div>
                                                 <div class="form_rt">
                                                     <Form.Item label="担保人名称">
-                                                        <Input value={this.state.guarInfo.guarname}
+                                                        <Input value={this.props.loan.guarInfo.guarname}
                                                                placeholder="请输入担保人名称"
                                                                onChange={this.onChangeGuar.bind(this, 'guarname')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="是否阶段性担保">
-                                                        <Radio.Group value={this.state.guarInfo.isphase}
+                                                        <Radio.Group value={this.props.loan.guarInfo.isphase}
                                                                      onChange={this.onChangeGuar.bind(this, 'isphase')}>
                                                             <Radio.Button value="是"/>
                                                             <Radio.Button value="否"/>
@@ -869,12 +783,12 @@ class Loan extends Component {
                                             <div class="form_content">
                                                 <div class="form_lf">
                                                     <Form.Item label="担保人名称">
-                                                        <Input value={this.state.guarInfo.guarname}
+                                                        <Input value={this.props.loan.guarInfo.guarname}
                                                                placeholder="请输入担保人名称"
                                                                onChange={this.onChangeGuar.bind(this, 'guarname')}></Input>
                                                     </Form.Item>
                                                     <Form.Item label="拟定担保方式">
-                                                        <Radio.Group value={this.state.guarInfo.guarway}
+                                                        <Radio.Group value={this.props.loan.guarInfo.guarway}
                                                                      onChange={this.onChangeGuar.bind(this, 'guarway')}>
                                                             <Radio.Button value="单人担保"/>
                                                             <Radio.Button value="多人分保"/>
@@ -884,7 +798,7 @@ class Loan extends Component {
                                                 </div>
                                                 <div class="form_rt">
                                                     <Form.Item label="是否阶段性担保">
-                                                        <Radio.Group value={this.state.guarInfo.isphase}
+                                                        <Radio.Group value={this.props.loan.guarInfo.isphase}
                                                                      onChange={this.onChangeGuar.bind(this, 'isphase')}>
                                                             <Radio.Button value="是"/>
                                                             <Radio.Button value="否"/>
