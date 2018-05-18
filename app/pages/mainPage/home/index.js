@@ -122,9 +122,9 @@ class Index extends Component {
     componentDidMount(){
         // 开始时注册一个插件
         // eslint-disable-next-line
-        mmspc.android.init(onBackPressed);
-        watermark({watermark_txt0:'小明   123456'});
-        this.props.homeActions.loading(true);
+        // mmspc.android.init(onBackPressed);
+        // watermark({watermark_txt0:'小明   123456'});
+        // this.props.homeActions.loading(true);
         // setTimeout(()=>{
         //     // eslint-disable-next-line
         //     mmspc.bridge.get((data)=>{
@@ -137,12 +137,12 @@ class Index extends Component {
         //
         //     },()=>{},"page");
         // },2000)
-        setTimeout(()=>{
-            // eslint-disable-next-line
-            mmspc.bridge.get((data)=>{
-                this.props.homeActions.login(data);
-            });
-        },2000)
+        // setTimeout(()=>{
+        //     // eslint-disable-next-line
+        //     mmspc.bridge.get((data)=>{
+        //         this.props.homeActions.login(data);
+        //     });
+        // },2000)
     }
     render() {
         return (

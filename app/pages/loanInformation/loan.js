@@ -23,6 +23,7 @@ import {
 } from "../../components/index";
 import '../publicCss/public.css'
 import Radio from '../../components/src/radio';
+import {postLoan} from "../../actions/loan";
 
 var qs = require("querystring");
 
@@ -37,8 +38,9 @@ const actions = [
 function mapStateToProps(state) {
     const {loan} = state;
     const {client} = state;
+    const {home} = state;
     return {
-        loan, client
+        loan, client, home
     };
 }
 
@@ -78,6 +80,8 @@ class Loan extends Component {
             containerHeight: window.innerHeight - this.getHeight(100),
             isShow: false,
             selectDialogVisible: false,
+            //loan页面是否已查询
+            isQueryLoan: false,
 
             isCommonasst: '',//是否普通住宅 onChangeHouse
             isLocal: '',//借款人是否本地信息
@@ -155,13 +159,13 @@ class Loan extends Component {
     componentDidMount() {
         that = this;
         // eslint-disable-next-line
-      //  mmspc.bridge.get(data => {
-            //this.props.loanActions.getLoanInfo(data, JSON.parse("{\"req_id\":\"111111\",\"loanorder\":\"11111\"}"));
-            //    this.props.loanActions.getRateInfo(data, JSON.parse("{\"req_id\":\"11111\"}"));
+        // mmspc.bridge.get(data => {
+            //    this.props.loanActions.getLoanInfo(data, JSON.parse("{\"_id\":\"111111\",\"loanorder\":\"11111\"}"));
+            //    this.props.loanActions.getRateInfo(data, JSON.parse("{\"id\":\"11111\"}"));
             //    this.props.loanActions.getHouseInfo(data, JSON.parse("{\"req_id\":\"1111111\"}"));
             //    this.props.loanActions.getAssetInfo(data, JSON.parse("{\"req_id\":\"111111\"}"), "");//作业Id 押品Id
             //    this.props.loanActions.getGuarInfo(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}")); //作业Id 担保信息Id
-      //  });
+        // });
 
     }
 
@@ -186,6 +190,22 @@ class Loan extends Component {
                                          style={{backgroundColor: 'rgba(0, 0, 0, 0.3)'}}/>
                             }
                         </div>
+                        {/*<div>
+                            {
+                                !this.state.isQueryLoan &&
+                                this.props.home.pageSelected == 4 &&
+                                // eslint-disable-next-line
+                                mmspc.bridge.get(data => {
+                                    this.props.loanActions.getLoanInfo(data, JSON.parse("{\"req_id\":\"111111\",\"loanorder\":\"11111\"}"));
+                                    this.props.loanActions.getRateInfo(data, JSON.parse("{\"req_id\":\"11111\"}"));
+                                    this.props.loanActions.getHouseInfo(data, JSON.parse("{\"req_id\":\"1111111\"}"));
+                                    this.props.loanActions.getAssetInfo(data, JSON.parse("{\"req_id\":\"111111\"}"), "");//作业Id 押品Id
+                                    this.props.loanActions.getGuarInfo(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}")); //作业Id 担保信息Id
+                                    this.setState({isQueryLoan: true});
+                                })
+                            }
+                        </div>*/}
+
                         <div class="main_contanier">
                             <TabTitle title="贷款信息" class="tabTitle blueTabTitle"/>
                             <Form labelPosition="left" model={this.state.form} labelWidth="120"
@@ -281,13 +301,13 @@ class Loan extends Component {
                                                     //      alert("押品信息：" + JSON.stringify(this.props.loan.asstInfo));
                                                     //     alert("担保信息："+JSON.stringify(this.props.loan.guarInfo));
                                                     // eslint-disable-next-line
-                                                    mmspc.bridge.get(function (data) {
-                                                    //    that.props.loanActions.postLoanInfo(data, that.state.loanInfo, that.props.loan.houseInfo);
-                                                    //    that.props.loanActions.postLoanInfo(data, that.props.loan.loanInfo);
-                                                    //    that.props.loanActions.postHouseInfo(data, that.props.loan.houseInfo);
-                                                    //    that.props.loanActions.postRateInfo(data, that.props.loan.rateInfo);
-                                                        that.props.loanActions.postAssetInfo(data, that.props.loan.asstInfo);
-                                                    //    that.props.loanActions.postGuarInfo(data, that.props.loan.guarInfo);
+                                                    mmspc.bridge.get(data => {
+                                                        //    that.props.loanActions.postLoanInfo(data, that.state.loanInfo, that.props.loan.houseInfo);
+                                                        this.props.loanActions.postLoanInfo(data, this.props.loan.loanInfo);
+                                                        this.props.loanActions.postHouseInfo(data, this.props.loan.houseInfo);
+                                                        this.props.loanActions.postRateInfo(data, this.props.loan.rateInfo);
+                                                        this.props.loanActions.postAssetInfo(data, this.props.loan.asstInfo);
+                                                        this.props.loanActions.postGuarInfo(data, this.props.loan.guarInfo);
                                                     });
                                                     // eslint-disable-next-line
                                                     // mmspc.fileConversion.getApplicationFrom();

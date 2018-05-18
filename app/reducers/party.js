@@ -57,6 +57,9 @@ let initData={
         addr:'居住地址',//常用通信地址
         email:'',//电子邮箱
         teliprefix:'',//固定电话
+        req_id:'',
+        clientId:''
+
     },
 }
 
@@ -94,5 +97,25 @@ export function partyData(state=initData , action={}) {
             }
         default:
             return{...state}
+    }
+}
+let clientData = {
+    clientId:"",
+    certNo:"",
+    certName:"",
+    procsId:""
+}
+
+let relateData={
+    relateId:''
+}
+
+export function relate(state=relateData ,action={}){
+    switch(action.type){
+        case "relateId":
+            return {
+                ...state,
+                relateId:action.value
+            }
     }
 }

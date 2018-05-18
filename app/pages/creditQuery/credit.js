@@ -7,13 +7,14 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Map} from 'immutable';
 import {Link} from 'react-router-dom';
-import {Button, Dialog, TabTitle, Header, SupplePage, NavBar, Loading} from '../../components/index';
+import {Button, Dialog, TabTitle, Header, SupplePage, NavBar, Loading,ImageViewer} from '../../components/index';
 import '../publicCss/public.css';
 import PropTypes from 'prop-types';
 
+
 var that = "";
 
-// 授权sign/
+// 授权人签名/
 var sign = "";
 /*曾用名签名*/
 var usedName = "";
@@ -118,6 +119,7 @@ class Credit extends Component {
         return value;
     }
 
+
     render() {
         return <div style={{height: this.state.containerHeight}}>
             <div style={{overflow: "auto", height: "100%"}}>
@@ -141,7 +143,7 @@ class Credit extends Component {
                             <div class="three_child_rt">
                                 <ul class="img_box">
                                     <li>
-                                        <div class="camera_box"
+                                        <div class="camera_bigBox"
                                              onClick={() => {
                                                  // eslint-disable-next-line
                                                  mmspc.faceDetect.startLive(dataStr => {
@@ -164,7 +166,7 @@ class Credit extends Component {
                                         <p>人脸识别认证</p>
                                     </li>
                                     <li style={{display: this.state.showIdentity}}>
-                                        <div class="camera_box"
+                                        <div class="camera_bigBox"
                                              onClick={(this.state.showIdentityFinished == "block") ?
                                                  () => {
                                                      this.setState({showIdPhotoDialog: true})
@@ -190,7 +192,7 @@ class Credit extends Component {
                                         <p>手持身份认证</p>
                                     </li>
                                     <li>
-                                        <div class="camera_box"
+                                        <div class="camera_bigBox"
                                              onClick={
                                                  /* ((this.state.showFaceFinished == "block") || ((this.state.showFaceFailure == "block") && (this.state.showIdentityFinished == "block"))) == true ?
                                                                  (this.state.showCreditFinished == "none" ?
@@ -254,10 +256,22 @@ class Credit extends Component {
 									    <span>
                                                 <img class="lWhiteTabTitle" src={require("../../images/signature.png")}
                                                      width="100px" height="auto"
-                                                     onClick={() => this.setState({
-                                                         isJump: !this.state.isJump,
-                                                         dialogVisible: false
-                                                     })
+                                                     onClick={() => {
+                                                         // eslint-disable-next-line
+                                                         mmspc.fileConversion.getAuthorizationLetter(msg =>{
+                                                          //   alert('成功');
+                                                             this.setState({
+                                                                 dialogVisible: false,
+                                                                 showCreditFinished: "block",
+                                                                 isShowPhotoSign: "write"
+                                                             });
+                                                             pagePic = "data:image/png;base64," + msg;
+                                                         },function(errorStr){
+                                                             alert(errorStr);
+                                                         },'32132120010203234x');
+                                                     }
+                                                         /*this.setState({isJump: !this.state.isJump, dialogVisible: false
+                                                         })*/
                                                          /* this.state.showCreditFinished == "none" ?
                                                          :
                                                           () => this.setState({showPhotoSignDialog: true,dialogVisible: false,isShowPhotoSign: "write"})*/
@@ -309,9 +323,9 @@ class Credit extends Component {
                                 >
                                     <Dialog.Body>
                                              <span>{this.state.isShowPhotoSign == "write" ?
-                                                 <img src={pagePic} width="800px" height="100%"/>
+                                                 <img src={pagePic} width="100%" height="100%" onClick={() => this.setState({showPhotoSignDialog: false})}/>
                                                  :
-                                                 <img id="showPhotoSign" src={photoSign} width="800px" height="100%"/>
+                                                 <img id="showPhotoSign" src={photoSign} width="100%" height="100%" onClick={() => this.setState({showPhotoSignDialog: false})}/>
                                              }
 											</span>
                                     </Dialog.Body>
@@ -326,7 +340,7 @@ class Credit extends Component {
                                 >
                                     <Dialog.Body>
                                              <span>
-                                                 <img id="showIdPhoto" src={idPhoto} width="800px" height="100%"/>
+                                                 <img id="showIdPhoto" src={idPhoto} width="100%" height="100%" onClick={() => this.setState({showIdPhotoDialog: !this.state.showIdPhotoDialog})}/>
 											</span>
                                     </Dialog.Body>
                                 </Dialog>
@@ -352,12 +366,11 @@ class Credit extends Component {
                                                         onClick={() => {
                                                             // alert("征信查询："+JSON.stringify(this.state.transId));
                                                             // eslint-disable-next-line
-                                                            mmspc.bridge.get(function (data) {
-                                                                that.props.creditActions.getCreditResult(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\",\"clientId\":\"11111\"}"));
-
+                                                            mmspc.bridge.get(data => {
+                                                                this.props.creditActions.getCreditResult(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\",\"clientId\":\"11111\"}"));
                                                                 //   that.props.creditActions.getCreditResult(data);
+                                                                this.setState({showQuery: "block", isShow: true})
                                                             });
-                                                            this.setState({showQuery: "block", isShow: true})
                                                         }}>
                                                     征信查询
                                                 </Button>
@@ -395,7 +408,7 @@ class Credit extends Component {
                             <div class="three_child_rt">
                                 <ul class="img_box">
                                     <li>
-                                        <div class="camera_box" onClick={this.creditReport}>
+                                        <div class="camera_bigBox" onClick={this.creditReport}>
                                             <img src={require("../../images/credit_certificate.png")}/>
                                             <p style={{display: this.state.showQuery}}>
                                                 <img src={require("../../images/yicahxun.png")}/>
@@ -405,7 +418,7 @@ class Credit extends Component {
                                     </li>
 
                                     <li>
-                                        <div class="camera_box">
+                                        <div class="camera_bigBox">
                                             <img src={require("../../images/customer_level_no.png")}/>
                                             <p>
                                             </p>
@@ -440,7 +453,8 @@ class Credit extends Component {
                         }*/}
                             <Button type="warning" size="large"
                                     onClick={() => {
-                                        this.context.jumpTo(2, this.setComplete.bind(this)(1))
+                                        this.context.jumpTo(2, this.setComplete.bind(this)(1));
+
                                     }}>
                                 下一步
                             </Button>

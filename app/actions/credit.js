@@ -18,10 +18,10 @@ export function getCreditResult(appId,params) {
     return function (dispatch) {
         dispatch(loadingCredit(true));
         dispatch(loadingCreditText("征信查询中..."));
-        Net.getRequest(appId+"/rest/pub/credit/result",params  ,function (data) {
-            alert(data);
+        Net.getRequest(appId+"/rest/pub/credit/result",params  ,function (successData) {
+            alert(successData);
             dispatch(loadingCredit(false));
-            dispatch(getCreditQuery(data));
+            dispatch(getCreditQuery(successData));
         },function () {
             alert("征信查询失败！");
             dispatch(loadingCredit(false));

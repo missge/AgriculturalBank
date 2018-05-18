@@ -16,7 +16,7 @@ export const setLoanerInfo=(data)=>({
     type:"loanerInfo",
     value:data
 })
-export const getLoanerInfoState=(data)=>({
+export const setLoanerInfoState=(data)=>({
     type:"state",
     value:data
 })
@@ -46,11 +46,10 @@ export function getLoadnerInfo(appId , params) {
         Net.getRequest(appId+"/rest/hl/process/client" , params , function (data) {
             dispatch(loading(false));
             dispatch(setLoanerInfo(data));
-            dispatch(getLoanerInfoState(true));
-
+            dispatch(setLoanerInfoState(true));
         },function () {
             dispatch(loading(false));
-            dispatch(getLoanerInfoState(false));
+            dispatch(setLoanerInfoState(false));
         })
     }
 }

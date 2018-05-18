@@ -70,7 +70,7 @@ class NetCheck extends Component{
             selectedValue2:true,
             loadingContent:"登录中...",
             fullscreen:false,
-            netCheckState:false,
+            netCheckState:true,
             cardNumber:"",
             cardName:"",
             frontImage:frontImage,
@@ -402,7 +402,7 @@ class NetCheck extends Component{
                             <div class="footer_content" >
                                 <div class="footer_content_lf">
                                     <Button id="resetMsg" plain={true} type="info" size="large" onClick={()=>{
-                                        if (!this.state.nextState){
+                                        if (!this.props.instData.netCheck){
                                             this.setState({radio1:"一手房贷款", radio2:"不使用模板",netCheckState:false,cardNumber:"", cardName:"",
                                                 frontImage:frontImage, backImage:backImage,frontDisplay:"inline", backDisplay:"inline",});
                                         }
@@ -410,45 +410,17 @@ class NetCheck extends Component{
                                 </div>
                                  <div class="footer_content_rt">
                                       <Button  id="nextStep" style={{backgroundColor:this.props.instData.netCheck?"#FFA400":"#999999" ,borderColor:this.props.instData.netCheck?"#FFA400":"#999999"}} type="warning" size="large" onClick={()=>{
-                                          if(this.props.instData.netCheck){
+                                          
                                                   this.context.jumpTo(1, this.setComplete.bind(this)(0));
                                                   this.props.netActions.pageSelected(1);
-                                          }else {
-                                              // this.context.jumpTo(1,[2,0,0,0,0,0,0,0])
-                                          }
-                                      }}>下一步</Button>
+                                         }
+                                      }>下一步</Button>
                                 </div>
                             </div>
                         </div>
 
                     </div>
-                   {/* <div>
 
-                        <Dialog
-                            size="small"
-                            visible={ this.props.instData.showList }
-                            title='请选择机构'
-                            onCancel={ () => this.props.netActions.showList(false) }
-                            lockScroll={ false }
-                            className='mmpsc-select-list-dialog'
-                        >
-                            <Dialog.Body>
-                                <SelectList value={this.state.selectedValue2} multiple={false} onChange={val=>{
-                                    this.props.netActions.changeName(val);
-                                    this.setState({selectedValue2: true})
-                                    this.props.netActions.showList(false)
-                                }}>
-                                    {
-                                        this.props.instData.getInstResult==null?[]:JSON.parse(this.props.instData.getInstResult).data
-                                        .map(option => {
-                                            return <SelectList.Option key={option.instname} label={option.instname} value={option.instname} />
-                                        })
-                                    }
-                                </SelectList>
-                            </Dialog.Body>
-                        </Dialog>
-
-                    </div>*/}
             </div>
 
         );

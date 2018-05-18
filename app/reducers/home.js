@@ -5,7 +5,7 @@
 // 初始化状态
 let initNavList = {
     readIdCard: 'none',
-    pageSelected:false
+    pageSelected:""
 }
 
 let initName = {

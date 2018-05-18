@@ -2,6 +2,7 @@ import React from 'react';
 import {Component}from '../../components/libs';
 import PropTypes from 'prop-types';
 import * as borrowerActions from '../../actions/borrower';
+import * as homeActions from '../../actions/home';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {Map} from 'immutable';
@@ -12,23 +13,20 @@ import first from "../containerPage/first";
 var qs = require("querystring");
 let showLength=4;
 const actions = [
-    borrowerActions
+    borrowerActions,homeActions
 ];
 
 function callback(key) {
     console.log(key);
 }
 
-function onChange(e) {
-    console.log(`radio checked:${e.target.value}`);
-}
-
 
 function mapStateToProps(state) {
     const {borrower}=state;
     const {client} = state;
+    const {home} = state;
     return {
-        borrower,client
+        borrower,client,home
     };
 }
 
@@ -97,111 +95,113 @@ class Borrower extends Component {
             selectFendcentDialog:false,
             selectCorpcharDialog:false,
             containerHeight:window.innerHeight-this.getHeight(100),
-            clientVO:{
+            loanInfoState:false,
 
-                housesta:"",
-                corpchar:"",
-                busiscale:"",
-                emptype:"",
-                clicode:"",
-                othflag:"",
-                opdate:"",
-                busiloanbal:"",
-                opinstcode:"",
-                corpflag:"",
-                addrdist:"",
-                othdebtbal:"",
-                othincpm:"",
-                carvalue:"",
-                contact:"",
-                qq:"",
-                f21:"",
-                f22:"",
-                position:"",
-                asssum:"",
-                isrel:"",
-                corpname:"",
-                offsite:"",
-                jobno:"",
-                abcstuffflag:"",
-                jobexp:"",
-                clientId:"",
-                corpdist:"",
-                housevalue:"",
-                reltype:"",
-                title:"",
-                parincpm:"",
-                req_id:"",
-                certtype:"",
-                perclienttype:"",
-                myselfincpm:"",
-                engname:"",
-                settledist:"",
-                agrflag:"",
-                jobyear:"",
-                birthday:"",
-                faxiprefix:"",
-                othass:"",
-                remark:"",
-                stkvalue:"",
-                msn:"",
-                dutysta:"",
-                f1:"",
-                oprid:"",
-                f2:"",
-                postcode:"",
-                f3:"",
-                edulevel:"",
-                f4:"",
-                f5:"",
-                f6:"",
-                agflag:"",
-                country:"",
-                busista:"",
-                othloanbal:"",
-                pardebtexpd:"",
-                email:"",
-                myguaramt:"",
-                depbal:"",
-                f61:"",
-                f62:"",
-                sumexpend:"",
-                cliname:"",
-                manchar:"",
-                hujidist:"",
-                corpadd:"",
-                addagrflag:"",
-                careertype:"",
-                settleaddr:"",
-                teliprefix:"",
-                gender:"",
-                mobno:"",
-                carloanbal:"",
-                guaramt:"",
-                degree:"",
-                protexpd:"",
-                f103:"",
-                f105:"",
-                orgcode:"",
-                f106:"",
-                f107:"",
-                jobbegdate:"",
-                debtsum:"",
-                exppm:"",
-                marrysta:"",
-                fendcent:"",
-                certno:"",
-                sumincpm:"",
-                addr:"",
-                corpstdtype:"",
-                stdjobtype:"",
-                cdobj:"",
-                delflag:"",
-                debtexpd:"",
-                houseloanbal:"",
-                hujiaddr:""
-
-            }
+            // clientVO:{
+            //
+            //     housesta:"",
+            //     corpchar:"",
+            //     busiscale:"",
+            //     emptype:"",
+            //     clicode:"",
+            //     othflag:"",
+            //     opdate:"",
+            //     busiloanbal:"",
+            //     opinstcode:"",
+            //     corpflag:"",
+            //     addrdist:"",
+            //     othdebtbal:"",
+            //     othincpm:"",
+            //     carvalue:"",
+            //     contact:"",
+            //     qq:"",
+            //     f21:"",
+            //     f22:"",
+            //     position:"",
+            //     asssum:"",
+            //     isrel:"",
+            //     corpname:"",
+            //     offsite:"",
+            //     jobno:"",
+            //     abcstuffflag:"",
+            //     jobexp:"",
+            //     clientId:"",
+            //     corpdist:"",
+            //     housevalue:"",
+            //     reltype:"",
+            //     title:"",
+            //     parincpm:"",
+            //     req_id:"",
+            //     certtype:"",
+            //     perclienttype:"",
+            //     myselfincpm:"",
+            //     engname:"",
+            //     settledist:"",
+            //     agrflag:"",
+            //     jobyear:"",
+            //     birthday:"",
+            //     faxiprefix:"",
+            //     othass:"",
+            //     remark:"",
+            //     stkvalue:"",
+            //     msn:"",
+            //     dutysta:"",
+            //     f1:"",
+            //     oprid:"",
+            //     f2:"",
+            //     postcode:"",
+            //     f3:"",
+            //     edulevel:"",
+            //     f4:"",
+            //     f5:"",
+            //     f6:"",
+            //     agflag:"",
+            //     country:"",
+            //     busista:"",
+            //     othloanbal:"",
+            //     pardebtexpd:"",
+            //     email:"",
+            //     myguaramt:"",
+            //     depbal:"",
+            //     f61:"",
+            //     f62:"",
+            //     sumexpend:"",
+            //     cliname:"",
+            //     manchar:"",
+            //     hujidist:"",
+            //     corpadd:"",
+            //     addagrflag:"",
+            //     careertype:"",
+            //     settleaddr:"",
+            //     teliprefix:"",
+            //     gender:"",
+            //     mobno:"",
+            //     carloanbal:"",
+            //     guaramt:"",
+            //     degree:"",
+            //     protexpd:"",
+            //     f103:"",
+            //     f105:"",
+            //     orgcode:"",
+            //     f106:"",
+            //     f107:"",
+            //     jobbegdate:"",
+            //     debtsum:"",
+            //     exppm:"",
+            //     marrysta:"",
+            //     fendcent:"",
+            //     certno:"",
+            //     sumincpm:"",
+            //     addr:"",
+            //     corpstdtype:"",
+            //     stdjobtype:"",
+            //     cdobj:"",
+            //     delflag:"",
+            //     debtexpd:"",
+            //     houseloanbal:"",
+            //     hujiaddr:""
+            //
+            // }
         }
 
     }
@@ -249,16 +249,10 @@ class Borrower extends Component {
     }
     onChange(key, value) {
         this.props.borrower.loanerInfo[key] = value;
-        this.props.borrower.loanerInfo[key] = value;
         this.setState({
-            clientVO: {[key]:value}
+            [key]: value,
         });
-    }
-    onChangeRadio(key, value) {
-        this.props.borrower.loanerInfo[key] = value;
-        this.setState({
-            clientVO: {[key]:value}
-        });
+
     }
     setComplete(cur){
         let value = this.context.getListValue();
@@ -266,18 +260,10 @@ class Borrower extends Component {
         return value;
     }
 
-    query(){
-        alert("???");
-    }
-    componentDidMount() {
-        // if (0==this.context.select){
-        //     // eslint-disable-next-line
-        //     mmspc.bridge.get((appId)=>{
-        //         this.props.borrowerActions.getLoadnerInfo(appId , JSON.parse("{\"clientId\":\"1111\"}"));
-        //     });
-        // }
+    componentDidMount(){
 
     }
+
     render() {
         return (
             <div  style={{height:this.state.containerHeight}}>
@@ -287,30 +273,25 @@ class Borrower extends Component {
                         {
                             this.props.borrower.postSuccess&&
                             this.props.borrowerActions.postSuccess(false) &&
-                            this.context.jumpTo(3, this.setComplete.bind(this)(2))
-
-                        }
-                    </div>
-                    <div>
-                        {   this.props.borrower.state&&
-                            this.props.borrowerActions.getLoanerInfoState(false)&&
-                            this.setState({clientVO:this.props.borrower.loanerInfo})
+                            this.context.jumpTo(3, this.setComplete.bind(this)(2))&&
+                            this.props.borrowerActions.pageSelected(3)
 
                         }
                     </div>
                     <div>
                         {
-                            !this.props.borrower.state&&
-                            this.context.select==2&&
+                            this.props.home.pageSelected==2&&
+                            !this.state.loanInfoState&&
                             // eslint-disable-next-line
                             mmspc.bridge.get((appId)=>{
+                                this.state.loanInfoState = true;
                                 this.props.borrowerActions.getLoadnerInfo(appId , JSON.parse("{\"clientId\":\"1111\"}"));
                             })
 
                         }
                     </div>
                     <TabTitle title="借款人信息" class="tabTitle blueTabTitle"/>
-                    <Form model={this.props.borrower.loanerInfo} labelWidth="110" labelPosition="left" onSubmit={this.onSubmit.bind(this)}>
+                    <Form model={this.props.borrower.loanerInfo} labelWidth="110" labelPosition="left"  onSubmit={this.onSubmit.bind(this)}>
                         <div class="form_content">
                             <div class="form_lf">
                                 <Form.Item label="客户姓名">
@@ -342,7 +323,7 @@ class Borrower extends Component {
                                     </Dialog.Body>
                                 </Dialog>
                                 <Form.Item label="文化程度">
-                                    <Radio.Group value={this.props.borrower.loanerInfo.edulevel} onChange={this.onChangeRadio.bind(this, 'edulevel')} appendix="更多"
+                                    <Radio.Group value={this.props.borrower.loanerInfo.edulevel} onChange={this.onChange.bind(this, 'edulevel')} appendix="更多"
                                                  onAppendixClick={this.onEducateAppendClick.bind(this)}>
                                         {
                                             this.state.cultureList.map(function(item,i){
@@ -389,7 +370,7 @@ class Borrower extends Component {
                                     <Input value={this.props.borrower.loanerInfo.certno}  placeholder="321320199905010203" onChange={this.onChange.bind(this, 'certno')}></Input>
                                 </Form.Item>
                                 <Form.Item label="婚姻状况">
-                                    <Radio.Group value={this.props.borrower.loanerInfo.marrysta} onChange={this.onChangeRadio.bind(this, 'marrysta')}>
+                                    <Radio.Group value={this.props.borrower.loanerInfo.marrysta} onChange={this.onChange.bind(this, 'marrysta')}>
                                         <Radio.Button value="已婚"/>
                                         <Radio.Button value="未婚"/>
                                         <Radio.Button value="离异"/>
@@ -423,7 +404,7 @@ class Borrower extends Component {
                                     </Dialog.Body>
                                 </Dialog>
                                 <Form.Item label="供养人口">
-                                    <Radio.Group value={this.props.borrower.loanerInfo.fendcent} onChange={this.onChangeRadio.bind(this, 'fendcent')} appendix="更多"
+                                    <Radio.Group value={this.props.borrower.loanerInfo.fendcent} onChange={this.onChange.bind(this, 'fendcent')} appendix="更多"
                                                  onAppendixClick={this.onFendcentAppendClick.bind(this)}>
                                         {
                                             this.state.fendcentList.map(function(item,i){
@@ -464,7 +445,7 @@ class Borrower extends Component {
                                     </Dialog.Body>
                                 </Dialog>
                                 <Form.Item label="单位性质">
-                                    <Radio.Group value={this.props.borrower.loanerInfo.corpchar} onChange={this.onChangeRadio.bind(this, 'corpchar')} appendix="更多"
+                                    <Radio.Group value={this.props.borrower.loanerInfo.corpchar} onChange={this.onChange.bind(this, 'corpchar')} appendix="更多"
                                                  onAppendixClick={this.onCorpcharAppendClick.bind(this)}>
                                         {
                                             this.state.corpcharList.map(function(item,i){
@@ -493,18 +474,18 @@ class Borrower extends Component {
                             </div>
                             <div class="footer_content_rt">
                                 <Button type="warning" size="large"  onClick={() => {
-                                    // alert(JSON.stringify(this.state.clientVO));
+                                    // alert(JSON.stringify(this.props.borrower.loanerInfo));
+                                
                                     // this.context.jumpTo(3, this.setComplete.bind(this)(2))
                                     // eslint-disable-next-line
-                                    // mmspc.bridge.get((data)=> {
-                                    //     this.props.borrower.loanerInfo.clientId = this.props.client.clientId;
-                                    //     this.props.borrower.loanerInfo.procsId = this.props.client.procsId;
-                                    //     // this.props.borrowerActions.postLoanerInfo(data , this.state.clientVO);
-                                    //     this.props.borrowerActions.postLoanerInfo(data , "{\"clientId\":"+"\""+this.props.client.clientId+"\"}");
-                                    //     // "{\"clientVO\":"+"\""+that.state.clientVO+"\""+"}"
+                                    mmspc.bridge.get((data)=> {
+                                        this.props.borrower.loanerInfo.clientId = this.props.client.clientId;
+                                        this.props.borrower.loanerInfo.procsId = this.props.client.procsId;
+                                        // this.props.borrowerActions.postLoanerInfo(data , this.props.borrower.loanerInfo);
+                                        this.props.borrowerActions.postLoanerInfo(data , this.props.borrower.loanerInfo);
+                                        // "{\"clientVO\":"+"\""+that.state.clientVO+"\""+"}"
 
-                                    // });
-
+                                    });
 
                                     }}>下一步</Button>
 
@@ -544,7 +525,7 @@ class Borrower extends Component {
                                                 <Input value={this.props.borrower.loanerInfo.country} placeholder="中国 "  onChange={this.onChange.bind(this, 'country')}></Input>
                                             </Form.Item>
                                             <Form.Item label="性别">
-                                                <Radio.Group value={this.props.borrower.loanerInfo.gender} onChange={this.onChangeRadio.bind(this, 'gender')}>
+                                                <Radio.Group value={this.props.borrower.loanerInfo.gender} onChange={this.onChange.bind(this, 'gender')}>
                                                     <Radio.Button value="男"/>
                                                     <Radio.Button value="女"/>
                                                 </Radio.Group>
@@ -557,7 +538,7 @@ class Borrower extends Component {
                                                 />
                                             </Form.Item>
                                             <Form.Item label="居住状况">
-                                                <Radio.Group value={this.props.borrower.loanerInfo.housesta} onChange={this.onChangeRadio.bind(this, 'housesta')}>
+                                                <Radio.Group value={this.props.borrower.loanerInfo.housesta} onChange={this.onChange.bind(this, 'housesta')}>
                                                     <Radio.Button value="父母同住"/>
                                                     <Radio.Button value="集体宿舍"/>
                                                     <Radio.Button value="租住"/>
@@ -574,7 +555,7 @@ class Borrower extends Component {
                                                 <Input value={this.props.borrower.loanerInfo.addagrflag}   placeholder="城市 " onChange={this.onChange.bind(this, 'addagrflag')}></Input>
                                             </Form.Item>
                                             <Form.Item label="人行涉农个人客户类别">
-                                                <Radio.Group value={this.props.borrower.loanerInfo.perclienttype} onChange={this.onChangeRadio.bind(this, 'perclienttype')}>
+                                                <Radio.Group value={this.props.borrower.loanerInfo.perclienttype} onChange={this.onChange.bind(this, 'perclienttype')}>
                                                     <Radio.Button value="非农户"/>
                                                     <Radio.Button value="农户"/>
                                                     <Radio.Button value="不定"/>
@@ -587,7 +568,7 @@ class Borrower extends Component {
                                             </Form.Item>
                                             {/*暂无*/}
                                             <Form.Item label="是否长期有效">
-                                                <Radio.Group value={this.state.radio8} onChange={this.onChangeRadio.bind(this, 'radio8')}>
+                                                <Radio.Group value={this.state.radio8} onChange={this.onChange.bind(this, 'radio8')}>
                                                     <Radio.Button value="是"/>
                                                     <Radio.Button value="否"/>
                                                 </Radio.Group>
@@ -602,27 +583,27 @@ class Borrower extends Component {
                                             </Form.Item>
                                             {/*暂无*/}
                                             <Form.Item label="是否本地常住户口">
-                                                <Radio.Group value={this.state.radio9} onChange={this.onChangeRadio.bind(this, 'radio9')}>
+                                                <Radio.Group value={this.state.radio9} onChange={this.onChange.bind(this, 'radio9')}>
                                                     <Radio.Button value="是"/>
                                                     <Radio.Button value="否"/>
                                                 </Radio.Group>
                                             </Form.Item>
                                             {/*暂无*/}
                                             <Form.Item label="是否本地户籍">
-                                                <Radio.Group value={this.state.radio10} onChange={this.onChangeRadio.bind(this, 'radio10')}>
+                                                <Radio.Group value={this.state.radio10} onChange={this.onChange.bind(this, 'radio10')}>
                                                     <Radio.Button value="是"/>
                                                     <Radio.Button value="否"/>
                                                 </Radio.Group>
                                             </Form.Item>
                                             <Form.Item label="是否农行员工">
-                                                <Radio.Group value={this.props.borrower.loanerInfo.abcstuffflag} onChange={this.onChangeRadio.bind(this, 'abcstuffflag')}>
+                                                <Radio.Group value={this.props.borrower.loanerInfo.abcstuffflag} onChange={this.onChange.bind(this, 'abcstuffflag')}>
                                                     <Radio.Button value="是"/>
                                                     <Radio.Button value="否"/>
                                                 </Radio.Group>
                                             </Form.Item>
                                             {/*暂无*/}
                                             <Form.Item label="是否私人银行客户">
-                                                <Radio.Group value={this.state.radio12} onChange={this.onChangeRadio.bind(this, 'radio12')}>
+                                                <Radio.Group value={this.state.radio12} onChange={this.onChange.bind(this, 'radio12')}>
                                                     <Radio.Button value="是"/>
                                                     <Radio.Button value="否"/>
                                                 </Radio.Group>
@@ -644,7 +625,7 @@ class Borrower extends Component {
                                     <div class="form_content">
                                         <div class="form_lf">
                                             <Form.Item label="个人信贷对象">
-                                                <Radio.Group value={this.props.borrower.loanerInfo.careertype} onChange={this.onChangeRadio.bind(this, 'careertype')}>
+                                                <Radio.Group value={this.props.borrower.loanerInfo.careertype} onChange={this.onChange.bind(this, 'careertype')}>
                                                     <Radio.Button value="公务员"/>
                                                     <Radio.Button value="企事业职工"/>
                                                     <Radio.Button value="私营业主"/>
@@ -665,7 +646,7 @@ class Borrower extends Component {
                                         </div>
                                         <div class="form_rt">
                                             <Form.Item label="国标职业分类">
-                                                <Radio.Group value={this.props.borrower.loanerInfo.stdjobtype} onChange={this.onChangeRadio.bind(this, 'stdjobtype')}>
+                                                <Radio.Group value={this.props.borrower.loanerInfo.stdjobtype} onChange={this.onChange.bind(this, 'stdjobtype')}>
                                                     <Radio.Button value="国家机关"/>
                                                     <Radio.Button value="党群组织"/>
                                                     <Radio.Button value="企业"/>
@@ -679,7 +660,7 @@ class Borrower extends Component {
                                             </Form.Item>
                                             {/*暂无*/}
                                             <Form.Item label="职业经营类别">
-                                                <Radio.Group value={this.state.radio15} onChange={this.onChangeRadio.bind(this, 'radio15')}>
+                                                <Radio.Group value={this.state.radio15} onChange={this.onChange.bind(this, 'radio15')}>
                                                     <Radio.Button value="工薪供职"/>
                                                     <Radio.Button value="个私经营"/>
                                                     <Radio.Button value="农业经营"/>
@@ -735,7 +716,7 @@ class Borrower extends Component {
                                         <div class="form_rt">
                                             {/*暂无*/}
                                         <Form.Item label="通信地址">
-                                            <Radio.Group value={this.state.radio16} onChange={this.onChangeRadio.bind(this, 'radio16')}>
+                                            <Radio.Group value={this.state.radio16} onChange={this.onChange.bind(this, 'radio16')}>
                                                 <Radio.Button value="单位地址"/>
                                                 <Radio.Button value="居住地址"/>
                                             </Radio.Group>

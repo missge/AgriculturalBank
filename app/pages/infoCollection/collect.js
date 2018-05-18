@@ -8,58 +8,134 @@ import './style/collect.css'
 import '../publicCss/public.css'
 import PropTypes from 'prop-types';
 var loanerList = "";
-var showList = "";
+var relateList = "";
+var loanInfoList = "";
+var loanShowList = "";
+var relateShowList = "";
+var loanInfoShowList = "";
 var imageList="";
 var image = require("../../images/certificate_back.png");
-var that = "";
+var loanPicList = ["身份证头像面" ,"身份证国徽面" ,"电子征信授权书" ,"纸质征信授权书" ,"还款能力证明" ,"婚姻状态证明", "户籍证明"];
+var relatePicList = ["身份证头像面" ,"身份证国徽面" ,"电子征信授权书" ,"纸质征信授权书" ,"还款能力证明" ,"婚姻状态证明" , "户籍证明"];
+var loanInfoPicList = ["电子业务申请书" ,"纸质业务申请书" ,"购房合同" ,"首付款证明" ,"购房资格查询文件" ,"还款账户" , "公积金贷款资料" , "面谈笔录"];
 class Collect extends Component{
     constructor(props){
         super(props);
 
         this.state={
             dialogVisible:false, // 要不要show
-            currentPosition:0,
-            frontImage:image,
-            backImage:image,
-            eleImage:image,
-            pageImage:image,
-            repayImage:image,
-            marryImage:image,
-            houseHoldImage:image,
+            // 借款人
+            frontImage1:image,
+            backImage1:image,
+            eleImage1:image,
+            pageImage1:image,
+            repayImage1:image,
+            marryImage1:image,
+            houseHoldImage1:image,
 
-            show0:false,
-            show1:false,
-            show2:false,
-            show3:false,
-            show4:false,
-            show5:false,
-            show6:false,
+            show11:false,
+            show12:false,
+            show13:false,
+            show14:false,
+            show15:false,
+            show16:false,
+            show17:false,
 
-            currentImage:image
             // 关系人影像
+            frontImage2:image,
+            backImage2:image,
+            eleImage2:image,
+            pageImage2:image,
+            repayImage2:image,
+            marryImage2:image,
+            houseHoldImage2:image,
+
+            show21:false,
+            show22:false,
+            show23:false,
+            show24:false,
+            show25:false,
+            show26:false,
+            show27:false,
+
             // 贷款资料影像
+            eleBusinessImage:image,
+            pageBusinessImage:image,
+            contractImage:image,
+            firstPayImage:image,
+            houseAccessImage:image,
+            repayAccountImage:image,
+            fundLoanImage:image,
+            recordImage:image,
+
+            show31:false,
+            show32:false,
+            show33:false,
+            show34:false,
+            show35:false,
+            show36:false,
+            show37:false,
+            show38:false,
             // 自定义资料
         }
     }
     componentDidMount() {
-        that = this;
         loanerList = [
-            this.state.frontImage,
-            this.state.backImage,
-            this.state.eleImage,
-            this.state.pageImage,
-            this.state.repayImage,
-            this.state.marryImage,
-            this.state.houseHoldImage,
+            "frontImage1",
+            "backImage1",
+            "eleImage1",
+            "pageImage1",
+            "repayImage1",
+            "marryImage1",
+            "houseHoldImage1",
         ]
-        showList = [
-            this.state.show0,
-            this.state.show1,
-            this.state.show2,
-            this.state.show3,
-            this.state.show4,
-            this.state.show5,
-            this.state.show6,
+        relateList = [
+            "frontImage2",
+            "backImage2",
+            "eleImage2",
+            "pageImage2",
+            "repayImage2",
+            "marryImage2",
+            "houseHoldImage2",
+        ]
+
+        loanInfoList = [
+            "eleBusinessImage",
+            "pageBusinessImage",
+            "contractImage",
+            "firstPayImage",
+            "houseAccessImage",
+            "repayAccountImage",
+            "fundLoanImage",
+            "recordImage",
+        ]
+        loanShowList = [
+            this.state.show11,
+            this.state.show12,
+            this.state.show13,
+            this.state.show14,
+            this.state.show15,
+            this.state.show16,
+            this.state.show17,
+        ]
+        relateShowList = [
+            this.state.show21,
+            this.state.show22,
+            this.state.show23,
+            this.state.show24,
+            this.state.show25,
+            this.state.show26,
+            this.state.show27,
+        ]
+        loanInfoShowList = [
+            this.state.show31,
+            this.state.show32,
+            this.state.show33,
+            this.state.show34,
+            this.state.show35,
+            this.state.show36,
+            this.state.show37,
+            this.state.show38,
         ]
     }
 
@@ -84,93 +160,34 @@ class Collect extends Component{
         value[cur] = 2;
         return value;
     }
-    onSelected(id){
-        if (showList[id]){
-            switch (id) {
-                case 0:
-                    this.showImageViewer(this.state.frontImage,()=>{navigator.camera.getPicture((data)=>{
-                        this.setState({frontImage:"data:image/png;base64," + data , show0:true});
-                    },(data)=>{
-                    },{quality:50,destinationType:0});
-                    },()=>{this.setState({frontImage:null}) ; showList[id] =false});
-                    // this.setState({currentImage: this.state.backImage , dialogVisible:true});
-                    break;
-                case 1:
-                    this.showImageViewer(this.state.backImage,()=>{navigator.camera.getPicture((data)=>{
-                        this.setState({backImage:"data:image/png;base64," + data , show1:true});
-                    },function(data){
-                    },{quality:50,destinationType:0});
-                    },()=>{this.setState({backImage:null}) ; showList[id] =false});
-                    // this.setState({currentImage: this.state.backImage , dialogVisible:true});
-                    break;
-                case 2:
-                    this.showImageViewer(this.state.eleImage,()=>{navigator.camera.getPicture((data)=>{
-                        this.setState({eleImage:"data:image/png;base64," + data , show2:true});
-                    },function(data){
-                    },{quality:50,destinationType:0});
-                    },()=>{this.setState({eleImage:null}) ; showList[id] =false});
-                    // this.setState({currentImage: this.state.eleImage , dialogVisible:true});
-                    break;
-                case 3:
-                    this.showImageViewer(this.state.pageImage,()=>{navigator.camera.getPicture((data)=>{
-                        this.setState({pageImage:"data:image/png;base64," + data , show3:true});
-                    },function(data){
-                    },{quality:50,destinationType:0});
-                    },()=>{this.setState({pageImage:null}) ; showList[id] =false});
-                    // this.setState({currentImage: this.state.pageImage , dialogVisible:true});
-                    break;
-                case 4:
-                    this.showImageViewer(this.state.repayImage,()=>{navigator.camera.getPicture((data)=>{
-                        this.setState({repayImage:"data:image/png;base64," + data , show4:true});
-                    },function(data){
-                    },{quality:50,destinationType:0});
-                    },()=>{this.setState({repayImage:null}) ; showList[id] =false});
-                    // this.setState({currentImage: this.state.repayImage , dialogVisible:true});
-                    break;
-                case 5:
-                    this.showImageViewer(this.state.marryImage,()=>{navigator.camera.getPicture((data)=>{
-                        this.setState({marryImage:"data:image/png;base64," + data , show5:true});
-                    },function(data){
-                    },{quality:50,destinationType:0});
-                    },()=>{this.setState({marryImage:null}) ; showList[id] =false});
-                    // this.setState({currentImage: this.state.marryImage , dialogVisible:true});
-                    break;
-                case 6:
-                    this.showImageViewer(this.state.houseHoldImage,()=>{navigator.camera.getPicture((data)=>{
-                        this.setState({houseHoldImage:"data:image/png;base64," + data , show6:true});
-                    },function(data){
-                    },{quality:50,destinationType:0});
-                    },()=>{this.setState({houseHoldImage:null}) ; showList[id] =false});
-                    // this.setState({currentImage: this.state.houseHoldImage , dialogVisible:true});
-                    break;
-            }
+    // 第一个参数是选择的position ，第二个参数是page的页码
+    onSelected(id , page){
+        var imageList = "";
+        var clickList = "";
+        if (page==1){
+            imageList = loanerList;
+            clickList = loanShowList;
+        } else if (page==2) {
+            imageList = relateList;
+            clickList = relateShowList;
+        } else if (page==3){
+            imageList = loanInfoList;
+            clickList = loanInfoShowList;
+        } else if (page==4){
+
+        }
+        if (clickList[id]){
+            this.showImageViewer(this.state[imageList[id]],()=>{navigator.camera.getPicture((data)=>{
+                this.setState({[imageList[id]]:"data:image/png;base64," + data , [clickList[id]]:true});
+            },(data)=>{
+            },{quality:50,destinationType:0});
+            },()=>{this.setState({[imageList[id]]:null}) ; clickList[id] =false});
+
         }else {
             // eslint-disable-next-line
             navigator.camera.getPicture(data=>{
-                showList[id] = true;
-                switch (id){
-                    case 0:
-                        this.setState({frontImage:"data:image/png;base64," + data});
-                        break;
-                    case 1:
-                        this.setState({backImage:"data:image/png;base64," + data});
-                        break;
-                    case 2:
-                        this.setState({eleImage:"data:image/png;base64," + data});
-                        break;
-                    case 3:
-                        this.setState({pageImage:"data:image/png;base64," + data});
-                        break;
-                    case 4:
-                        this.setState({repayImage:"data:image/png;base64," + data});
-                        break;
-                    case 5:
-                        this.setState({marryImage:"data:image/png;base64," + data});
-                        break;
-                    case 6:
-                        this.setState({houseHoldImage:"data:image/png;base64," + data});
-                        break;
-                }
+                clickList[id] = true;
+                this.setState({[imageList[id]]:"data:image/png;base64," + data})
             },()=>{
 
             },{quality:50,destinationType:0})
@@ -185,12 +202,54 @@ class Collect extends Component{
                         <Tabs.Pane label="借款人影像" name="1">
                             <div class="collectBox">
 
-                                <Layout.Row gutter="12" style={{marginTop:"37px"}}>
-                                    <Layout.Col span="6">
-                                        <div className="grid-content bg-purple layoutBoxs" >
-                                        <img id="tab11" src={this.state.frontImage?this.state.frontImage:image} class="collect_img" onClick={()=>{this.onSelected(0)}}></img>
+                                <Layout.Row gutter="12" style={{marginTop:"8px"}}>
+                                    {/* {
+                                        loanPicList.map((option , position)=>{
+                                            return  <Layout.Col span="6">
+                                                        <div className="grid-content bg-purple layoutBoxs" >
+                                                            <img id="tab11" style={{marginTop:"8px", height:"100px"}} src={(this.state[loanerList[position]])?(this.state[loanerList[position]]):image} class="collect_img" onClick={()=>{this.onSelected(position , 1)}}></img>
 
-                                        <span class="collect_span">身份证头像面</span>
+                                                            <span class="collect_span" style={{marginTop:"8px"}}>{option}</span>
+
+                                                        </div>
+                                                     </Layout.Col>
+                                        })
+                                    } */}
+                                    {/* 有摄像机的 */}
+                                     <div className="layout_box1" >
+                                        <div className="camera_box1">
+                                            <img src={require("../../images/graybg.png")} />
+                                            <p>
+                                            <img src={require("../../images/camera.png")} />
+                                            </p>
+                                        </div>
+                                        <span >身份证头像面</span>
+                                    </div>
+
+                                    <div className="layout_box1" >
+                                        <div className="camera_box1">
+                                             <img src={require("../../images/bg.png")} />
+                                            <span className="fontTrans">
+                                                 仅限办理贷款使用
+                                            </span>
+                                            <div class="gray_bg" >
+                                            </div>
+                                            <div class="bot_sj">
+                                                <img src={require("../../images/botsj.png")}/>
+                                                <span>共2张</span>
+                                            </div>
+                                        </div>
+                                        <span >借款人有效证件</span>
+                                    </div>
+                                   
+
+
+
+                                    {/*<Layout.Col span="6">
+                                        <div className="grid-content bg-purple layoutBoxs" >
+                                            <img id="tab11" src={this.state.frontImage?this.state.frontImage:image} class="collect_img" onClick={()=>{this.onSelected(0)}}></img>
+
+                                            <span class="collect_span">身份证头像面</span>
 
                                         </div></Layout.Col>
                                     <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
@@ -219,7 +278,7 @@ class Collect extends Component{
                                     <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
                                         <img id="tab17" src={this.state.houseHoldImage?this.state.houseHoldImage:image} class="collect_img" onClick={()=>{this.onSelected(6)}}></img>
                                         <span class="collect_span">户籍证明</span>
-                                    </div></Layout.Col>
+                                    </div></Layout.Col>*/}
 
                                 </Layout.Row>
 
@@ -237,9 +296,18 @@ class Collect extends Component{
                         <Tabs.Pane label="关系人影像" name="2">
                             <div class="collectBox">
 
-                                <span style={{fontSize:"13px"}}>关小明</span>
-                                <Layout.Row gutter="12" style={{marginTop:"12px"}}>
-                                    <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
+                                {/*<span style={{fontSize:"13px"}}>关小明</span>*/}
+                                <Layout.Row gutter="12" style={{marginTop:"8px"}}>
+                                    {
+                                        relatePicList.map((option , position)=>{
+                                            return <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
+                                                <img  style={{marginTop:"8px" , height:"100px"}} src={(this.state[relateList[position]])?(this.state[relateList[position]]):image} class="collect_img"  onClick={()=>{this.onSelected(position , 2)}}></img>
+                                                <span class="collect_span" style={{marginTop:"8px"}}>{option}</span>
+
+                                            </div></Layout.Col>
+                                        })
+                                    }
+                                   {/* <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
                                         <img id="tab21" src={image} class="collect_img"  onClick={(id)=>{this.onSelected("tab21")}}></img>
                                         <span class="collect_span">身份证头像面</span>
 
@@ -271,7 +339,7 @@ class Collect extends Component{
                                     <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
                                         <img id="tab27" src={image} class="collect_img"  onClick={(id)=>{this.onSelected("tab27")}}></img>
                                         <span class="collect_span">户籍证明</span>
-                                    </div></Layout.Col>
+                                    </div></Layout.Col>*/}
                                 </Layout.Row>
                             </div>
                             <div className="loan_footer">
@@ -287,8 +355,20 @@ class Collect extends Component{
                         <Tabs.Pane label="贷款资料影像" name="3">
                             <div class="collectBox">
 
-                                <Layout.Row gutter="12" style={{marginTop:"37px"}}>
-                                    <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
+                                <Layout.Row gutter="12" style={{marginTop:"8px"}}>
+                                    {
+                                        loanInfoPicList.map((option , position)=>{
+                                            return  <Layout.Col span="6">
+                                                <div className="grid-content bg-purple layoutBoxs" >
+                                                    <img id="tab11" style={{marginTop:"8px" , height:"100px"}} src={(this.state[loanInfoList[position]])?(this.state[loanInfoList[position]]):image} class="collect_img" onClick={()=>{this.onSelected(position , 3)}}></img>
+
+                                                    <span class="collect_span" style={{marginTop:"8px"}}>{option}</span>
+
+                                                </div>
+                                            </Layout.Col>
+                                        })
+                                    }
+                                  {/*  <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
                                         <img id="tab31" src={image} class="collect_img"  onClick={(id)=>{this.onSelected("tab31")}}></img>
                                         <span class="collect_span">电子业务申请书</span>
 
@@ -323,7 +403,7 @@ class Collect extends Component{
                                     <Layout.Col span="6"><div className="grid-content bg-purple layoutBoxs">
                                         <img id="tab38" src={image} class="collect_img"  onClick={(id)=>{this.onSelected("tab38")}}></img>
                                         <span class="collect_span">面谈笔录</span>
-                                    </div></Layout.Col>
+                                    </div></Layout.Col>*/}
                                 </Layout.Row>
                             </div>
                             <div className="loan_footer">
@@ -341,28 +421,24 @@ class Collect extends Component{
                                 <div class="center_box">
                                     <div class="addcontact">
                                         <div>
-                                            <img src={require("../../images/add.png")} width="58px" height="58px" />
+                                            <img src={require("../../images/add.png")} width="58px" height="58px"/>
                                             <p>新增自定义资料</p>
                                         </div>
                                     </div> 
                                 </div> 
                             </div>
+                            <div className="loan_footer">
+                                <div className="footer_content">
+                                    <div className="footer_content_rt">
+                                        <Button type="warning" size="large" onClick={()=>{
+                                            this.context.jumpTo(6, this.setComplete.bind(this)(5))
+                                        }}>上传影像资料</Button>
+                                    </div>
+                                </div>
+                            </div>
                         </Tabs.Pane>
                     </Tabs>
 
-                    <Dialog
-                        size="full"
-                        visible={this.state.dialogVisible}
-                        onCancel={() => this.setState({dialogVisible: !this.state.dialogVisible})}
-                        lockScroll={false}
-                        style={{background: "#000000", textAlign: "center"}}
-                    >
-                        <Dialog.Body>
-                                             <span>
-                                                 <img id="showIdPhoto" src={this.state.currentImage} width="800px" height="100%"/>
-											</span>
-                        </Dialog.Body>
-                    </Dialog>
                 </div>
             </div>
         );

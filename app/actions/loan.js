@@ -14,6 +14,7 @@ export const postLoan = (data) => ({
     type: "postLoan",
     value: data
 })
+
 export const setLoanInfo = (data) => ({
     type: "loanData",
     value: data
@@ -34,11 +35,7 @@ export const setGuarInfo = (data) => ({
     type: "guarData",
     value: data
 })
-/*export const handleLoanLoanData = (data) => ({
-    type: "loanLoanData",
-    value: data
 
-})*/
 
 /*export function postLoanInfo(appId ,loanParams,houseParams) {
     return function (dispatch) {
@@ -68,7 +65,8 @@ export function postLoanInfo(appId, loanParams) {
             dispatch(loadingLoan(false));
             dispatch(postLoan(true));
         }, function () {
-            alert("贷款信息保存失败");
+            // eslint-disable-next-line
+            mmspc.dialog.toast("贷款信息保存失败！");
             dispatch(loadingLoan(false));
             dispatch(postLoan(true));
 
@@ -82,7 +80,8 @@ export function postHouseInfo(appId, houseParams) {
             alert(data);
             dispatch(postLoan(true));
         }, function () {
-            alert('房屋信息保存失败');
+            // eslint-disable-next-line
+            mmspc.dialog.toast("房屋信息保存失败！");
             dispatch(postLoan(true));
         })
     }
@@ -94,7 +93,8 @@ export function postRateInfo(appId, rateParams) {
             alert(data);
             dispatch(postLoan(true));
         }, function () {
-            alert('利率信息保存失败');
+            // eslint-disable-next-line
+            mmspc.dialog.toast("利率信息保存失败！");
             dispatch(postLoan(true));
         })
     }
@@ -106,7 +106,8 @@ export function postAssetInfo(appId, assetParams) {
             alert(data);
             dispatch(postLoan(true));
         }, function () {
-            alert('押品信息保存失败');
+            // eslint-disable-next-line
+            mmspc.dialog.toast("押品信息保存失败！");
             dispatch(postLoan(true));
         })
     }
@@ -118,7 +119,8 @@ export function postGuarInfo(appId, guarParams) {
             alert(data);
             dispatch(postLoan(true));
         }, function () {
-            alert('担保信息保存失败');
+            // eslint-disable-next-line
+            mmspc.dialog.toast("担保信息保存失败！");
             dispatch(postLoan(true));
         })
     }
@@ -134,7 +136,8 @@ export function getLoanInfo(appId, params) {
             dispatch(setLoanInfo(jsonData));
             dispatch(loadingLoan(false));
         }, function () {
-            alert("贷款信息查询失败！");
+            // eslint-disable-next-line
+            mmspc.dialog.toast("贷款信息查询失败！");
             dispatch(loadingLoan(false));
         })
     }
@@ -150,7 +153,8 @@ export function getRateInfo(appId, params) {
             dispatch(setRateInfo(jsonData));
             dispatch(loadingLoan(false));
         }, function () {
-            alert("利率信息查询失败！");
+            // eslint-disable-next-line
+            mmspc.dialog.toast("利率信息查询失败！");
             dispatch(loadingLoan(false));
         })
     }
@@ -166,7 +170,8 @@ export function getHouseInfo(appId, params) {
             dispatch(setHouseInfo(jsonData))
             dispatch(loadingLoan(false));
         }, function () {
-            alert("用途信息查询失败！");
+            // eslint-disable-next-line
+            mmspc.dialog.toast("用途信息查询失败！");
             dispatch(loadingLoan(false));
         })
     }
@@ -192,12 +197,14 @@ export function getAssetInfo(appId, assetlistparams, assetIdparams) {
                     dispatch(setAssetInfo(jsonData));
                     dispatch(loadingLoan(false));
                 }, function () {
-                    alert("押品信息查询失败！");
+                    // eslint-disable-next-line
+                    mmspc.dialog.toast("押品信息查询失败！");
                     dispatch(loadingLoan(false));
                 })
             }
         }, function () {
-            alert("押品信息查询失败！");
+            // eslint-disable-next-line
+            mmspc.dialog.toast("押品信息查询失败！");
             dispatch(loadingLoan(false));
         })
     }
@@ -215,7 +222,8 @@ export function getGuarInfo(appId, guarListparams, guarIdparams) {
             dispatch(loadingLoan(false));
 
         }, function () {
-            alert("担保信息查询失败！");
+            // eslint-disable-next-line
+            mmspc.dialog.toast("担保信息查询失败！");
             dispatch(loadingLoan(false));
         })
     }
