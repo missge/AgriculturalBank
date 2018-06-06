@@ -1,5 +1,6 @@
 import React from 'react';
 import * as homeActions from '../../actions/home';
+import * as loginActions from '../../actions/login';
 import {Component, unshiftArrs} from '../../components/libs'
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
@@ -9,6 +10,7 @@ import Head from '../../ma-ui/Head'
 import {Link} from 'react-router-dom';
 import * as loanActions from '../../actions/loan';
 import TabTitle from '../../components/src/TabTitle'
+
 import {
     Form,
     Input,
@@ -19,20 +21,23 @@ import {
     SupplePage,
     Dialog,
     SelectList,
-    Loading
+    Loading,
 } from "../../components/index";
 import '../publicCss/public.css'
 import Radio from '../../components/src/radio';
 import {postLoan} from "../../actions/loan";
+import {MessageBox} from "../../components";
+import {loading} from "../../actions/login";
 
-var qs = require("querystring");
 
 var appId;
 var that = "";
-let showLength = 4;
+let showLength = 2;
+let showLengthTwo = 1;
+let showSixLength = 5;
 
 const actions = [
-    loanActions
+    loanActions, loginActions,homeActions
 ];
 
 function mapStateToProps(state) {
@@ -79,9 +84,14 @@ class Loan extends Component {
             },
             containerHeight: window.innerHeight - this.getHeight(100),
             isShow: false,
-            selectDialogVisible: false,
             //loan页面是否已查询
             isQueryLoan: false,
+            //控制下一步按钮是否显示
+            nextJump: "none",
+            //控制生成电子申请表按钮是否显示
+            generateForm: "block",
+            //新增产权人
+            newProperty: false,
 
             isCommonasst: '',//是否普通住宅 onChangeHouse
             isLocal: '',//借款人是否本地信息
@@ -91,8 +101,20 @@ class Loan extends Component {
             iseval: '',//是否评估流程
             evaldat: '',//评估价值认定日期
 
+            //房屋类型 点击更多弹窗
+            houseDialogVisible: false,
+            //特色产品 点击更多弹窗
+            spepdctDialogVisible: false,
+            //房贷结清情况 点击更多弹窗
+            husloclinfoDialog: false,
+            //建筑物规划用途 点击更多弹窗
+            archusageDialog: false,
 
+            spepdctList: ['非特色', '接力贷款', '连心贷', '行内交易转按贷款', '置换贷款', '非交易转按贷款',
+                '车库（位）贷款', '自建房贷款', '集资建房贷款', '直客式贷款', '跨行交易转按贷款',],
             houseTypeList: ['商品房', '经济适用房', '限价房', '房改房', '军队经济适用房', '军队安置房'],
+            husloclIist: ['名下无住房贷款记录', '已结清名下住房贷款', '有一笔住房贷款未结清', '有两笔及以上住房贷款未结清'],
+            archusageList: ['普通商品房', '别墅', '高档公寓', '房改房', '经济房', '限价房', '其他保障住房', '自建房', '其他类居住用房'],
         };
     }
 
@@ -137,8 +159,38 @@ class Loan extends Component {
         this.forceUpdate();
     }
 
-    onEducateAppendClick() {
-        this.setState({selectDialogVisible: true});
+    /* onMesageBoxClick(key) {
+         MessageBox.confirm(
+             '您确定要删除产权人吗？', '温馨提示', {
+                 cancelButtonText: '取消',
+                 confirmButtonText: '确定',
+                 showClose: false
+             }).then(() => {
+             // eslint-disable-next-line
+             mmspc.button.backPress()
+         }).catch(() => {
+
+         });
+     }*/
+
+    //房屋类型 更多点击事件
+    onHouseAppendClick() {
+        this.setState({houseDialogVisible: true});
+    }
+
+    //特色产品 更多点击事件
+    onSpepdctAppendClick() {
+        this.setState({spepdctDialogVisible: true});
+    }
+
+    //房贷结清情况 更多点击事件
+    onHusloclinfoAppendClick() {
+        this.setState({husloclinfoDialog: true});
+    }
+
+    //建筑物规划用途 更多点击事件
+    onArchusageAppendClick() {
+        this.setState({archusageDialog: true});
     }
 
     removeByValue(arr, val) {
@@ -158,53 +210,71 @@ class Loan extends Component {
 
     componentDidMount() {
         that = this;
-        // eslint-disable-next-line
-        // mmspc.bridge.get(data => {
-            //    this.props.loanActions.getLoanInfo(data, JSON.parse("{\"_id\":\"111111\",\"loanorder\":\"11111\"}"));
-            //    this.props.loanActions.getRateInfo(data, JSON.parse("{\"id\":\"11111\"}"));
-            //    this.props.loanActions.getHouseInfo(data, JSON.parse("{\"req_id\":\"1111111\"}"));
-            //    this.props.loanActions.getAssetInfo(data, JSON.parse("{\"req_id\":\"111111\"}"), "");//作业Id 押品Id
-            //    this.props.loanActions.getGuarInfo(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}")); //作业Id 担保信息Id
-        // });
+
+        unshiftArrs(this.state.spepdctList, this.props.loan.loanInfo.spepdct, (data) => {
+            this.props.loan.loanInfo['spepdct'] = data
+            this.refs.spepdctSL.setState({selected: null})
+        }, showLength);
+
+        unshiftArrs(this.state.houseTypeList, this.props.loan.houseInfo.hustype, (data) => {
+            this.props.loan.houseInfo['hustype'] = data
+            this.refs.houseTypeSL.setState({selected: null})
+        }, showLength);
+
+        unshiftArrs(this.state.archusageList, this.props.loan.asstInfo.archusage, (data) => {
+            this.props.loan.asstInfo['archusage'] = data
+            this.refs.archusageSL.setState({selected: null})
+        }, showLength);
 
     }
 
+//重置Loan页面信息
+    clearLoanInfo() {
+        this.setState({
+            //loan页面是否已查询
+            isQueryLoan: false,
+            //控制下一步按钮是否显示
+            nextJump: "none",
+            //控制生成电子申请表按钮是否显示
+            generateForm: "block",
+        })
+        //重置props贷款信息
+        this.props.loanActions.clearPropsLoan();
+    }
 
     render() {
         return (
             <div style={{height: this.state.containterHeight}}>
                 <div style={{overflow: 'auto', height: '100%'}}>
                     <div class="showTab1">
-                        <div>
-                            {
-                                this.props.loan.postLoan &&
-                                this.props.loanActions.postLoan(false) &&
-                                this.context.jumpTo(5, this.setComplete.bind(this)(4))
 
-                            }
-                        </div>
                         <div>
+                            {/*查询接口*/}
                             {
-                                this.props.loan.loadingLoan &&
-                                <Loading fullscreen={true} text={this.props.loan.loadingLoanText}
-                                         style={{backgroundColor: 'rgba(0, 0, 0, 0.3)'}}/>
-                            }
-                        </div>
-                        {/*<div>
-                            {
-                                !this.state.isQueryLoan &&
                                 this.props.home.pageSelected == 4 &&
+                                !this.state.isQueryLoan &&
                                 // eslint-disable-next-line
-                                mmspc.bridge.get(data => {
-                                    this.props.loanActions.getLoanInfo(data, JSON.parse("{\"req_id\":\"111111\",\"loanorder\":\"11111\"}"));
-                                    this.props.loanActions.getRateInfo(data, JSON.parse("{\"req_id\":\"11111\"}"));
-                                    this.props.loanActions.getHouseInfo(data, JSON.parse("{\"req_id\":\"1111111\"}"));
-                                    this.props.loanActions.getAssetInfo(data, JSON.parse("{\"req_id\":\"111111\"}"), "");//作业Id 押品Id
-                                    this.props.loanActions.getGuarInfo(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\"}")); //作业Id 担保信息Id
-                                    this.setState({isQueryLoan: true});
+                                mmspc.bridge.get((data) => {
+                                    this.state.isQueryLoan = true;
+                                    // this.setState({isQueryLoan: true});
+                                    /*this.props.loanActions.getLoanInfo(data, JSON.parse("{\"req_id\":\"111111\"}"));
+                                    this.props.loanActions.getRateInfo(data, JSON.parse("{\"req_id\":\"111111\"}"));
+                                    this.props.loanActions.getHouseInfo(data, JSON.parse("{\"req_id\":\"111111\"}"));
+                                    this.props.loanActions.getAssetInfo(data, JSON.parse("{\"req_id\":\"111111\"}"));
+                                    this.props.loanActions.getGuarInfo(data, JSON.parse("{\"req_id\":\"111111\"}"));*/
+                                    //查询贷款信息
+                                    this.props.loanActions.getLoanInfo(JSON.parse("{\"req_id\":" + "\"" + this.props.client.procsId + "\",\"loanorder\":\"11111\"}"));
+                                    //查询利率信息
+                                    this.props.loanActions.getRateInfo(JSON.parse("{\"req_id\":" + "\"" + this.props.client.procsId + "\"}"));
+                                    //查询用途信息
+                                    this.props.loanActions.getHouseInfo(JSON.parse("{\"req_id\":" + "\"" + this.props.client.procsId + "\"}"));
+                                    //查询押品信息
+                                    this.props.loanActions.getAssetInfo(JSON.parse("{\"req_id\":" + "\"" + this.props.client.procsId + "\"}"));//作业Id 押品Id
+                                    //查询担保信息
+                                    this.props.loanActions.getGuarInfo(JSON.parse("{\"req_id\":" + "\"" + this.props.client.procsId + "\"}")); //作业Id 担保信息Id
                                 })
                             }
-                        </div>*/}
+                        </div>
 
                         <div class="main_contanier">
                             <TabTitle title="贷款信息" class="tabTitle blueTabTitle"/>
@@ -289,30 +359,63 @@ class Loan extends Component {
                             <div class="footer_content">
                                 <div class="footer_content_lf">
                                     <Button plain={true} type="info" size="large"
-                                            onClick={() => this.setState({isShow: !this.state.isShow})}>信息补录</Button>
+                                            onClick={
+                                                () => this.setState({isShow: !this.state.isShow})
+                                            }>
+                                        信息补录
+                                    </Button>
+                                    {/*   <Button plain={true} type="info" size="large"
+                                            onClick={
+                                                () => this.clearLoanInfo()
+                                            }>
+                                        重置
+                                    </Button>*/}
                                 </div>
                                 <div class="footer_content_rt">
-                                    <Button type="warning" size="large"
+                                    <Button type="warning" size="large" style={{width:'90%'}}
                                             onClick={
                                                 () => {
-                                                    //     alert("贷款信息："+JSON.stringify(this.props.loan.loanInfo));
-                                                    //     alert("房屋信息："+JSON.stringify(this.props.loan.houseInfo));
-                                                    //   alert("利率信息："+JSON.stringify(this.props.loan.rateInfo));
+                                                    this.props.loan.loanInfo.req_id = this.props.client.procsId;
+                                                    this.props.loan.houseInfo.req_id = this.props.client.procsId;
+                                                    this.props.loan.guarInfo.req_id = this.props.client.procsId;
+                                                    this.props.loan.rateInfo.req_id = this.props.client.procsId;
+                                                    this.props.loan.asstInfo.req_id = this.props.client.procsId;
+                                                    //      alert("贷款信息："+JSON.stringify(this.props.loan.loanInfo));
+                                                    //      alert("房屋信息："+JSON.stringify(this.props.loan.houseInfo));
+                                                    //      alert("利率信息："+JSON.stringify(this.props.loan.rateInfo));
                                                     //      alert("押品信息：" + JSON.stringify(this.props.loan.asstInfo));
-                                                    //     alert("担保信息："+JSON.stringify(this.props.loan.guarInfo));
-                                                    // eslint-disable-next-line
-                                                    mmspc.bridge.get(data => {
-                                                        //    that.props.loanActions.postLoanInfo(data, that.state.loanInfo, that.props.loan.houseInfo);
-                                                        this.props.loanActions.postLoanInfo(data, this.props.loan.loanInfo);
-                                                        this.props.loanActions.postHouseInfo(data, this.props.loan.houseInfo);
-                                                        this.props.loanActions.postRateInfo(data, this.props.loan.rateInfo);
-                                                        this.props.loanActions.postAssetInfo(data, this.props.loan.asstInfo);
-                                                        this.props.loanActions.postGuarInfo(data, this.props.loan.guarInfo);
-                                                    });
-                                                    // eslint-disable-next-line
-                                                    // mmspc.fileConversion.getApplicationFrom();
+                                                    //      alert("担保信息："+JSON.stringify(this.props.loan.guarInfo));
+                                                    //    that.props.loanActions.postLoanInfo(data, that.state.loanInfo, that.props.loan.houseInfo);
+                                                    //保存贷款信息
+                                                    this.props.loanActions.postLoanInfo(this.props.loan.loanInfo);
+                                                    //保存用途信息
+                                                    this.props.loanActions.postHouseInfo(this.props.loan.houseInfo);
+                                                    //保存利率信息
+                                                    this.props.loanActions.postRateInfo(this.props.loan.rateInfo);
+                                                    //保存押品信息
+                                                    this.props.loanActions.postAssetInfo(this.props.loan.asstInfo);
+                                                    // this.props.loanActions.postAssetInfo("{\"assttype\":\"2030104\",\"req_id\":\""+this.props.client.procsId+"\"}");
+                                                    // this.props.loanActions.loginout("");
+                                                    //保存担保信息
+                                                    this.props.loanActions.postGuarInfo(this.props.loan.guarInfo);
+                                                    //显示下一步按钮，隐藏生成电子申请表按钮
+                                                    //this.setState({nextJump: "block", generateForm: "none"})
                                                 }
-                                            }>生成电子申请表</Button>
+                                            }>保存贷款信息</Button>
+                                </div>
+                                <div class="footer_content_rt">
+                                    <Button type="warning" size="large" style={{width:'90%'}}
+                                            onClick={
+                                                () => {
+                                                    //下载申请表 6c7bObbc-e5da-4d1b-
+                                                    this.props.loanActions.downloadAppForm(JSON.parse("{\"req_id\":" + "\"" + this.props.client.procsId + "\",\"bussrc\":\"02\"}"));
+                                                    this.context.jumpTo(5, this.setComplete.bind(this)(4));
+                                                    this.props.loanActions.pageSelected(5);
+                                                }
+                                            }>
+                                        生成电子申请表
+                                    </Button>
+
                                 </div>
                             </div>
                         </div>
@@ -394,13 +497,52 @@ class Loan extends Component {
                                                 <div class="form_rt">
                                                     <Form.Item label="特色产品">
                                                         <Radio.Group value={this.props.loan.loanInfo.spepdct}
-                                                                     onChange={this.onChangeLoan.bind(this, 'spepdct')}>
-                                                            <Radio.Button value="非特色"/>
-                                                            <Radio.Button value="接力贷款"/>
-                                                            <Radio.Button value="连心贷"/>
-                                                            <Radio.Button value="更多"/>
+                                                                     onChange={this.onChangeLoan.bind(this, 'spepdct')}
+                                                                     appendix="更多"
+                                                                     onAppendixClick={this.onSpepdctAppendClick.bind(this)}>
+                                                            {
+                                                                this.state.spepdctList.map(function (item, i) {
+                                                                    return (
+                                                                        i < showLength + 1 ?
+                                                                            <Radio.Button key={i} value={item}/> : ''
+                                                                    )
+                                                                })
+                                                            }
+                                                            <Radio.Button style={{marginBottom: "0px"}} value="更多"/>
                                                         </Radio.Group>
                                                     </Form.Item>
+                                                    {/*特色产品点击更多弹窗*/}
+                                                    <Dialog
+                                                        size="small"
+                                                        visible={this.state.spepdctDialogVisible}
+                                                        // onCancel={ () => this.setState({ selectDialogVisible: false,types:this.state.types}) }
+                                                        onCancel={() => this.setState({spepdctDialogVisible: false})}
+
+                                                        lockScroll={false}
+                                                        className='mmpsc-select-list-dialog'
+                                                    >
+                                                        <Dialog.Body>
+                                                            <SelectList ref="spepdctSL"
+                                                                        visible={this.state.spepdctDialogVisible}
+                                                                        value={this.props.loan.loanInfo.spepdct}
+                                                                        multiple={false} onChange={(val) => {
+                                                                this.removeByValue(this.state.spepdctList, val)
+                                                                this.state.spepdctList.unshift(val)
+                                                                this.onChangeLoan('spepdct', val)
+                                                                this.setState({spepdctDialogVisible: false})
+                                                                this.refs.spepdctSL.setState({selected: null});
+                                                            }}>
+                                                                {
+                                                                    this.state.spepdctList.map(function (item, i) {
+                                                                        return i > showLength ?
+                                                                            <SelectList.Option key={i} label={item}
+                                                                                               value={item}/> : ''
+                                                                    })
+                                                                }
+
+                                                            </SelectList>
+                                                        </Dialog.Body>
+                                                    </Dialog>
                                                     <Form.Item label="合作品种编号">
                                                         <Input value={this.props.loan.loanInfo.cobreno}
                                                                placeholder="A2018040101 "
@@ -473,29 +615,25 @@ class Loan extends Component {
                                                             <Radio.Button value="投资"/>
                                                         </Radio.Group>
                                                     </Form.Item>
+                                                    {/* 房屋类型点击更多弹窗*/}
                                                     <Dialog
                                                         size="small"
-                                                        visible={this.state.selectDialogVisible}
-                                                        title='对话框'
-                                                        onCancel={() => this.setState({
-                                                            selectDialogVisible: false,
-                                                            hustype: this.state.hustype
-                                                        })}
+                                                        visible={this.state.houseDialogVisible}
+                                                        // onCancel={ () => this.setState({ selectDialogVisible: false,types:this.state.types}) }
+                                                        onCancel={() => this.setState({houseDialogVisible: false})}
                                                         lockScroll={false}
                                                         className='mmpsc-select-list-dialog'
                                                     >
                                                         <Dialog.Body>
-                                                            <SelectList ref="houseType"
-                                                                        visible={this.state.selectDialogVisible}
+                                                            <SelectList ref="houseTypeSL"
+                                                                        visible={this.state.houseDialogVisible}
                                                                         value={this.props.loan.houseInfo.hustype}
                                                                         multiple={false} onChange={(val) => {
                                                                 this.removeByValue(this.state.houseTypeList, val)
                                                                 this.state.houseTypeList.unshift(val)
-                                                                this.setState({
-                                                                    selectDialogVisible: false,
-                                                                    hustype: val
-                                                                })
-                                                                this.refs.houseType.setState({selected: null});
+                                                                this.onChangeHouse('hustype', val)
+                                                                this.setState({houseDialogVisible: false})
+                                                                this.refs.houseTypeSL.setState({selected: null});
                                                             }}>
                                                                 {
                                                                     this.state.houseTypeList.map(function (item, i) {
@@ -512,19 +650,18 @@ class Loan extends Component {
                                                         <Radio.Group value={this.props.loan.houseInfo.hustype}
                                                                      onChange={this.onChangeHouse.bind(this, 'hustype')}
                                                                      appendix="更多"
-                                                                     onAppendixClick={this.onEducateAppendClick.bind(this)}>
+                                                                     onAppendixClick={this.onHouseAppendClick.bind(this)}>
                                                             {
                                                                 this.state.houseTypeList.map(function (item, i) {
                                                                     return (
                                                                         i < showLength + 1 ?
                                                                             <Radio.Button key={i} value={item}/> : ''
-
                                                                     )
                                                                 })
-
                                                             }
-                                                            <Radio.Button value="更多"/>
+                                                            <Radio.Button style={{marginBottom: "0px"}} value="更多"/>
                                                         </Radio.Group>
+
                                                     </Form.Item>
                                                     <Form.Item label="房屋建造年份">
                                                         <Input value={this.props.loan.houseInfo.buildyear}
@@ -580,12 +717,52 @@ class Loan extends Component {
                                                     </Form.Item>
                                                     <Form.Item label="房贷结清情况">
                                                         <Radio.Group value={this.props.loan.houseInfo.husloclinfo}
-                                                                     onChange={this.onChangeHouse.bind(this, 'husloclinfo')}>
-                                                            <Radio.Button value="名下无住房贷款记录"/>
-                                                            <Radio.Button value="已结清名下住房贷款"/>
-                                                            <Radio.Button value="更多"/>
+                                                                     onChange={this.onChangeHouse.bind(this, 'husloclinfo')}
+                                                                     appendix="更多"
+                                                                     onAppendixClick={this.onHusloclinfoAppendClick.bind(this)}>
+                                                            {
+                                                                this.state.husloclIist.map(function (item, i) {
+                                                                    return (
+                                                                        i < showLengthTwo + 1 ?
+                                                                            <Radio.Button key={i} value={item}/> : ''
+                                                                    )
+                                                                })
+                                                            }
+                                                            <Radio.Button style={{marginBottom: "0px"}} value="更多"/>
                                                         </Radio.Group>
                                                     </Form.Item>
+                                                    {/*房贷结清情况点击更多弹窗*/}
+                                                    <Dialog
+                                                        size="small"
+                                                        visible={this.state.husloclinfoDialog}
+                                                        // onCancel={ () => this.setState({ selectDialogVisible: false,types:this.state.types}) }
+                                                        onCancel={() => this.setState({husloclinfoDialog: false})}
+
+                                                        lockScroll={false}
+                                                        className='mmpsc-select-list-dialog'
+                                                    >
+                                                        <Dialog.Body>
+                                                            <SelectList ref="husloclinfoSL"
+                                                                        visible={this.state.husloclinfoDialog}
+                                                                        value={this.props.loan.houseInfo.husloclinfo}
+                                                                        multiple={false} onChange={(val) => {
+                                                                this.removeByValue(this.state.husloclIist, val)
+                                                                this.state.husloclIist.unshift(val)
+                                                                this.onChangeHouse('husloclinfo', val)
+                                                                this.setState({husloclinfoDialog: false})
+                                                                this.refs.husloclinfoSL.setState({selected: null});
+                                                            }}>
+                                                                {
+                                                                    this.state.husloclIist.map(function (item, i) {
+                                                                        return i > showLengthTwo ?
+                                                                            <SelectList.Option key={i} label={item}
+                                                                                               value={item}/> : ''
+                                                                    })
+                                                                }
+
+                                                            </SelectList>
+                                                        </Dialog.Body>
+                                                    </Dialog>
                                                     <Form.Item label="借款人离婚证明登记日期">
                                                         <DatePicker
                                                             value={this.state.divorceDate}
@@ -631,11 +808,25 @@ class Loan extends Component {
                                                             <Radio.Button value="其他"/>
                                                         </Radio.Group>
                                                     </Form.Item>
-                                                    <Form.Item label="产权人客户代码">
+                                                    <Form.Item label="产权人客户代码"
+                                                               style={{display: (this.state.newProperty != false ? "none" : "block")}}>
                                                         <Input value={this.props.loan.asstInfo.ownercode}
                                                                placeholder="请输入产权人客户代码"
                                                                onChange={this.onChangeAsst.bind(this, 'ownercode')}></Input>
                                                     </Form.Item>
+                                                    <Form.Item label="产权人客户代码1"
+                                                               style={{display: (this.state.newProperty != false ? "block" : "none")}}>
+                                                        <Input value={this.props.loan.asstInfo.ownercode}
+                                                               placeholder="请输入产权人客户代码1"
+                                                               onChange={this.onChangeAsst.bind(this, 'ownercode')}></Input>
+                                                    </Form.Item>
+                                                    <Form.Item label="产权人客户代码2"
+                                                               style={{display: (this.state.newProperty != false ? "block" : "none")}}>
+                                                        <Input value={this.props.loan.asstInfo.ownercode}
+                                                               placeholder="请输入产权人客户代码2"
+                                                               onChange={this.onChangeAsst.bind(this, 'ownercode')}></Input>
+                                                    </Form.Item>
+
                                                 </div>
                                                 <div class="form_rt">
                                                     <Form.Item label="建筑结构">
@@ -651,16 +842,50 @@ class Loan extends Component {
                                                     </Form.Item>
                                                     <Form.Item label="建筑物规划用途">
                                                         <Radio.Group value={this.props.loan.asstInfo.archusage}
-                                                                     onChange={this.onChangeAsst.bind(this, 'archusage')}>
-                                                            <Radio.Button value="普通商品房"/>
-                                                            <Radio.Button value="别墅"/>
-                                                            <Radio.Button value="高档公寓"/>
-                                                            <Radio.Button value="房改房"/>
-                                                            <Radio.Button value="经济房"/>
-                                                            <Radio.Button value="限价房"/>
-                                                            <Radio.Button value="更多"/>
+                                                                     onChange={this.onChangeAsst.bind(this, 'archusage')}
+                                                                     appendix="更多"
+                                                                     onAppendixClick={this.onArchusageAppendClick.bind(this)}>
+                                                            {
+                                                                this.state.archusageList.map(function (item, i) {
+                                                                    return (
+                                                                        i < showLength + 1 ?
+                                                                            <Radio.Button key={i} value={item}/> : ''
+                                                                    )
+                                                                })
+                                                            }
+                                                            <Radio.Button style={{marginBottom: "0px"}} value="更多"/>
                                                         </Radio.Group>
                                                     </Form.Item>
+                                                    {/*建筑物规划用途点击更多弹窗*/}
+                                                    <Dialog
+                                                        size="small"
+                                                        visible={this.state.archusageDialog}
+                                                        onCancel={() => this.setState({archusageDialog: false})}
+                                                        lockScroll={false}
+                                                        className='mmpsc-select-list-dialog'
+                                                    >
+                                                        <Dialog.Body>
+                                                            <SelectList ref="archusageSL"
+                                                                        visible={this.state.archusageDialog}
+                                                                        value={this.props.loan.asstInfo.archusage}
+                                                                        multiple={false} onChange={(val) => {
+                                                                this.removeByValue(this.state.archusageList, val)
+                                                                this.state.archusageList.unshift(val)
+                                                                this.onChangeAsst('archusage', val)
+                                                                this.setState({archusageDialog: false})
+                                                                this.refs.archusageSL.setState({selected: null});
+                                                            }}>
+                                                                {
+                                                                    this.state.archusageList.map(function (item, i) {
+                                                                        return i > showLength ?
+                                                                            <SelectList.Option key={i} label={item}
+                                                                                               value={item}/> : ''
+                                                                    })
+                                                                }
+
+                                                            </SelectList>
+                                                        </Dialog.Body>
+                                                    </Dialog>
                                                     <Form.Item label="土地用途">
                                                         <Radio.Group value={this.props.loan.asstInfo.landusage}
                                                                      onChange={this.onChangeAsst.bind(this, 'landusage')}>
@@ -679,9 +904,28 @@ class Loan extends Component {
                                                                placeholder="请输入产权份额"
                                                                onChange={this.onChangeAsst.bind(this, 'ownerprop')}></Input>
                                                     </Form.Item>
+                                                    <Form.Item label="产权份额"
+                                                               style={{display: (this.state.newProperty != false ? "block" : "none")}}>
+                                                        <Input placeholder="请输入产权份额"></Input>
+                                                        <img src={require("../../images/yijujue.png")}
+                                                             style={{height: '4%', width: '4%'}} onClick={() => {
+                                                            this.setState({newProperty: false});
+                                                        }}/>
+                                                    </Form.Item>
                                                 </div>
                                             </div>
+
                                         </Form>
+
+                                        <Button type="warning" size="large"
+                                                style={{marginBottom: '3%', marginLeft: '42%'}}
+                                                onClick={() => {
+                                                    this.setState({newProperty: true});
+                                                }}
+                                        >
+                                            新增产权人
+                                        </Button>
+
                                     </Tabs.Pane>
                                     <Tabs.Pane label="押品评估信息" name="4">
                                         <Form labelPosition="left" model={this.state.form} labelWidth="150"

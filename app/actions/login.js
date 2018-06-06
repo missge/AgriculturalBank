@@ -1,5 +1,9 @@
 import Net from "../netRequest/mmspRequest";
 import {Type} from "../global/contact"
+import {setCardName, setCardNum} from "./home";
+import {Url} from "../global/url";
+import {uploadCreditPage} from "./credit";
+import {queryWork} from "./investi"
 // 加载弹框是否显示逻辑
 export const loading=(data)=> ({
     type:"Loading",
@@ -57,113 +61,68 @@ export const setClientId = (data)=>({
     type:"clientId",
     value:data
 })
-/*export function getInst(appId) {
-    return function (dispatch) {
-        dispatch(loading(true));
-        dispatch(loadingText("登录中..."));
-        // 联网核查
-        // eslint-disable-next-line
-        // Net.getRequest(appId+"/rest/pub/access/onlinecheck" ,
-        //     /!*JSON.parse("{\"clientId\":\"00000\",\"procsId\":\"2018abcA5101A0000213\"}")*!/
-        //     JSON.parse("{\"clientId\":\"00000\"}"),function (data) {
-        //         // dispatch(loading(false));
-        //         // dispatch(loginLoadSuccess(data));
-        //         alert("success");
-        //         dispatch(getInst(appId));
-        //     },function () {
-        //         alert("fail");
-        //         dispatch(loading(false));
-        //         dispatch(loginLoadFail("error"));
-        //     })
+export const setModelList = (data)=>({
+    type:"modelList",
+    value:data
+})
 
-        // 客户准入
-        // eslint-disable-next-line
-        // Net.getRequest(appId+"/rest/pub/access/result" ,
-        //     /!*JSON.parse("{\"clientId\":\"00000\",\"procsId\":\"2018abcA5101A0000213\"}")*!/
-        //     JSON.parse("{\"clientId\":\"00000\"}"),function (data) {
-        //         // dispatch(loading(false));
-        //         // dispatch(loginLoadSuccess(data));
-        //         alert("success");
-        //         dispatch(getInst(appId));
-        //     },function () {
-        //         alert("fail");
-        //         dispatch(loading(false));
-        //         dispatch(loginLoadFail("error"));
-        //     })
-        // 征信结果
-        // eslint-disable-next-line
-        // Net.getRequest(appId+"/rest/pub/credit/result" ,
-        //     JSON.parse("{\"clientId\":\"00000\",\"procsId\":\"2018abcA5101A0000213\"}")
-        //     /!*JSON.parse("{\"clientId\":\"00000\"}")*!/,function (data) {
-        //         // dispatch(loading(false));
-        //         // dispatch(loginLoadSuccess(data));
-        //         alert("success");
-        //         dispatch(getInst(appId));
-        //     },function () {
-        //         dispatch(loading(false));
-        //         dispatch(loginLoadFail("error"));
-        //     })
-        // 机构列表
-        // eslint-disable-next-line
-        // Net.getRequest(appId+"/rest/admin/system/user/instlist" ,
-        //     /!*JSON.parse("{\"clientId\":\"00000\",\"procsId\":\"2018abcA5101A0000213\"}")*!/
-        //     /!*JSON.parse("{\"clientId\":\"00000\"}")*!/"",function (data) {
-        //         // dispatch(loading(false));
-        //         // dispatch(loginLoadSuccess(data));
-        //         // dispatch(getInst(appId));
-        //     },function () {
-        //         dispatch(loading(false));
-        //         dispatch(loginLoadFail("error"));
-        //     })
-        // 用户登入（无密码）
-        // eslint-disable-next-line
-        // Net.postRequest(appId+"/rest/admin/system/user/facein" ,"username=412801198304100815",
-        //     Type.jsonType,function (data) {
-        //         // dispatch(loading(false));
-        //         // dispatch(loginLoadSuccess(data));
-        //         // dispatch(getInst(appId));
-        //     },function () {
-        //         dispatch(loading(false));
-        //         dispatch(loginLoadFail("error"));
-        //     })
-        // 选择机构（无密码）
-        // eslint-disable-next-line
-        // Net.postRequest(appId+"/rest/admin/system/user/index" ,"instcode=000000000603",
-        //     Type.jsonType,function (data) {
-        //         // dispatch(loading(false));
-        //         // dispatch(loginLoadSuccess(data));
-        //         // dispatch(getInst(appId));
-        //     },function () {
-        //         dispatch(loading(false));
-        //         dispatch(loginLoadFail("error"));
-        //     })
-    }
-}*/
-export function login(appId) {
+export const setSceneList = (data)=>({
+    type:"sceneList",
+    value:data
+})
+// 密码登录
+export function login(params) {
     return function (dispatch) {
         dispatch(loading(true));
         dispatch(loadingText("登录中..."));
-        // 根据appId登录
-        // eslint-disable-next-line
-        Net.postRequest(appId+"/rest/admin/system/user/signin" ,"username=412801198304100815&userpass=11111111",
+        Net.postRequest(Url.login ,params,
             Type.formType,function (data) {
                 // dispatch(loading(false));
                 // dispatch(loginLoadSuccess(data));
                 // dispatch(getInst(appId));
-                dispatch(getInst(appId));
+                dispatch(getInst());
             },function () {
                 dispatch(loading(false));
                 dispatch(loginLoadFail("error"));
             })
     }
 }
-export function getInst(appId) {
+
+// 密码登录
+export function loginFromB(params , workId) {
+    return function (dispatch) {
+        dispatch(loading(true));
+        dispatch(loadingText("登录中..."));
+        Net.postRequest(Url.login ,params,
+            Type.formType,function (data) {
+                dispatch(queryWork(JSON.parse("{\"req_id\":\""+workId+"\"}")));
+            },function () {
+                dispatch(loading(false));
+                dispatch(loginLoadFail("error"));
+            })
+    }
+}
+// 无密码登录
+export function loginNonePassword(params) {
+    return function (dispatch) {
+        dispatch(loading(true));
+        dispatch(loadingText("登录中..."));
+        Net.postRequest(Url.facein , params , Type.formType ,
+            function (data) {
+                dispatch(getInst());
+            },function () {
+                dispatch(loading(false));
+                dispatch(loginLoadFail("error"));
+            })
+    }
+}
+export function getInst() {
     return function (dispatch) {
         dispatch(loading(true));
         dispatch(loadingText("获取机构列表..."));
         // 根据appId登录
         // eslint-disable-next-line
-        Net.getRequest(appId+"/rest/admin/system/user/instlist" ,"" ,function (data) {
+        Net.getRequest(Url.instList ,"" ,function (data) {
                 dispatch(loading(false));
                 dispatch(showList(true));
                 dispatch(getInstSuccess(data));
@@ -174,27 +133,28 @@ export function getInst(appId) {
     }
 }
 
-export function getInstInfo(appId , instcode) {
+export function getInstInfo(instcode) {
     return function(dispatch){
         dispatch(loading(true));
-        dispatch(loadingText("查询机构中..."));
-        Net.postRequest(appId+"/rest/admin/system/user/index" , "instcode="+instcode ,Type.formType,
+        dispatch(loadingText("选择机构中..."));
+        Net.postRequest(Url.instInfo , "instcode="+instcode ,Type.formType,
             function (data) {
-                dispatch(instInfo(data));
-                dispatch(getModelList(appId));
+                dispatch(instInfo());
+                dispatch(getModelList());
             },function () {
                 dispatch(loading(false));
             })
     }
 
 }
-export function getModelList(appId , ) {
+export function getModelList() {
     return function (dispatch) {
         dispatch(loading(true));
         dispatch(loadingText("获取模板列表..."));
-        Net.getRequest(appId+"/rest/hl/process/templist" , "",function (data) {
+        Net.getRequest(Url.modelList , "",function (data) {
+            dispatch(setModelList(JSON.parse(data).data));
             dispatch(loading(false));
-
+            dispatch(getSceneList(JSON.parse("{\"pdts_cod\":\""+optkind+"\"}")));
         },function () {
             dispatch(loading(false));
 
@@ -202,29 +162,32 @@ export function getModelList(appId , ) {
     }
 }
 // 这个接口是在联网核查前调用，确保后台能够记录到这个人员的信息
-export function addCustomer(appId , params) {
+export function addCustomer(params) {
     return function (dispatch) {
         dispatch(loading(true));
         dispatch(loadingText("联网核查中..."));
-        Net.postRequest(appId+"/rest/hl/process/client" , params , Type.jsonType,
+        // 身份证号 110108195805175419  姓名 张李五
+        Net.postRequest(Url.client , params , Type.jsonType,
             function (data) {
                 dispatch(loading(false));
-                dispatch(setClientId(JSON.parse(data).data));
-                dispatch(netcheck(appId , JSON.parse(data).data));
+                dispatch(setClientId(JSON.parse(data).data.client_id));
+                dispatch(netcheck(JSON.parse(data).data.client_id));
+                dispatch(setCardName(JSON.parse(params).cliname));
+                dispatch(setCardNum(JSON.parse(params).certno));
             },function () {
                 dispatch(loading(false));
             });
     }
 }
-export function netcheck(appId , clientId) {
+export function netcheck(clientId) {
     return function (dispatch) {
         dispatch(loading(true));
         dispatch(loadingText("联网核查中..."));
         // eslint-disable-next-line
-        Net.getRequest(appId+"/rest/pub/access/onlinecheck" ,
+        Net.getRequest(Url.netCheck ,
             JSON.parse("{\"clientId\":"+"\""+clientId+"\"}"),function (data) {
                 dispatch(loading(false));
-                dispatch(accessResult(appId ,clientId));
+                dispatch(accessResult(clientId));
                 dispatch(netResult(true));
             },function () {
                 dispatch(loading(false));
@@ -234,13 +197,13 @@ export function netcheck(appId , clientId) {
     }
 }
 
-export function accessResult(appId , clientId) {
+export function accessResult(clientId) {
     return function (dispatch) {
         dispatch(loading(true));
         dispatch(loadingText("联网核查中..."));
         // 客户准入
         // eslint-disable-next-line
-        Net.getRequest(appId+"/rest/pub/access/result" ,
+        Net.getRequest(Url.netResult ,
             JSON.parse("{\"clientId\":\""+clientId+"\"}"),function (data) {
                 dispatch(loading(false));
             },function () {
@@ -249,13 +212,13 @@ export function accessResult(appId , clientId) {
     }
 }
 
-export function addWork(appId , params) {
+export function addWork(params) {
     return function (dispatch) {
         dispatch(loading(true));
         dispatch(loadingText("生成作业Id..."));
         // Cql3SSh2
         // eslint-disable-next-line
-        Net.postRequest(appId+"/rest/hl/process" ,params , Type.jsonType,
+        Net.postRequest(Url.process ,params , Type.jsonType,
             function (data) {
                 dispatch(loading(false));
                 dispatch(setProcsId(JSON.parse(data).data.req_id));
@@ -264,4 +227,59 @@ export function addWork(appId , params) {
             })
     }
     
+}
+export function updateWork(params) {
+    return function (dispatch) {
+        dispatch(loading(true));
+        dispatch(loadingText("更新作业信息..."));
+        Net.putRequest(Url.process , params , Type.jsonType,
+            function (data) {
+                // eslint-disable-next-line
+                mmspc.dialog.toast("更新作业信息成功");
+                dispatch(loading(false));
+
+            },function () {
+                // eslint-disable-next-line
+                mmspc.dialog.toast("更新作业信息失败");
+                dispatch(loading(false));
+            })
+    }
+}
+
+export function queryList(params) {
+    return function (dispatch) {
+        dispatch(loading(true));
+        Net.getRequest("/rest/admin/ipl/processlist" , params ,
+            function (data) {
+                dispatch(loading(false));
+            },function () {
+                dispatch(loading(false));
+            })
+    }
+}
+
+export function loginout(params) {
+    return function (dispatch) {
+        dispatch(loading(true));
+        Net.getRequest(Url.loginOut , "" ,
+            function (data) {
+                dispatch(loading(false));
+            },function () {
+                dispatch(loading(false));
+            })
+    }
+}
+
+export function getSceneList(params) {
+    return function (dispatch) {
+        dispatch(loadingText("获取场景列表..."));
+        dispatch(loading(true));
+        Net.getRequest(Url.sceneList , params ,
+            function (data) {
+                dispatch(setSceneList(JSON.parse(data).data));
+                dispatch(loading(false));
+            },function () {
+                dispatch(loading(false));
+            })
+    }
 }

@@ -1,8 +1,9 @@
 import { home ,head , load ,loginData , instData ,instInfo,client} from './home'
 import {borrower} from "./borrower"
-import {partyData} from "./party"
+import {partyData,relate} from "./party"
 import {credit} from "./credit"
 import {loan} from "./loan"
+import {investi} from "./investi"
 const rootReducer = {
   /* your reducers */
   home, //首页相关
@@ -15,6 +16,8 @@ const rootReducer = {
     client,
     partyData,
     credit,
-    loan
+    loan,
+    relate,
+    investi
 }
 export default rootReducer

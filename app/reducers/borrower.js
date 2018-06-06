@@ -67,6 +67,7 @@ let borrowerState={
         depbal:"",
         f61:"",
         f62:"",
+        f91:"",
         sumexpend:"",
         cliname:"",
         manchar:"",
@@ -83,6 +84,7 @@ let borrowerState={
         degree:"",
         protexpd:"",
         f103:"",
+        f104:"",
         f105:"",
         orgcode:"",
         f106:"",
@@ -101,7 +103,12 @@ let borrowerState={
         delflag:"",
         debtexpd:"",
         houseloanbal:"",
-        hujiaddr:""
+        hujiaddr:"",
+
+        area:"",
+        reqno:"",
+        self:"",
+
     },
     state:false
 }
@@ -114,14 +121,13 @@ export function borrower(state = borrowerState , action={}) {
                 postSuccess:action.value
             }
         case "loanerInfo":
+            var tempInfo = borrowerState.loanerInfo;
+            for (var key in tempInfo){
+                tempInfo[key] = action.value[key];
+            }
             return{
                 ...state,
-                loanerInfo:JSON.parse(action.value).data
-            }
-        case "loaner":
-            state.loanerInfo[action.key] = action.value;
-            return{
-                ...state
+               loanerInfo:tempInfo
             }
         case "state":
             return{

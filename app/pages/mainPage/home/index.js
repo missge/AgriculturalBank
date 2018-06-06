@@ -19,15 +19,19 @@ import * as homeActions from '../../../actions/home';
 import Net from "../../../netRequest/mmspRequest";
 import watermark from "../../../components/src/utils/waterMark";
 import {MessageBox} from "../../../components";
+import {setAppId} from "../../../global/net";
 
+var that = "";
 const actions=[
     loginActions,homeActions
 ]
 function mapStateToProps(state) {
     const {instData} = state;
+    const {home} = state;
+    const {client} = state;
 
     return {
-        instData
+        instData,home,client
     };
 }
 function mapDispatchToProps(dispatch) {
@@ -87,7 +91,12 @@ function onBackPressed() {
         // eslint-disable-next-line
         mmspc.button.backPress()
     }).catch(() => {
-
+        if (that.props.client.procsId!=""){
+            that.props.homeActions.updateWork("{\"req_id\":\"" + that.props.client.procsId + "\" , \"cur_step\":\""+that.props.home.pageSelected+"\" ,\"finish_step\":\"7\"}");
+        }else {
+            // eslint-disable-next-line
+            mmspc.dialog.toast("作业Id不能为空");
+        }
     });
 }
 class Index extends Component {
@@ -116,15 +125,16 @@ class Index extends Component {
             if(value[1] == 2){
                 this.refs.myIconBar.jumpTo(cur,value);
             }
+            this.props.homeActions.pageSelected(cur);
         }
-        this.props.homeActions.pageSelected(cur);
+
     }
     componentDidMount(){
-        // 开始时注册一个插件
+        that = this;
+        watermark({watermark_txt0:'用户0815   412801198304100815'});
         // eslint-disable-next-line
-        // mmspc.android.init(onBackPressed);
-        // watermark({watermark_txt0:'小明   123456'});
-        // this.props.homeActions.loading(true);
+
+        this.props.homeActions.loading(true);
         // setTimeout(()=>{
         //     // eslint-disable-next-line
         //     mmspc.bridge.get((data)=>{
@@ -137,12 +147,34 @@ class Index extends Component {
         //
         //     },()=>{},"page");
         // },2000)
-        // setTimeout(()=>{
-        //     // eslint-disable-next-line
-        //     mmspc.bridge.get((data)=>{
-        //         this.props.homeActions.login(data);
-        //     });
-        // },2000)
+        setTimeout(()=>{
+            // eslint-disable-next-line
+            mmspc.bridge.get((data)=>{
+                if (data!=null) {
+                    // 将应用Id存在全局
+                    setAppId(data);
+                    // 开始时注册一个插件
+                    // eslint-disable-next-line
+                    mmspc.android.init(onBackPressed);
+
+                    // 判断是从A面进来还是B面进来
+                    mmspc.bridge.get((data)=>{
+                        if ("B" == data){
+                            this.props.homeActions.loginFromB("username=412801198304100815&userpass=11111111");
+                        }else {
+                            this.props.homeActions.login("username=412801198304100815&userpass=11111111");
+                        }
+                    },
+                    ()=>{} , "page");
+
+                    // this.props.homeActions.loginNonePassword("username=412801198304100815");
+                }else {
+                    // eslint-disable-next-line
+                    mmspc.dialog.toast("应用Id不能为空");
+                }
+
+            });
+        },2000)
     }
     render() {
         return (
@@ -152,6 +184,7 @@ class Index extends Component {
                         this.props.instData.loading&&<Loading fullscreen={true} text={this.props.instData.text} style={{backgroundColor: 'rgba(0, 0, 0, 0)'}}/>
                     }
                 </div>
+
                 <Dialog
                     size="small"
                     visible={ this.props.instData.showList }
@@ -162,18 +195,14 @@ class Index extends Component {
                 >
                     <Dialog.Body>
                         <SelectList value={this.state.selectedValue2} multiple={false} onChange={val=>{
-                            // eslint-disable-next-line
-                            mmspc.bridge.get((data)=>{
-
-                                this.props.homeActions.getInstInfo(data , val.instcode);
-                            });
+                            this.props.homeActions.getInstInfo(val.instcode);
                             this.props.homeActions.changeName(val.instname);
                             this.props.homeActions.setInstCode(val.instcode);
                             this.setState({selectedValue2: true})
                             this.props.homeActions.showList(false)
                         }}>
                             {
-                                this.props.instData.getInstResult==null?[]:JSON.parse(this.props.instData.getInstResult).data
+                                    this.props.instData.getInstResult==null?[]:JSON.parse(this.props.instData.getInstResult).data
                                     .map(option => {
                                         return <SelectList.Option key={option.instname} label={option.instname} value={option} />
                                     })

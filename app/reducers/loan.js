@@ -1,14 +1,16 @@
-import {getAssetSuccess} from "../actions/loan";
+import {clearLoan} from "../actions/loan";
 
 let loanState = {
-    loadingLoan: false,
-    loadingLoanText: "",
+  /*  loadingLoan: false,
+    loadingLoanText: "",*/
     postLoan: false,
     loanData: "",
     rateData: "",
     houseData: "",
     assetData: "",
     guarData: "",
+    formUrl:"",
+    clearLoan:"",
     //   loanLoanData:'',
     //贷款信息
     loanInfo: {
@@ -29,7 +31,7 @@ let loanState = {
         account1: '', //     还款结算账号一
         payeedepacc: '',//     收款人账号
         payeename: '',//     收款人户名
-        req_id: 'dc01db22-a682-4fee-'
+        req_id: ''
     },
     //担保信息
     guarInfo: {
@@ -38,7 +40,7 @@ let loanState = {
         guarname: '',//担保人名称
         guarway: '',//拟定担保方式
         isphase: '',//是否阶段性担保
-        req_id: 'dc01db22-a682-4fee-', //作业Id
+        req_id: '', //作业Id
         guar_type: '01',
         //    guarcalway:'',//担保能力测算方法
         //    guarsum:'',//可用担保额度（原型）与担保额度
@@ -55,7 +57,7 @@ let loanState = {
         buildyear: '',//房屋建造年份
         husloclinfo: '',//房贷结清情况
         ishired: '',//房屋是否已经出租
-        req_id: 'dc01db22-a682-4fee-'
+        req_id: ''
     },
     //利率信息
     rateInfo: {
@@ -66,7 +68,7 @@ let loanState = {
         floatrange: '',//利率浮动幅度
         houseexp: '',//每月房屋其他费用支出（单位：元）
         execratekind: '',//执行利率类别
-        req_id: 'dc01db22-a682-4fee-'
+        req_id: ''
     },
     //利率信息与原型 不一致的2个字段
     // monHousPay:'',//每月房屋费用支出
@@ -95,22 +97,12 @@ let loanState = {
         ownerprop: '',//产权份额
         ownershiptype: '',//产权类型
         archusage: '',//建筑物规划用途
-        req_id: 'dc01db22-a682-4fee-',//作业Id
+        req_id: '',//作业Id
     },
 }
 
 export function loan(state = loanState, action = {}) {
     switch (action.type) {
-        case "loadingLoan":
-            return {
-                ...state,
-                loadingLoan: action.value
-            }
-        case "loadingLoanText":
-            return {
-                ...state,
-                loadingLoanText: action.value
-            }
         case "postLoan":
             return {
                 ...state,
@@ -119,27 +111,101 @@ export function loan(state = loanState, action = {}) {
         case "loanData":
             return {
                 ...state,
-                loanInfo: action.value
+                loansum: action.value.loansum,
+                firstpaysum: action.value.firstpaysum,
+                loanterm: action.value.loanterm,
+                price: action.value.price,
+                isfund: action.value.isfund,
+                cobreno: action.value.cobreno,
+                coprjname: action.value.coprjname,
+                firstpayrate: action.value.firstpayrate,
+                fundno: action.value.fundno,
+                fundcontno: action.value.fundcontno,
+                loanusekind: action.value.loanusekind,
+                charkind: action.value.charkind,
+                spepdct: action.value.spepdct,
+                iscredit: action.value.iscredit,
+                account1: action.value.account1,
+                payeedepacc: action.value.payeedepacc,
+                payeename: action.value.payeename,
+                req_id: action.value.req_id
             }
         case "rateData":
             return {
                 ...state,
-                rateInfo: action.value
+                execrate: action.value.execrate,
+                isgetbreaksum: action.value.isgetbreaksum,
+                repaykind: action.value.repaykind,
+                adjrateflag: action.value.adjrateflag,
+                floatrange: action.value.floatrange,
+                houseexp: action.value.houseexp,
+                execratekind: action.value.execratekind,
+                req_id: action.value.req_id
             }
         case "houseData":
             return {
                 ...state,
-                houseInfo: action.value
+                dlpname: action.value.dlpname,
+                bldname: action.value.bldname,
+                sellno: action.value.sellno,
+                bhusaim: action.value.bhusaim,
+                housesum: action.value.housesum,
+                hustype: action.value.hustype,
+                husform: action.value.husform,
+                buildyear: action.value.buildyear,
+                husloclinfo: action.value.husloclinfo,
+                ishired: action.value.ishired,
+                req_id: action.value.req_id,
             }
         case "assetData":
             return {
                 ...state,
-                asstInfo: action.value
+                buildarea: action.value.buildarea,
+                houseaddr: action.value.houseaddr,
+                assttype: action.value.assttype,
+                asstname: action.value.asstname,
+                houseusage: action.value.houseusage,
+                landgetmetho: action.value.landgetmetho,
+                ownercode: action.value.ownercode,
+                archstruc: action.value.archstruc,
+                landusage: action.value.landusage,
+                evaldate: action.value.evaldate,
+                confval: action.value.confval,
+                evalmethod: action.value.evalmethod,
+                evalmeth1: action.value.evalmeth1,
+                evalname2: action.value.evalname2,
+                evalval: action.value.evalval,
+                validdate: action.value.validdate,
+                evalinst: action.value.evalinst,
+                evalname1: action.value.evalname1,
+                ownerprop: action.value.ownerprop,
+                ownershiptype: action.value.ownershiptype,
+                archusage: action.value.archusage,
+                req_id: action.value.req_id,
             }
         case "guarData":
             return {
                 ...state,
-                guarInfo: action.value
+                guarcode: action.value.guarcode,
+                guarname: action.value.guarname,
+                guarway: action.value.guarway,
+                isphase: action.value.isphase,
+                req_id: action.value.req_id,
+                guar_type: action.value.guar_type,
+            }
+        case "formUrl":
+            return {
+                ...state,
+                formUrl: action.value
+            }
+        case "clearLoan":
+            return {
+                ...state,
+                loanInfo: action.value,
+                guarInfo: action.value,
+                houseInfo: action.value,
+                rateInfo: action.value,
+                asstInfo: action.value,
             }
         default:
             return {...state}

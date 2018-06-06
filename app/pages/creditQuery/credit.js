@@ -3,13 +3,16 @@ import html2canvas from 'html2canvas';
 import {Component} from '../../components/libs';
 import * as creditActions from '../../actions/credit';
 import * as homeActions from '../../actions/home';
+import * as fileActions from '../../actions/file';
+import * as loginActions from '../../actions/login';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Map} from 'immutable';
 import {Link} from 'react-router-dom';
-import {Button, Dialog, TabTitle, Header, SupplePage, NavBar, Loading,ImageViewer} from '../../components/index';
+import {Button, Dialog, TabTitle, Header, SupplePage, NavBar, Loading, ImageViewer, Tabs} from '../../components/index';
 import '../publicCss/public.css';
 import PropTypes from 'prop-types';
+import {loading} from "../../actions/login";
 
 
 var that = "";
@@ -19,21 +22,22 @@ var sign = "";
 /*曾用名签名*/
 var usedName = "";
 /*纸质拍照签名*/
-var photoSign = "";
+var photoPic = "";
 /*手持身份拍照图片*/
 var idPhoto = "";
 /*授权书页面截图*/
 var pagePic = "";
 
 const actions = [
-    creditActions,homeActions
+    creditActions, homeActions, fileActions, loginActions
 ];
 
 function mapStateToProps(state) {
     const {credit} = state;
     const {home} = state;
+    const {client} = state;
     return {
-        credit,home
+        credit, home, client
     };
 }
 
@@ -84,17 +88,30 @@ class Credit extends Component {
             showCreditFinished: "none",
             /* 征信查询*/
             showQuery: "none",
+
+            /* 展示征信查询报告*/
+            isShowReport: false,
+
             /* 弹出窗显示签名图片*/
             showPhotoSignDialog: false,
             /* 判断显示电子签名还是拍照签名的图片*/
             isShowPhotoSign: "",
             /* 弹出窗显示手持身份认证的图片*/
             showIdPhotoDialog: false,
-
-            transId: {
-                procsId: "123456",
-                clientId: "234567",
-            }
+            photoSign: {
+                imageBase64: "",
+                oprId: "",
+                pageId: "",
+                pageName: "纸质拍照签名",
+                pageType: "png",
+            },
+            pageSign: {
+                imageBase64: "",
+                oprId: "",
+                pageId: "",
+                pageName: "授权书页面截图",
+                pageType: "png",
+            },
         }
 
     }
@@ -119,6 +136,58 @@ class Credit extends Component {
         return value;
     }
 
+    showImageViewer(src, onRetake, onDelete) {
+        ImageViewer.show(src, {showActionButtons: false}).then((action) => {
+            switch (action) {
+                case 'retake':
+                    onRetake();
+                    break;
+                case 'delete':
+                    onDelete();
+                    return;
+                default:
+                    break;
+            }
+        }).catch(() => {
+        });
+    }
+
+    clearCreditInfo() {
+        /*1、props里面的暂时没有重置，征信查询成功后的状态
+        * 2、已拍的照片不需要清空，状态重置后，预览不了，只能重拍。*/
+        this.setState({
+            /*签署征信授权书，弹出电子签名或拍照*/
+            dialogVisible: false,
+            /* 授权人签名弹出窗*/
+            signDialog: false,
+            /* 曾用名签名弹出窗*/
+            usedNameDialog: false,
+            /* w网页签名页面弹出窗*/
+            pageSignDialog: false,
+            /* 征信查询按钮与绿色勾号图片显示*/
+            isShow: false,
+            /* 打开授权书页面*/
+            isJump: false,
+            /* 手持身份认证*/
+            showIdentity: "none",
+            showFaceFinished: "none",
+            showFaceFailure: "none",
+            showIdentityFinished: "none",
+            showCreditFinished: "none",
+            /* 征信查询*/
+            showQuery: "none",
+            /* 展示征信查询报告*/
+            isShowReport: false,
+            /* 弹出窗显示签名图片*/
+            showPhotoSignDialog: false,
+            /* 判断显示电子签名还是拍照签名的图片*/
+            isShowPhotoSign: "",
+            /* 弹出窗显示手持身份认证的图片*/
+            showIdPhotoDialog: false,
+        });
+        //重置props征信信息为空
+        this.props.creditActions.clearPropsCredit();
+    }
 
     render() {
         return <div style={{height: this.state.containerHeight}}>
@@ -126,15 +195,7 @@ class Credit extends Component {
                 <div class="main_contanier">
                     <div>
                         {
-                            this.props.credit.loadingCredit &&
-                            <Loading fullscreen={true} text={this.props.credit.loadingCreditText}
-                                     style={{backgroundColor: 'rgba(0, 0, 0, 0.3)'}}/>
-                        }
-                    </div>
-
-                    <div>
-                        {
-                            this.props.home.pageSelected==1
+                            this.props.home.pageSelected == 1
                         }
                     </div>
                     <TabTitle title="征信授权" class="tabTitle blueTabTitle"/>
@@ -167,7 +228,26 @@ class Credit extends Component {
                                     </li>
                                     <li style={{display: this.state.showIdentity}}>
                                         <div class="camera_bigBox"
-                                             onClick={(this.state.showIdentityFinished == "block") ?
+                                             onClick={() => {
+                                                 if (this.state.showIdentityFinished == "none") {
+                                                     // eslint-disable-next-line
+                                                     mmspc.customCamera.openRectCamera(successData => {
+                                                         idPhoto = "data:image/png;base64," + successData;
+                                                         this.setState({showIdentityFinished: "block"});
+                                                     }, errorData => {
+                                                         // eslint-disable-next-line
+                                                         mmspc.dialog.toast("手持身份认证失败！");
+                                                     }, '/借款人影像/手持身份认证/010102002.jpg');
+                                                 } else {
+                                                     this.showImageViewer(idPhoto, () => {
+
+                                                     }, () => {
+
+                                                     });
+                                                 }
+                                             }
+                                                 /*弹窗显示手持身份认证的照片*/
+                                                 /*(this.state.showIdentityFinished == "block") ?
                                                  () => {
                                                      this.setState({showIdPhotoDialog: true})
                                                  }
@@ -181,7 +261,7 @@ class Credit extends Component {
                                                      }, errData => {
                                                          alert("error");
                                                      }, {quality: 50, destinationType: 0});
-                                                 }
+                                                 }*/
                                              }
                                         >
                                             <img src={require("../../images/identity_authentication.png")}/>
@@ -194,6 +274,29 @@ class Credit extends Component {
                                     <li>
                                         <div class="camera_bigBox"
                                              onClick={
+                                                 () => {
+                                                     if (((this.state.showFaceFinished == "block") || ((this.state.showFaceFailure == "block") && (this.state.showIdentityFinished == "block")))) {
+                                                         if (this.state.showCreditFinished == 'none') {
+                                                             this.setState({dialogVisible: true});
+                                                         } else if (this.state.isShowPhotoSign == "write") {
+                                                             this.setState({isShowPhotoSign: "write"});
+                                                             this.showImageViewer(pagePic, () => {
+
+                                                             }, () => {
+
+                                                             });
+
+                                                         } else {
+                                                             this.setState({isShowPhotoSign: "photo"});
+                                                             this.showImageViewer(photoPic, () => {
+                                                             }, () => {
+                                                             });
+                                                         }
+                                                     } else {
+                                                         // eslint-disable-next-line
+                                                         mmspc.dialog.toast("请先完成人脸识别认证或手持身份认证！");
+                                                     }
+                                                 }
                                                  /* ((this.state.showFaceFinished == "block") || ((this.state.showFaceFailure == "block") && (this.state.showIdentityFinished == "block"))) == true ?
                                                                  (this.state.showCreditFinished == "none" ?
                                                                          () => this.setState({dialogVisible: true})
@@ -212,21 +315,21 @@ class Credit extends Component {
                                                                  )
                                                                  :
                                                                  () => alert("请先完成人脸识别或手持身份认证")*/
-                                                 (this.state.showCreditFinished == "none" ?
-                                                         () => this.setState({dialogVisible: true})
-                                                         :
-                                                         (this.state.isShowPhotoSign == "write" ?
-                                                                 () => this.setState({
-                                                                     showPhotoSignDialog: true,
-                                                                     isShowPhotoSign: "write"
-                                                                 })
-                                                                 :
-                                                                 () => this.setState({
-                                                                     showPhotoSignDialog: true,
-                                                                     isShowPhotoSign: "photo"
-                                                                 })
-                                                         )
-                                                 )
+                                                 /*  (this.state.showCreditFinished == "none" ?
+                                                           () => this.setState({dialogVisible: true})
+                                                           :
+                                                           (this.state.isShowPhotoSign == "write" ?
+                                                                   () => this.setState({
+                                                                       showPhotoSignDialog: true,
+                                                                       isShowPhotoSign: "write"
+                                                                   })
+                                                                   :
+                                                                   () => this.setState({
+                                                                       showPhotoSignDialog: true,
+                                                                       isShowPhotoSign: "photo"
+                                                                   })
+                                                           )
+                                                   )*/
                                              }
                                         >
                                             <img src={require("../../images/credit_authorizatio.png")}/>
@@ -258,17 +361,38 @@ class Credit extends Component {
                                                      width="100px" height="auto"
                                                      onClick={() => {
                                                          // eslint-disable-next-line
-                                                         mmspc.fileConversion.getAuthorizationLetter(msg =>{
-                                                          //   alert('成功');
-                                                             this.setState({
-                                                                 dialogVisible: false,
-                                                                 showCreditFinished: "block",
-                                                                 isShowPhotoSign: "write"
-                                                             });
+                                                         mmspc.fileConversion.getAuthorizationLetter(msg => {
+                                                             //           this.props.creditActions.loading(true);
                                                              pagePic = "data:image/png;base64," + msg;
-                                                         },function(errorStr){
-                                                             alert(errorStr);
-                                                         },'32132120010203234x');
+                                                             this.state.pageSign.imageBase64 = msg;
+                                                             this.setState({dialogVisible: false});
+                                                             //上传图片
+                                                             this.props.creditActions.uploadFile("{\"fileDesp\":\"征信查询授权书\",\"groupId\":\"010102\",\"workId\":\"" + this.props.client.procsId + "\",\"uploadPageList\":[" + JSON.stringify(this.state.pageSign) + "]}",
+                                                                 (successData) => {
+                                                                     this.setState({
+                                                                         showCreditFinished: "block",
+                                                                         isShowPhotoSign: "write"
+                                                                     });
+                                                                     this.props.creditActions.loading(false);
+                                                                 }, () => {
+                                                                     // eslint-disable-next-line
+                                                                     mmspc.dialog.toast("电子签名上传失败！");
+                                                                     this.props.creditActions.loading(false);
+                                                                 });
+                                                             //上传征信授权书
+                                                             this.props.creditActions.uploadCreditPage(this.props.client.procsId, this.props.client.clientId, "/" + this.props.client.procsId + '/借款人影像/征信查询授权书/010102001.jpg',
+                                                                 successData => {
+                                                                     // eslint-disable-next-line
+                                                                     mmspc.dialog.toast("征信授权书上传成功！");
+                                                                     this.props.creditActions.loading(false);
+                                                                 },erroeData => {
+                                                                     // eslint-disable-next-line
+                                                                     mmspc.dialog.toast("征信授权书上传失败！");
+                                                                     this.props.creditActions.loading(false);
+                                                                 });
+                                                         }, errorStr => {
+
+                                                         }, this.props.client.certNo, "/" + this.props.client.procsId + '/借款人影像/征信查询授权书/010102001.jpg');
                                                      }
                                                          /*this.setState({isJump: !this.state.isJump, dialogVisible: false
                                                          })*/
@@ -285,17 +409,62 @@ class Credit extends Component {
                                                     /*判断是否已经纸质签名拍照，若已拍过，点击查看签名*/
                                                      onClick={() => {
                                                          // eslint-disable-next-line
-                                                         navigator.camera.getPicture(successData => {
-                                                             photoSign = "data:image/png;base64," + successData;
-                                                             document.getElementById("showPhotoSign").src = photoSign;
-                                                             this.setState({
-                                                                 showCreditFinished: "block",
-                                                                 dialogVisible: false,
-                                                                 isShowPhotoSign: "photo"
-                                                             });
-                                                         }, errData => {
-                                                             alert("error");
-                                                         }, {quality: 50, destinationType: 0});
+                                                         mmspc.customCamera.openRectCamera(successData => {
+                                                             this.state.photoSign.imageBase64 = successData;
+                                                             photoPic = "data:image/png;base64," + successData;
+                                                             this.setState({dialogVisible: false});
+                                                             this.props.creditActions.uploadFile("{\"fileDesp\":\"征信查询授权书\",\"groupId\":\"010102\",\"workId\":\"" + this.props.client.procsId + "\",\"uploadPageList\":[" + JSON.stringify(this.state.photoSign) + "]}",
+                                                                 (successData) => {
+                                                                     this.setState({
+                                                                         showCreditFinished: "block",
+                                                                         isShowPhotoSign: "photo"
+                                                                     });
+                                                                     this.props.creditActions.loading(false);
+                                                                 }, () => {
+                                                                     this.props.creditActions.loading(false);
+                                                                     // eslint-disable-next-line
+                                                                     mmspc.dialog.toast("纸质签名拍照上传失败！");
+                                                                 });
+                                                             //上传征信授权书
+                                                             this.props.creditActions.uploadCreditPage(this.props.client.procsId, this.props.client.clientId, "/" + this.props.client.procsId + '/借款人影像/征信查询授权书/010102001.jpg',
+                                                                 successData => {
+                                                                     // eslint-disable-next-line
+                                                                     mmspc.dialog.toast("征信授权书上传成功！");
+                                                                     this.props.creditActions.loading(false);
+                                                                 },erroeData => {
+                                                                     // eslint-disable-next-line
+                                                                     mmspc.dialog.toast("征信授权书上传失败！");
+                                                                     this.props.creditActions.loading(false);
+                                                                 });
+                                                             //             idPhoto = "data:image/png;base64," + successData;
+                                                             //             this.setState({showIdentityFinished: "block"});
+                                                         }, errorData => {
+                                                             alert('失败：' + errorData);
+                                                         }, "/" + this.props.client.procsId + '/借款人影像/征信查询授权书/010102001.jpg');
+                                                         /* // eslint-disable-next-line
+                                                          navigator.camera.getPicture(successData => {
+                                                              //           alert("data:"+successData);
+                                                              this.state.photoSign.imageBase64 = successData;
+                                                              //            alert(this.state.photoSign.imageBase64);
+                                                              photoPic = "data:image/png;base64," + successData;
+                                                              this.setState({dialogVisible: false});
+                                                              this.props.creditActions.uploadFile("{\"fileDesp\":\"征信查询授权书\",\"groupId\":\"010102\",\"workId\":\"" + this.props.client.procsId + "\",\"uploadPageList\":[" + JSON.stringify(this.state.photoSign) + "]}",
+                                                                  (successData) => {
+                                                                      this.setState({
+                                                                          showCreditFinished: "block",
+                                                                          isShowPhotoSign: "photo"
+                                                                      });
+                                                                      this.props.creditActions.loading(false);
+                                                                  }, () => {
+                                                                      this.props.creditActions.loading(false);
+                                                                      // eslint-disable-next-line
+                                                                      mmspc.dialog.toast("纸质签名拍照上传失败！");
+                                                                  });
+
+                                                          }, errData => {
+                                                              alert("error");
+                                                          }, {quality: 50, destinationType: 0})*/
+                                                         ;
                                                      }
                                                          /*this.state.showCreditFinished == "none" ?
                                                                :
@@ -314,7 +483,7 @@ class Credit extends Component {
 
                                 </div>
                                 {/* 弹出窗显示签名图片*/}
-                                <Dialog
+                                {/*<Dialog
                                     size="full"
                                     visible={this.state.showPhotoSignDialog}
                                     onCancel={() => this.setState({showPhotoSignDialog: false})}
@@ -323,15 +492,17 @@ class Credit extends Component {
                                 >
                                     <Dialog.Body>
                                              <span>{this.state.isShowPhotoSign == "write" ?
-                                                 <img src={pagePic} width="100%" height="100%" onClick={() => this.setState({showPhotoSignDialog: false})}/>
+                                                 <img src={pagePic} width="100%" height="100%"
+                                                      onClick={() => this.setState({showPhotoSignDialog: false})}/>
                                                  :
-                                                 <img id="showPhotoSign" src={photoSign} width="100%" height="100%" onClick={() => this.setState({showPhotoSignDialog: false})}/>
+                                                 <img id="showPhotoSign" src={photoSign} width="100%" height="100%"
+                                                      onClick={() => this.setState({showPhotoSignDialog: false})}/>
                                              }
 											</span>
                                     </Dialog.Body>
-                                </Dialog>
+                                </Dialog>*/}
                                 {/* 弹出窗显示手持身份拍照图片*/}
-                                <Dialog
+                                {/* <Dialog
                                     size="full"
                                     visible={this.state.showIdPhotoDialog}
                                     onCancel={() => this.setState({showIdPhotoDialog: !this.state.showIdPhotoDialog})}
@@ -340,13 +511,14 @@ class Credit extends Component {
                                 >
                                     <Dialog.Body>
                                              <span>
-                                                 <img id="showIdPhoto" src={idPhoto} width="100%" height="100%" onClick={() => this.setState({showIdPhotoDialog: !this.state.showIdPhotoDialog})}/>
+                                                 <img id="showIdPhoto" src={idPhoto} width="100%" height="100%"
+                                                      onClick={() => this.setState({showIdPhotoDialog: !this.state.showIdPhotoDialog})}/>
 											</span>
                                     </Dialog.Body>
-                                </Dialog>
+                                </Dialog>*/}
                             </div>
-                            <div class="three_box_rt">
-                                <div>{this.state.isShow === false ?
+                            <div class="three_box_rt"> {/*this.state.isShow === false ?*/}
+                                <div>{this.props.credit.creditResult === false ?
                                     <div>
                                         {(((this.state.showFaceFinished == "block") || ((this.state.showFaceFailure == "block") && (this.state.showIdentityFinished == "block"))) && (this.state.showCreditFinished == "block")) == false ?
                                             <div>
@@ -364,28 +536,29 @@ class Credit extends Component {
                                                     whiteSpace: 'normal'
                                                 }}
                                                         onClick={() => {
-                                                            // alert("征信查询："+JSON.stringify(this.state.transId));
-                                                            // eslint-disable-next-line
-                                                            mmspc.bridge.get(data => {
-                                                                this.props.creditActions.getCreditResult(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\",\"clientId\":\"11111\"}"));
-                                                                //   that.props.creditActions.getCreditResult(data);
-                                                                this.setState({showQuery: "block", isShow: true})
-                                                            });
+                                                            //征信查询接口
+                                                            this.props.creditActions.getCreditResult(JSON.parse("{\"req_id\":\"" + this.props.client.procsId + "\",\"clientId\":\"" + this.props.client.clientId + "\"}"));
+                                                            //查询客户级别接口
+                                                            //this.props.creditActions.getLoadnerInfo(JSON.parse("{\"clientId\":"+"\""+this.props.client.clientId+"\"}"));
+                                                            //征信查询成功后，隐藏征信查询按钮，显示查询成功图片并且 征信报告显示已查询
+                                                            //   this.setState({showQuery: "block", isShow: true})
                                                         }}>
                                                     征信查询
                                                 </Button>
 
                                             </div>
                                         }
-                                        {/* <Button type="warning" style={{height:70,width:70}} textStyle={{fontSize:18,lineHeight:1.3,whiteSpace:'normal'}}
-                                                onClick={() =>{
-                                                  //  alert("征信查询："+JSON.stringify(this.state.transId));
+                                        {/*  <Button type="warning" style={{height: 70, width: 70}}
+                                                textStyle={{fontSize: 18, lineHeight: 1.3, whiteSpace: 'normal'}}
+                                                onClick={() => {
+                                                    //  alert("征信查询："+JSON.stringify(this.state.transId));  req_id procsId
                                                     // eslint-disable-next-line
-                                                    mmspc.bridge.get(function (data) {
-                                                        that.props.creditActions.getCreditResult(data,that.state.transId);
-                                                      //  that.props.creditActions.getCreditResult(data);
+                                                    mmspc.bridge.get(data => {
+                                                        //      alert(this.props.client.clientId);
+                                                        //       this.props.creditActions.getCreditResult(data, JSON.parse("{\"req_id\":\"dc01db22-a682-4fee-\",\"clientId\":\"7d236673-7df8-4ab9-\"}"));
+                                                        this.props.creditActions.getCreditResult(data, JSON.parse("{\"req_id\":" + "\"" + this.props.client.procsId + "\",\"clientId\":" + "\"" + this.props.client.clientId + "\"}"));
                                                     });
-                                                    //   this.setState({showQuery: "block", isShow: true})
+                                                    this.setState({showQuery: "block", isShow: true})
                                                 }}>
                                             征信查询
                                         </Button>*/}
@@ -408,9 +581,14 @@ class Credit extends Component {
                             <div class="three_child_rt">
                                 <ul class="img_box">
                                     <li>
-                                        <div class="camera_bigBox" onClick={this.creditReport}>
+                                        <div class="camera_bigBox" onClick={() => {
+                                            /*征信查询后，可点击查看征信报告*/
+                                            if (this.props.credit.showQuery != "none") {
+                                                this.setState({isShowReport: true});
+                                            }
+                                        }}>
                                             <img src={require("../../images/credit_certificate.png")}/>
-                                            <p style={{display: this.state.showQuery}}>
+                                            <p style={{display: this.props.credit.showQuery}}>
                                                 <img src={require("../../images/yicahxun.png")}/>
                                             </p>
                                         </div>
@@ -437,321 +615,135 @@ class Credit extends Component {
                 </div>
                 <div class="loan_footer">
                     <div class="footer_content">
-                        {/* 下一步按钮是否可以点击，当征信查询后，在可以点击下一步按钮*/}
-                        <div class="footer_content_rt">
-                            {/* {this.state.isShow === false ?
-                            <Button style={{background: "#999999", color: "#fff", borderColor: "#999999"}}
-                                    size="large">
-                                下一步
-                            </Button>
-                            :
-                            <Button type="warning" size="large"
-                                onClick={() => {this.context.jumpTo(2, this.setComplete.bind(this)(1))}}>
-                                下一步
-                            </Button>
-
-                        }*/}
+                        {/*<Button type="warning" size="large"
+                                onClick={() => {
+                                    //重置页面状态
+                                    this.clearCreditInfo();
+                                }}>
+                            重置</Button>*/}
+                        {/* 下一步按钮是否可以点击，当征信查询后，在可以点击下一步按钮style={{background: "#999999", color: "#fff", borderColor: "#999999"}}*/}
+                        <div class="footer_content_rt"> {/*this.state.isShow === false ?*/}
+                            {/*{this.props.credit.creditResult === false ?
+                                <Button disabled={true} type="warning"
+                                        size="large">
+                                    下一步
+                                </Button>
+                                :
+                                <Button type="warning" size="large"
+                                        onClick={() => {
+                                            this.context.jumpTo(2, this.setComplete.bind(this)(1))
+                                            this.props.creditActions.pageSelected(2);
+                                        }}>
+                                    下一步
+                                </Button>
+                            }*/}
                             <Button type="warning" size="large"
                                     onClick={() => {
+                                        // this.props.creditActions.downloadFile(JSON.parse("{\"workId\":\"001802A5100000026\",\"groupId\":\"\"}"),
+                                        //     (successData) => {
+                                        //         alert(successData);
+                                        //         this.props.creditActions.loading(false);
+                                        //     }, () => {
+                                        //         this.props.creditActions.loading(false);
+                                        //         // eslint-disable-next-line
+                                        //         mmspc.dialog.toast("图片下载失败！");
+                                        //     });
                                         this.context.jumpTo(2, this.setComplete.bind(this)(1));
-
+                                        this.props.creditActions.pageSelected(2);
                                     }}>
                                 下一步
                             </Button>
                         </div>
                     </div>
                 </div>
-                <SupplePage style={{display: this.state.isJump === false ? "none" : "block"}}>
+                {/*征信报告*/}
+                <SupplePage style={{display: this.state.isShowReport != true ? "none" : "block"}}>
                     <NavBar
-                        title={"授权书"}
-                        lName={"取消"}
-                        rName={"确定"}
-                        lClick={() => this.setState({isJump: !this.state.isJump})}
-                        rClick={
-                            () => html2canvas(document.getElementById("signPage")).then(canvas => {
-                                pagePic = canvas.toDataURL();
-                                alert("保存成功");
-                                this.setState({isJump: !this.state.isJump});
-
-                            })
-                        }>
+                        title={"客户征信报告"}
+                        lName={"返回"}
+                        //     rName={"确定"}
+                        lClick={() => this.setState({isShowReport: !this.state.isShowReport})}
+                        //      rClick={() => this.setState({isShowReport: !this.state.isShowReport})}
+                    >
                     </NavBar>
-                    {/* 授权书页面*/}
                     <div id="signPage" style={{
                         height: window.innerHeight - this.getHeight(100),
                         overflowY: "auto",
                         overflowX: "hidden"
                     }}>
-                        <div style={{
-                            marginLeft: "10%",
-                            marginRight: "10%",
-                            background: "#FFFFFF",
-                            fontSize: "100%"
-                        }}>
-                            {/*授权书*/}
-                            <html lang="en">
-                            <head>
-                                <title>授权书</title>
-                            </head>
+                        <div>
+                            <Tabs activeName="1" onTabClick={(tab) => console.log(tab.props.name)}>
+                                <Tabs.Pane label="征信预览" name="1">
+                                    <div style={{
+                                        marginLeft: "22%",
+                                        marginRight: "22%",
+                                        background: "#FFFFFF",
+                                        fontSize: "100%"
+                                    }}>
+                                        {this.props.credit.parsedInfo}
+                                    </div>
+                                </Tabs.Pane>
+                                <Tabs.Pane label="基本信息" name="2">
+                                    <div style={{
+                                        marginLeft: "22%",
+                                        marginRight: "22%",
+                                        background: "#FFFFFF",
+                                        fontSize: "100%"
+                                    }} dangerouslySetInnerHTML={
+                                        {__html: this.props.credit.basicInfo}
+                                    }>
+                                    </div>
+                                </Tabs.Pane>
+                                <Tabs.Pane label="信息概要" name="3">
+                                    <div style={{
+                                        marginLeft: "22%",
+                                        marginRight: "22%",
+                                        background: "#FFFFFF",
+                                        fontSize: "100%"
+                                    }} dangerouslySetInnerHTML={
+                                        {__html: this.props.credit.summaryInfo}
+                                    }>
+                                    </div>
+                                </Tabs.Pane>
+                                <Tabs.Pane label="信贷信息" name="4">
+                                    <div style={{
+                                        marginLeft: "22%",
+                                        marginRight: "22%",
+                                        background: "#FFFFFF",
+                                        fontSize: "100%"
+                                    }} dangerouslySetInnerHTML={
+                                        {__html: this.props.credit.creditTrans}
+                                    }>
+                                    </div>
+                                </Tabs.Pane>
+                                <Tabs.Pane label="公共信息" name="5">
+                                    <div style={{
+                                        marginLeft: "22%",
+                                        marginRight: "22%",
+                                        background: "#FFFFFF",
+                                        fontSize: "100%"
+                                    }} dangerouslySetInnerHTML={
+                                        {__html: this.props.credit.publicInfo}
+                                    }>
+                                    </div>
+                                </Tabs.Pane>
+                                <Tabs.Pane label="查询记录" name="6">
+                                    <div style={{
+                                        marginLeft: "22%",
+                                        marginRight: "22%",
+                                        background: "#FFFFFF",
+                                        fontSize: "100%"
+                                    }} dangerouslySetInnerHTML={
+                                        {__html: this.props.credit.queryLog}
+                                    }>
+                                    </div>
+                                </Tabs.Pane>
+                            </Tabs>
 
-                            <body>
-                            {/*差样式的图片*/}
-                            {/* <p><img class="whiteTabTitle" src={require("../../images/close.png")}
-                                    width="30px" height="auto" style={{marginLeft: "90%", marginTop: "1%"}}
-                                    onClick={() => this.setState({isJump: !this.state.isJump})}/></p>*/}
 
-                            <h2 align="center">授&nbsp;&nbsp;&nbsp;&nbsp;权&nbsp;&nbsp;&nbsp;&nbsp;书</h2>
-
-                            <p align="center">（个人征信业务）</p>
-
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>重要提示：</b></p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <b>尊敬的客户：为了维护您的权益，请在签署本授权书前，仔细阅读本授权书各条款（特别是黑体字条款），关注您在授权书中的权利、义务。如有任何疑问，请向经办行咨询。</b>
-                            </p>
-                            <p>中国农业银行股份有限公司：</p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 一、本人同意并不可撤销地授权：
-                                <b>贵行（包括贵行各分支机构）按照国家相关规定采集并向金融信用信息基础数据库提供本人个人信息和包括信贷信息在内的信用信息，包含但不限于本人因未及时履行合同义务产生的不良信息。</b>
-                            </p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 二、本人同意并不可撤销地授权：
-                                <b>贵行（包括贵行各分支机构）根据国家有关规定，在办理涉及本人的业务时，有权通过金融信用信息基础数据库查询、打印、保存、使用符合相关规定的本人信用报告、个人信息和包括信贷信息在内的信用信息，并用于以下用途：</b>
-                            </p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                □1.审核本人授信业务或用信申请，进行贷后风险管理。
-                            </p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                □ 2.审核本人为他人（含自然人、法人、其他组织）提供担保，进行贷后等风险管理。
-                            </p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                □ 3.审核本人担任法定代表人、负责人或出资人的法人或其他组织（或该法人、其他组织作为担保人）的授信和用信申请，进行相关风险管理。
-                            </p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                □ 4.审核本人担任法定代表人、负责人或出资人的法人、商户或其他组织的特约商户开户申请，进行相关风险管理。
-                            </p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                □ 5.用于 业务。
-                            </p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <b>三、如果贵行超出本授权范围进行查询使用，则贵行应承担与此相关的法律责任。</b>
-                            </p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <b>四、若相关业务未获批准办理，本人同意本授权书及本人信用报告等资料由贵行留存，无须退还。</b>
-                            </p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <b>五、本授权书有效期自签署之日起至本人约定用途的授信到期或业务结清之日止。</b>
-                            </p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <b>授权人声明：贵行已依法向本人提示了相关条款（特别是黑体字条款），应本人要求对相关条款的概念、内容及法律效果做了说明，本人已经知悉并理解上述条款。</b>
-                            </p>
-                            <div class="authorization_content">
-                                <div>
-                                    授权人（签字）：
-                                    <p>
-                                        <img id="signature" src={sign} width="140px" height="70px"
-                                             onClick={() => {
-                                                 // eslint-disable-next-line
-                                                 mmspc.abcDevice.initDevice();
-                                                 // eslint-disable-next-line
-                                                 mmspc.abcDevice.openSignature(600, 400, json => {
-                                                     this.setState({signDialog: true});
-                                                 }, errorData => {
-                                                     alert("errorData：" + JSON.stringify(errorData));
-                                                     this.setState({pageSignDialog: true});
-                                                 });
-                                             }}/>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="authorization_content">
-                                <div>
-                                    曾用名（签字）：
-                                    <p>
-                                        <img id="usedNameSign" src={usedName} width="140px" height="70px"
-                                             onClick={() => {
-                                                 // eslint-disable-next-line
-                                                 mmspc.abcDevice.initDevice();
-                                                 // eslint-disable-next-line
-                                                 mmspc.abcDevice.openSignature(600, 400, json => {
-                                                     this.setState({usedNameDialog: true})
-                                                 }, errorData => {
-                                                     alert("errorData：" + JSON.stringify(errorData));
-                                                     alert("errorData：" + JSON.stringify(errorData));
-                                                 });
-                                             }}/>
-                                    </p>
-                                </div>
-                            </div>
-                            <p>证件名称：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; □
-                                居民身份证 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; □
-                                其他 </p>
-                            <p>证件号码：</p>
-                            </body>
-                            </html>
-                            {/* 授权人签名*/}
-                            <div>
-                                <Dialog
-                                    title="请手写签名"
-                                    size="small"
-                                    visible={this.state.signDialog}
-                                    onCancel={() => {
-                                        // eslint-disable-next-line
-                                        mmspc.abcDevice.closeSignature(json => {
-                                            this.setState({signDialog: false})
-                                        }, error => {
-                                            alert("error：" + JSON.stringify(error));
-                                        });
-                                    }}
-                                    lockScroll={false}
-                                    style={{textAlign: "center"}}
-                                >
-                                    <Dialog.Body style={{height: "200px"}}>
-                                        <span>假装有一个授权人签名</span>
-                                    </Dialog.Body>
-                                    <Dialog.Footer className="dialog-footer">
-                                        <Button style={{float: "left"}}
-                                                onClick={() => {
-                                                    // eslint-disable-next-line
-                                                    mmspc.abcDevice.clearSignature(json => {
-                                                    }, error => {
-                                                        alert("error：" + JSON.stringify(error));
-                                                    });
-                                                }}>
-                                            清除签名
-                                        </Button>
-                                        <Button style={{float: "right"}} type="primary"
-                                                onClick={() => {
-                                                    // eslint-disable-next-line
-                                                    mmspc.abcDevice.getSignaturePhoto(json => {
-                                                        // eslint-disable-next-line
-                                                        sign = "data:image/jpeg;base64," + json.data;
-                                                        document.getElementById("signature").src = sign;
-                                                        this.setState({
-                                                            showCreditFinished: "block",
-                                                            isShowPhotoSign: "write"
-                                                        });
-                                                    }, error => {
-                                                        alert("error：" + JSON.stringify(error));
-                                                    });
-                                                    // eslint-disable-next-line
-                                                    mmspc.abcDevice.closeSignature(json => {
-                                                        this.setState({signDialog: false})
-                                                    }, error => {
-                                                        alert("error：" + JSON.stringify(error));
-                                                    });
-                                                }}>
-                                            确定签名
-                                        </Button>
-                                    </Dialog.Footer>
-                                </Dialog>
-                            </div>
-                            {/* 曾用名签名*/}
-                            <div>
-                                <Dialog
-                                    title="请手写签名"
-                                    size="small"
-                                    visible={this.state.usedNameDialog}
-                                    onCancel={() => {
-                                        // eslint-disable-next-line
-                                        mmspc.abcDevice.closeSignature(json => {
-                                            this.setState({usedNameDialog: false})
-                                        }, error => {
-                                            alert("error：" + JSON.stringify(error));
-                                        });
-                                    }}
-                                    lockScroll={false}
-                                    style={{textAlign: "center"}}
-                                    showClose={true}
-                                >
-                                    <Dialog.Body style={{height: "200px"}}>
-                                        <span>假装有一个曾用名签名</span>
-                                    </Dialog.Body>
-                                    <Dialog.Footer className="dialog-footer">
-                                        <Button style={{float: "left"}} onClick={() => {
-                                            // eslint-disable-next-line
-                                            mmspc.abcDevice.clearSignature(json => {
-                                            }, error => {
-                                                alert("error：" + JSON.stringify(error));
-                                            });
-                                        }}>
-                                            清除签名
-                                        </Button>
-                                        <Button style={{float: "right"}} type="primary" onClick={() => {
-                                            // eslint-disable-next-line
-                                            mmspc.abcDevice.getSignaturePhoto(json => {
-                                                // eslint-disable-next-line
-                                                usedName = "data:image/jpeg;base64," + json.data;
-                                                document.getElementById("usedNameSign").src = usedName;
-                                                this.setState({isShowPhotoSign: "write"});
-                                            }, error => {
-                                                alert("error：" + JSON.stringify(error));
-                                            });
-                                            // eslint-disable-next-line
-                                            mmspc.abcDevice.closeSignature(json => {
-                                                this.setState({usedNameDialog: false});
-                                            }, error => {
-                                                alert("error：" + JSON.stringify(error));
-                                            });
-                                        }}>
-                                            确定签名
-                                        </Button>
-                                    </Dialog.Footer>
-                                </Dialog>
-                            </div>
-                            {/* 网页签名*/}
-                            <div>
-                                <Dialog
-                                    title="请手写签名"
-                                    size="small"
-                                    visible={this.state.pageSignDialog}
-                                    onCancel={() => this.setState({pageSignDialog: false})}
-                                    lockScroll={false}
-                                    style={{textAlign: "center"}}
-                                >
-                                    <Dialog.Body style={{height: "200px"}}>
-                                        <div>
-
-                                        </div>
-                                    </Dialog.Body>
-                                    {/*  <Dialog.Footer className="dialog-footer">
-                                            <Button style={{float: "left"}}
-                                                    onClick={() => {
-                                                        // eslint-disable-next-line
-                                                        mmspc.abcDevice.clearSignature(json => {
-                                                        }, error => {
-                                                            alert("error：" + JSON.stringify(error));
-                                                        });
-                                                    }}>
-                                                清除签名
-                                            </Button>
-                                            <Button style={{float: "right"}} type="primary"
-                                                    onClick={() => {
-                                                        // eslint-disable-next-line
-                                                        mmspc.abcDevice.getSignaturePhoto(json => {
-                                                            // eslint-disable-next-line
-                                                            sign = "data:image/jpeg;base64," + json.data;
-                                                            document.getElementById("signature").src = sign;
-                                                            this.setState({
-                                                                showCreditFinished: "block",
-                                                                isShowPhotoSign: "write"
-                                                            });
-                                                        }, error => {
-                                                            alert("error：" + JSON.stringify(error));
-                                                        });
-                                                        // eslint-disable-next-line
-                                                        mmspc.abcDevice.closeSignature(json => {
-                                                            this.setState({signDialog: false})
-                                                        }, error => {
-                                                            alert("error：" + JSON.stringify(error));
-                                                        });
-                                                    }}>
-                                                确定签名
-                                            </Button>
-                                        </Dialog.Footer>*/}
-                                </Dialog>
-                            </div>
                         </div>
                     </div>
                 </SupplePage>
-
             </div>
 
         </div>;

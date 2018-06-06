@@ -59,7 +59,7 @@ export default class Radio extends Component {
 
   render(): React.Element<any> {
     const { checked, focus } = this.state;
-    const { disabled, value, children } = this.props;
+    const { disabled, value, children, label} = this.props;
 
     return (
       <label style={this.style()} className={this.className('el-radio')}>
@@ -81,7 +81,7 @@ export default class Radio extends Component {
           />
         </span>
         <span className="el-radio__label">
-          {children || value}
+          {children || label || value}
         </span>
       </label>
     )
@@ -90,6 +90,7 @@ export default class Radio extends Component {
 
 Radio.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  label: PropTypes.string,
   onChange: PropTypes.func,
   disabled: PropTypes.bool,
   checked: PropTypes.bool,

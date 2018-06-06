@@ -17,9 +17,9 @@ function next(props) {
 
     document.body.appendChild(div);
 
-    if (props.lockScroll != false) {
-      document.body.style.setProperty('overflow', 'hidden');
-    }
+    // if (props.lockScroll != false) {
+    //   document.body.style.setProperty('overflow', 'hidden');
+    // }
 
     const component = React.createElement(ImageViewer, Object.assign({}, props, {
       promise: { resolve, reject },
@@ -34,5 +34,21 @@ function next(props) {
   });
 }
 
+function showMultiple(src, props) {
+  props = Object.assign({ src}, props);
 
-export default {show};
+  const div = document.createElement('div');
+
+  document.body.appendChild(div);
+
+  const component = React.createElement(ImageViewer, Object.assign({}, props, {
+    willUnmount: () => {
+      ReactDOM.unmountComponentAtNode(div);
+      document.body.removeChild(div);
+      document.body.style.removeProperty('overflow');
+    }
+  }));
+
+  ReactDOM.render(component, div);
+}
+export default {show,showMultiple};

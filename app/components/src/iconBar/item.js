@@ -15,7 +15,7 @@ export default class Item extends Component{
                 <div style={{marginRight:this.getWidth(20),marginTop:this.getWidth(20),textAlign:"center"}}
                 >
                     <img src={this.props.image[type]} width="30" height="30"/>
-                    <p style={{marginTop:0,fontFamily:"Microsoft YaHei",fontSize:"18px",color:this.props.titleColor[type]}}>{this.props.title}</p>
+                    <p style={{marginTop:0,fontFamily:"Microsoft YaHei",fontSize:"16px",color:this.props.titleColor[type]}}>{this.props.title}</p>
                 </div>
             )
         }else{
@@ -24,7 +24,7 @@ export default class Item extends Component{
                      onClick={this.props.onClick}
                 >
                     <img src={this.props.image[type]} width="30" height="30"/>
-                    <p style={{marginTop:0,fontFamily:"Microsoft YaHei",fontSize:"18px",color:this.props.titleColor[type]}}>{this.props.title}</p>
+                    <p style={{marginTop:0,fontFamily:"Microsoft YaHei",fontSize:"16px",color:this.props.titleColor[type]}}>{this.props.title}</p>
                 </div>
             )
         }

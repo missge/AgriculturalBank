@@ -7,6 +7,14 @@ export const showIdCard = (data) => ({
     type: 'READ_ID_CARD',
     readIdCard: data
 })
+export const setCardName = (data)=>({
+    type:"certName",
+    value:data
+})
+export const setCardNum = (data)=>({
+    type:"certNo",
+    value:data
+})
 export const changeName = (data) => ({
     type: 'Name',
     instName: data
@@ -26,4 +34,12 @@ export const showText = (data) => ({
 export const showLoading = (data) => ({
     type: 'Loading',
     value: data
+})
+export const setOptKind = (data)=>({
+    type:"optKind",
+    value:data
+})
+export const setOpt = (data)=>({
+    type:"opt",
+    value:data
 })

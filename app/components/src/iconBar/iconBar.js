@@ -77,6 +77,12 @@ export default class IconBar extends Component{
     jumpTo(num,iconType){
         this.setState({select:num,iconType:iconType})
     }
+    jumpToPage(num){
+        this.setState({select:num})
+    }
+    setIconState(iconType){
+        this.setState({iconType:iconType})
+    }
     getChildContext() {
         return {
             select: this.state.select,

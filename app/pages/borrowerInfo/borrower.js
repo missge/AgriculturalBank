@@ -12,6 +12,7 @@ import '../publicCss/public.css';
 import first from "../containerPage/first";
 var qs = require("querystring");
 let showLength=4;
+let eduLvl= {"01":"大学" , "02":"初中"};
 const actions = [
     borrowerActions,homeActions
 ];
@@ -97,111 +98,6 @@ class Borrower extends Component {
             containerHeight:window.innerHeight-this.getHeight(100),
             loanInfoState:false,
 
-            // clientVO:{
-            //
-            //     housesta:"",
-            //     corpchar:"",
-            //     busiscale:"",
-            //     emptype:"",
-            //     clicode:"",
-            //     othflag:"",
-            //     opdate:"",
-            //     busiloanbal:"",
-            //     opinstcode:"",
-            //     corpflag:"",
-            //     addrdist:"",
-            //     othdebtbal:"",
-            //     othincpm:"",
-            //     carvalue:"",
-            //     contact:"",
-            //     qq:"",
-            //     f21:"",
-            //     f22:"",
-            //     position:"",
-            //     asssum:"",
-            //     isrel:"",
-            //     corpname:"",
-            //     offsite:"",
-            //     jobno:"",
-            //     abcstuffflag:"",
-            //     jobexp:"",
-            //     clientId:"",
-            //     corpdist:"",
-            //     housevalue:"",
-            //     reltype:"",
-            //     title:"",
-            //     parincpm:"",
-            //     req_id:"",
-            //     certtype:"",
-            //     perclienttype:"",
-            //     myselfincpm:"",
-            //     engname:"",
-            //     settledist:"",
-            //     agrflag:"",
-            //     jobyear:"",
-            //     birthday:"",
-            //     faxiprefix:"",
-            //     othass:"",
-            //     remark:"",
-            //     stkvalue:"",
-            //     msn:"",
-            //     dutysta:"",
-            //     f1:"",
-            //     oprid:"",
-            //     f2:"",
-            //     postcode:"",
-            //     f3:"",
-            //     edulevel:"",
-            //     f4:"",
-            //     f5:"",
-            //     f6:"",
-            //     agflag:"",
-            //     country:"",
-            //     busista:"",
-            //     othloanbal:"",
-            //     pardebtexpd:"",
-            //     email:"",
-            //     myguaramt:"",
-            //     depbal:"",
-            //     f61:"",
-            //     f62:"",
-            //     sumexpend:"",
-            //     cliname:"",
-            //     manchar:"",
-            //     hujidist:"",
-            //     corpadd:"",
-            //     addagrflag:"",
-            //     careertype:"",
-            //     settleaddr:"",
-            //     teliprefix:"",
-            //     gender:"",
-            //     mobno:"",
-            //     carloanbal:"",
-            //     guaramt:"",
-            //     degree:"",
-            //     protexpd:"",
-            //     f103:"",
-            //     f105:"",
-            //     orgcode:"",
-            //     f106:"",
-            //     f107:"",
-            //     jobbegdate:"",
-            //     debtsum:"",
-            //     exppm:"",
-            //     marrysta:"",
-            //     fendcent:"",
-            //     certno:"",
-            //     sumincpm:"",
-            //     addr:"",
-            //     corpstdtype:"",
-            //     stdjobtype:"",
-            //     cdobj:"",
-            //     delflag:"",
-            //     debtexpd:"",
-            //     houseloanbal:"",
-            //     hujiaddr:""
-            //
-            // }
         }
 
     }
@@ -260,9 +156,6 @@ class Borrower extends Component {
         return value;
     }
 
-    componentDidMount(){
-
-    }
 
     render() {
         return (
@@ -273,8 +166,8 @@ class Borrower extends Component {
                         {
                             this.props.borrower.postSuccess&&
                             this.props.borrowerActions.postSuccess(false) &&
-                            this.context.jumpTo(3, this.setComplete.bind(this)(2))&&
-                            this.props.borrowerActions.pageSelected(3)
+                            this.props.borrowerActions.pageSelected(3)&&
+                            this.context.jumpTo(3, this.setComplete.bind(this)(2))
 
                         }
                     </div>
@@ -285,7 +178,7 @@ class Borrower extends Component {
                             // eslint-disable-next-line
                             mmspc.bridge.get((appId)=>{
                                 this.state.loanInfoState = true;
-                                this.props.borrowerActions.getLoadnerInfo(appId , JSON.parse("{\"clientId\":\"1111\"}"));
+                                this.props.borrowerActions.getLoadnerInfo(JSON.parse("{\"clientId\":"+"\""+this.props.client.clientId+"\"}"));
                             })
 
                         }
@@ -295,7 +188,7 @@ class Borrower extends Component {
                         <div class="form_content">
                             <div class="form_lf">
                                 <Form.Item label="客户姓名">
-                                    <Input value={this.props.borrower.loanerInfo.cliname} placeholder="关小明" onChange={this.onChange.bind(this, 'cliname')}></Input>
+                                    <Input value={this.props.client.certName} placeholder="关小明" onChange={this.onChange.bind(this, 'cliname')} disabled={true}></Input>
                                 </Form.Item>
                                 <Dialog
                                     size="small"
@@ -323,7 +216,7 @@ class Borrower extends Component {
                                     </Dialog.Body>
                                 </Dialog>
                                 <Form.Item label="文化程度">
-                                    <Radio.Group value={this.props.borrower.loanerInfo.edulevel} onChange={this.onChange.bind(this, 'edulevel')} appendix="更多"
+                                    <Radio.Group value={eduLvl[this.props.borrower.loanerInfo.edulevel]} onChange={this.onChange.bind(this, 'edulevel')} appendix="更多"
                                                  onAppendixClick={this.onEducateAppendClick.bind(this)}>
                                         {
                                             this.state.cultureList.map(function(item,i){
@@ -367,7 +260,7 @@ class Borrower extends Component {
                             </div>
                             <div class="form_rt">
                                 <Form.Item label="证件号码">
-                                    <Input value={this.props.borrower.loanerInfo.certno}  placeholder="321320199905010203" onChange={this.onChange.bind(this, 'certno')}></Input>
+                                    <Input value={this.props.client.certNo}  placeholder="321320199905010203" onChange={this.onChange.bind(this, 'certno')}disabled={true}></Input>
                                 </Form.Item>
                                 <Form.Item label="婚姻状况">
                                     <Radio.Group value={this.props.borrower.loanerInfo.marrysta} onChange={this.onChange.bind(this, 'marrysta')}>
@@ -474,19 +367,9 @@ class Borrower extends Component {
                             </div>
                             <div class="footer_content_rt">
                                 <Button type="warning" size="large"  onClick={() => {
-                                    // alert(JSON.stringify(this.props.borrower.loanerInfo));
-                                
-                                    // this.context.jumpTo(3, this.setComplete.bind(this)(2))
-                                    // eslint-disable-next-line
-                                    mmspc.bridge.get((data)=> {
-                                        this.props.borrower.loanerInfo.clientId = this.props.client.clientId;
-                                        this.props.borrower.loanerInfo.procsId = this.props.client.procsId;
-                                        // this.props.borrowerActions.postLoanerInfo(data , this.props.borrower.loanerInfo);
-                                        this.props.borrowerActions.postLoanerInfo(data , this.props.borrower.loanerInfo);
-                                        // "{\"clientVO\":"+"\""+that.state.clientVO+"\""+"}"
-
-                                    });
-
+                                    this.props.borrower.loanerInfo.clientId = this.props.client.clientId;
+                                    this.props.borrower.loanerInfo.req_id = this.props.client.procsId;
+                                    this.props.borrowerActions.postLoanerInfo(this.props.borrower.loanerInfo);
                                     }}>下一步</Button>
 
                             </div>
@@ -522,11 +405,11 @@ class Borrower extends Component {
                                     <div class="form_content">
                                         <div class="form_lf">
                                             <Form.Item label="国家">
-                                                <Input value={this.props.borrower.loanerInfo.country} placeholder="中国 "  onChange={this.onChange.bind(this, 'country')}></Input>
+                                                <Input value={this.props.borrower.loanerInfo.country} placeholder="中国 "  onChange={this.onChange.bind(this, 'country')}disabled={true}></Input>
                                             </Form.Item>
                                             <Form.Item label="性别">
                                                 <Radio.Group value={this.props.borrower.loanerInfo.gender} onChange={this.onChange.bind(this, 'gender')}>
-                                                    <Radio.Button value="男"/>
+                                                    <Radio.Button value="男" disabled={true}/>
                                                     <Radio.Button value="女"/>
                                                 </Radio.Group>
                                             </Form.Item>
@@ -535,6 +418,7 @@ class Borrower extends Component {
                                                     value={this.props.borrower.loanerInfo.birthday}
                                                     placeholder="选择日期"
                                                     onChange={this.onChange.bind(this, 'birthday')}
+                                                    isDisabled={true}
                                                 />
                                             </Form.Item>
                                             <Form.Item label="居住状况">
@@ -564,21 +448,22 @@ class Borrower extends Component {
                                         </div>
                                         <div class="form_rt">
                                             <Form.Item label="证件类型">
-                                                <Input value={this.props.borrower.loanerInfo.certtype} placeholder="身份证 " onChange={this.onChange.bind(this, 'certttype')}></Input>
+                                                <Input value={this.props.borrower.loanerInfo.certtype} placeholder="身份证 " onChange={this.onChange.bind(this, 'certttype')}disabled={true}></Input>
                                             </Form.Item>
                                             {/*暂无*/}
                                             <Form.Item label="是否长期有效">
                                                 <Radio.Group value={this.state.radio8} onChange={this.onChange.bind(this, 'radio8')}>
                                                     <Radio.Button value="是"/>
-                                                    <Radio.Button value="否"/>
+                                                    <Radio.Button value="否" disabled={true}/>
                                                 </Radio.Group>
                                             </Form.Item>
                                             {/*暂无*/}
-                                            <Form.Item label="证件有效终止日">
+                                            <Form.Item label="证件有效终止日" >
                                                 <DatePicker
                                                     value={this.props.borrower.loanerInfo.opdate}
                                                     placeholder="选择日期"
                                                     onChange={this.onChange.bind(this, 'date2')}
+                                                    isDisabled={true}
                                                 />
                                             </Form.Item>
                                             {/*暂无*/}

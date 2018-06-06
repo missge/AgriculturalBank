@@ -5,11 +5,14 @@
 // 初始化状态
 let initNavList = {
     readIdCard: 'none',
-    pageSelected:""
+    pageSelected:0,
+    // ”1“是一手房  ”2“是二手房
+    optkind:"1",
+    opt:"A5101",
 }
 
 let initName = {
-    instName:"",
+    instName:"机构名称",
     instCode:""
 }
 
@@ -29,6 +32,16 @@ export function home(state = initNavList, action={}) {
             return{
                 ...state,
                 pageSelected:action.value
+            }
+        case "optKind":
+            return{
+                ...state,
+                optkind:action.value
+            }
+        case "opt":
+            return{
+                ...state,
+                opt:action.value
             }
         default:
             return {...state};
@@ -87,7 +100,11 @@ let initData = {
     // 获取机构列表失败的数据
     getInstFail:null,
     // 是否联网核查成功
-    netCheck:false
+    netCheck:false,
+    // 模板列表
+    modelList:[],
+    // 场景列表
+    sceneList:[],
 
 }
 export function loginData(state=initData ,action={}) {
@@ -149,6 +166,16 @@ export function instData(state=initData , action={}) {
                 ...state,
                 netCheck:action.value
             }
+        case "modelList":
+            return{
+                ...state,
+                modelList:action.value
+            }
+        case "sceneList":
+            return{
+                ...state,
+                sceneList:action.value
+            }
         default:
             return{...state}
     }
@@ -187,6 +214,16 @@ export function client(state=clientData ,action={}) {
             return{
                 ...state,
                 procsId:action.value
+            }
+        case "certName":
+            return{
+                ...state,
+                certName:action.value
+            }
+        case "certNo":
+            return{
+                ...state,
+                certNo:action.value
             }
         default:
             return{...state}
