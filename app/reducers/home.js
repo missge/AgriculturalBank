@@ -5,10 +5,9 @@
 // 初始化状态
 let initNavList = {
     readIdCard: 'none',
-    pageSelected:0,
+    pageSelected:"",
     // ”1“是一手房  ”2“是二手房
-    optkind:"1",
-    opt:"A5101",
+    optkind:"1"
 }
 
 let initName = {
@@ -37,11 +36,6 @@ export function home(state = initNavList, action={}) {
             return{
                 ...state,
                 optkind:action.value
-            }
-        case "opt":
-            return{
-                ...state,
-                opt:action.value
             }
         default:
             return {...state};
@@ -197,10 +191,10 @@ export function instInfo(state=instInfo , action={}) {
 }
 
 let clientData = {
-    clientId:"",
+    clientId:"3000be65-c-447f-",
     certNo:"",
     certName:"",
-    procsId:""
+    procsId:"001802A5100000162"
 }
 
 export function client(state=clientData ,action={}) {

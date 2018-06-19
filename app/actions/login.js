@@ -3,7 +3,6 @@ import {Type} from "../global/contact"
 import {setCardName, setCardNum} from "./home";
 import {Url} from "../global/url";
 import {uploadCreditPage} from "./credit";
-import {queryWork} from "./investi"
 // 加载弹框是否显示逻辑
 export const loading=(data)=> ({
     type:"Loading",
@@ -87,21 +86,6 @@ export function login(params) {
             })
     }
 }
-
-// 密码登录
-export function loginFromB(params , workId) {
-    return function (dispatch) {
-        dispatch(loading(true));
-        dispatch(loadingText("登录中..."));
-        Net.postRequest(Url.login ,params,
-            Type.formType,function (data) {
-                dispatch(queryWork(JSON.parse("{\"req_id\":\""+workId+"\"}")));
-            },function () {
-                dispatch(loading(false));
-                dispatch(loginLoadFail("error"));
-            })
-    }
-}
 // 无密码登录
 export function loginNonePassword(params) {
     return function (dispatch) {
@@ -136,11 +120,10 @@ export function getInst() {
 export function getInstInfo(instcode) {
     return function(dispatch){
         dispatch(loading(true));
-        dispatch(loadingText("选择机构中..."));
+        dispatch(loadingText("查询机构中..."));
         Net.postRequest(Url.instInfo , "instcode="+instcode ,Type.formType,
             function (data) {
-                dispatch(instInfo());
-                dispatch(getModelList());
+                dispatch(getSceneList(JSON.parse("{\"pdts_cod\":\"A5101\"}")));
             },function () {
                 dispatch(loading(false));
             })
@@ -152,9 +135,8 @@ export function getModelList() {
         dispatch(loading(true));
         dispatch(loadingText("获取模板列表..."));
         Net.getRequest(Url.modelList , "",function (data) {
-            dispatch(setModelList(JSON.parse(data).data));
             dispatch(loading(false));
-            dispatch(getSceneList(JSON.parse("{\"pdts_cod\":\""+optkind+"\"}")));
+            dispatch(setModelList(JSON.parse(data).data));
         },function () {
             dispatch(loading(false));
 
@@ -277,7 +259,8 @@ export function getSceneList(params) {
         Net.getRequest(Url.sceneList , params ,
             function (data) {
                 dispatch(setSceneList(JSON.parse(data).data));
-                dispatch(loading(false));
+                dispatch(instInfo(data));
+                dispatch(getModelList());
             },function () {
                 dispatch(loading(false));
             })

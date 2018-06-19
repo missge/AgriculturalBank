@@ -12,7 +12,6 @@ import '../publicCss/public.css';
 import first from "../containerPage/first";
 var qs = require("querystring");
 let showLength=4;
-let eduLvl= {"01":"大学" , "02":"初中"};
 const actions = [
     borrowerActions,homeActions
 ];
@@ -216,7 +215,7 @@ class Borrower extends Component {
                                     </Dialog.Body>
                                 </Dialog>
                                 <Form.Item label="文化程度">
-                                    <Radio.Group value={eduLvl[this.props.borrower.loanerInfo.edulevel]} onChange={this.onChange.bind(this, 'edulevel')} appendix="更多"
+                                    <Radio.Group value={this.props.borrower.loanerInfo.edulevel} onChange={this.onChange.bind(this, 'edulevel')} appendix="更多"
                                                  onAppendixClick={this.onEducateAppendClick.bind(this)}>
                                         {
                                             this.state.cultureList.map(function(item,i){

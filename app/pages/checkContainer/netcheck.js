@@ -91,7 +91,7 @@ class NetCheck extends Component{
             check:"inline",
             checkSuccess:"none",
             position:0,
-            tmplt_id:"",
+            tmplt_id:"1",
             backFile:{
                 imageBase64:"",
                 oprId:"",
@@ -208,15 +208,11 @@ class NetCheck extends Component{
         ImageViewer.show(src).then((action) => {
             switch (action) {
               case 'retake':
-                  if (!this.props.instData.netCheck){
-                      onRetake();
-                  }
-                  break;
-              case 'delete':
-                  if (!this.props.instData.netCheck){
-                      onDelete();
-                  }
-                  return;
+                onRetake();
+                break;
+              case 'delete':        
+                onDelete();
+                return;
               default:
                 break;
             }
@@ -234,26 +230,23 @@ class NetCheck extends Component{
                         <div className="form_content">
                             <div className="form_lf">
                                 <Form.Item label="业务品种" >
-                                    <Radio.Group value={this.state.optkindName} onChange={(value)=>{
+                                    <Radio.Group value={this.state.optkindName} disabled={this.props.instData.netCheck?true:false} onChange={(value)=>{
                                         var code = "";
                                         optkind.map((option ,position)=>{
                                             if (JSON.parse(option).name == value){
                                                 code = JSON.parse(option).code;
-                                                this.props.netActions.setOpt(code);
-                                                this.props.netActions.getModelList(code);
                                                 if (position==0|| position==2){
                                                     this.props.netActions.setOptKind("1");
                                                 } else {
                                                     this.props.netActions.setOptKind("2");
                                                 }
-                                                this.props.netActions.getSceneList(JSON.parse("{\"pdts_cod\":\""+code+"\"}"));
                                             }
                                         })
                                         this.setState({optkindName:value ,optkindCode:code})
                                     }}>
                                         {
                                             optkind.map((option)=>{
-                                                return <Radio.Button disabled={this.props.instData.netCheck?(JSON.parse(option).name == this.state.optkindName?false:true):false} value={JSON.parse(option).name}/>
+                                                return <Radio.Button value={JSON.parse(option).name}/>
                                             })
                                         }
                                     </Radio.Group>
@@ -261,7 +254,7 @@ class NetCheck extends Component{
                             </div>
                             <div className="form_rt">
                                 <Form.Item label="参考模板">
-                                    <Radio.Group value={this.state.modelName} onChange={(value)=>{
+                                    <Radio.Group value={this.state.modelName} disabled={this.props.instData.netCheck?true:false} onChange={(value)=>{
                                         var id = "";
                                         this.props.instData.modelList.map((option)=>{
                                             if (option.tmplt_name == value){
@@ -278,7 +271,7 @@ class NetCheck extends Component{
                                     }}>
                                         {
                                             this.props.instData.modelList==null?[]:this.props.instData.modelList.map((option)=>{
-                                                return <Radio.Button disabled={this.props.instData.netCheck?(option.tmplt_name == this.state.modelName?false:true):false} value={option.opt == this.state.optKind?option.tmplt_name:""}/>
+                                                return <Radio.Button value={option.tmplt_name}/>
                                             })
                                         }
                                     </Radio.Group>
@@ -287,7 +280,7 @@ class NetCheck extends Component{
 
                             <div className="form_rt">
                                 <Form.Item label="场景选择">
-                                    <Radio.Group value={this.state.sceneName} onChange={(value)=>{
+                                    <Radio.Group value={this.state.sceneName} disabled={this.props.instData.netCheck?true:false} onChange={(value)=>{
                                         var id = "";
                                         this.props.instData.sceneList.map((option)=>{
                                             if (option.name == value){
@@ -300,7 +293,7 @@ class NetCheck extends Component{
                                     }}>
                                         {
                                             this.props.instData.sceneList==null?[]:this.props.instData.sceneList.map((option)=>{
-                                                return <Radio.Button disabled={this.props.instData.netCheck?(this.state.sceneName == option.name?false:true):false} value={option.name}/>
+                                                return <Radio.Button value={option.name}/>
                                             })
                                         }
                                     </Radio.Group>

@@ -39,7 +39,3 @@ export const setOptKind = (data)=>({
     type:"optKind",
     value:data
 })
-export const setOpt = (data)=>({
-    type:"opt",
-    value:data
-})

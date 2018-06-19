@@ -21,17 +21,14 @@ import watermark from "../../../components/src/utils/waterMark";
 import {MessageBox} from "../../../components";
 import {setAppId} from "../../../global/net";
 
-var that = "";
 const actions=[
     loginActions,homeActions
 ]
 function mapStateToProps(state) {
     const {instData} = state;
-    const {home} = state;
-    const {client} = state;
 
     return {
-        instData,home,client
+        instData
     };
 }
 function mapDispatchToProps(dispatch) {
@@ -91,12 +88,7 @@ function onBackPressed() {
         // eslint-disable-next-line
         mmspc.button.backPress()
     }).catch(() => {
-        if (that.props.client.procsId!=""){
-            that.props.homeActions.updateWork("{\"req_id\":\"" + that.props.client.procsId + "\" , \"cur_step\":\""+that.props.home.pageSelected+"\" ,\"finish_step\":\"7\"}");
-        }else {
-            // eslint-disable-next-line
-            mmspc.dialog.toast("作业Id不能为空");
-        }
+
     });
 }
 class Index extends Component {
@@ -130,8 +122,7 @@ class Index extends Component {
 
     }
     componentDidMount(){
-        that = this;
-        watermark({watermark_txt0:'用户0815   412801198304100815'});
+        watermark({watermark_txt0:'小明   412801198304100815'});
         // eslint-disable-next-line
 
         this.props.homeActions.loading(true);
@@ -156,17 +147,7 @@ class Index extends Component {
                     // 开始时注册一个插件
                     // eslint-disable-next-line
                     mmspc.android.init(onBackPressed);
-
-                    // 判断是从A面进来还是B面进来
-                    mmspc.bridge.get((data)=>{
-                        if ("B" == data){
-                            this.props.homeActions.loginFromB("username=412801198304100815&userpass=11111111");
-                        }else {
-                            this.props.homeActions.login("username=412801198304100815&userpass=11111111");
-                        }
-                    },
-                    ()=>{} , "page");
-
+                    this.props.homeActions.login("username=412801198304100815&userpass=11111111");
                     // this.props.homeActions.loginNonePassword("username=412801198304100815");
                 }else {
                     // eslint-disable-next-line
@@ -184,7 +165,6 @@ class Index extends Component {
                         this.props.instData.loading&&<Loading fullscreen={true} text={this.props.instData.text} style={{backgroundColor: 'rgba(0, 0, 0, 0)'}}/>
                     }
                 </div>
-
                 <Dialog
                     size="small"
                     visible={ this.props.instData.showList }

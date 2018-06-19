@@ -12,7 +12,8 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
-    "babel-runtime": "^6.26.0"
+    "babel-runtime": "^6.26.0",
+    "wangeditor":">=3.0.0"
   },
   "dependencies": {
     "antd": "^3.4.1",
@@ -21,7 +22,6 @@
     "element-theme-default": "^1.4.13",
     "fastclick": "^1.0.6",
     "immutable": "^3.8.2",
-    "wangeditor": ">=3.0.0",
     "lazy-load-component": "^1.1.2",
     "react-router-dom": "^4.2.2",
     "react-click-outside": "^3.0.0",

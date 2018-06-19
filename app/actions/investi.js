@@ -45,7 +45,6 @@ export function commitWork(reqId ,params) {
 export function queryWork(params) {
     return function (dispatch) {
         dispatch(loading(true));
-        dispatch(loadingText("查询作业中..."));
         Net.getRequest(Url.process , params,
             function (data) {
                 dispatch(loading(false));
@@ -58,7 +57,7 @@ export function queryWork(params) {
 export function queryObject(params) {
     return function (dispatch) {
         dispatch(loading(true));
-        Net.postRequest(Url.searchList , params, Type.formType,
+        Net.postRequest(Url.searchList , params, Type.jsonType,
             function (data) {
                 // eslint-disable-next-line
                 mmspc.dialog.toast("获取成功！");

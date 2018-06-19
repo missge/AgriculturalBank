@@ -14,7 +14,7 @@ export default function watermark(settings) {
         watermark_fontsize:'20px',//水印字体大小  
         watermark_font:'微软雅黑',//水印字体  
         watermark_width:210,//水印宽度  
-        watermark_height:120,//水印高度  
+        watermark_height:80,//水印长度  
         watermark_angle:45,//水印倾斜度数  
         watermark_root:null,//
         watermark_z_index:9999,//水印深度
